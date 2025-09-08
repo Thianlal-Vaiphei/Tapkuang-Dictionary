@@ -6,52 +6,96 @@
 <title>Tapkuang Vaiphei Dictionary</title>
 <link rel="stylesheet" href="style.css">
 <style>
-  body { font-family: Arial, sans-serif; padding: 20px; }
-  input, button { margin: 5px 0; padding: 5px; }
-  table { border-collapse: collapse; width: 100%; margin-top: 10px; }
-  table, th, td { border: 1px solid #ccc; }
-  th, td { padding: 8px; text-align: left; }
+  body { font-family: Arial, sans-serif; margin: 0; }
+  header { background: #333; color: white; padding: 10px; text-align: center; }
+  nav { background: #f4f4f4; padding: 10px; display: flex; justify-content: space-around; }
+  nav button { background: none; border: none; padding: 10px; cursor: pointer; font-size: 16px; }
+  nav button:hover { background: #ddd; }
+  section { display: none; padding: 20px; }
+  section.active { display: block; }
+
+  /* Dictionary Tabs */
   .tab { margin-top: 10px; }
   .tab button { padding: 10px; margin-right: 5px; cursor: pointer; }
   .tabcontent { display: none; margin-top: 10px; }
   .activeTab { display: block; }
+
+  table { border-collapse: collapse; width: 100%; margin-top: 10px; }
+  th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
 </style>
 </head>
 <body>
 
-<h1>Tapkuang Vaiphei Dictionary</h1>
+<header>
+  <h1>Tapkuang Vaiphei Dictionary</h1>
+</header>
 
-<!-- Tabs -->
-<div class="tab">
-  <button class="tablinks" onclick="openSection(event, 'VaipheiToEnglish')" id="defaultTab">Vaiphei → English</button>
-  <button class="tablinks" onclick="openSection(event, 'EnglishToVaiphei')">English → Vaiphei</button>
-</div>
+<nav>
+  <button onclick="openPage('home')">🏠 Home</button>
+  <button onclick="openPage('addWord')">➕ Add Word</button>
+  <button onclick="openPage('importExcel')">📥 Import Excel</button>
+  <button onclick="openPage('dictionary')">📖 Dictionary</button>
+  <button onclick="openPage('settings')">⚙️ Settings</button>
+</nav>
 
-<!-- Vaiphei → English -->
-<div id="VaipheiToEnglish" class="tabcontent">
-  <h2>Vaiphei → English</h2>
-  <input type="file" id="excelFileV2E" accept=".xlsx, .xls" />
-  <button id="importExcelV2E">Import Excel</button>
-  <br><br>
-  <input type="text" id="searchV2E" placeholder="Search Vaiphei..." />
-  <table id="tableV2E">
-    <thead><tr><th>Vaiphei</th><th>English</th></tr></thead>
-    <tbody></tbody>
-  </table>
-</div>
+<!-- Pages -->
+<section id="home" class="active">
+  <h2>Welcome</h2>
+  <p>Use the menu to explore the dictionary, add new words, or import from Excel.</p>
+</section>
 
-<!-- English → Vaiphei -->
-<div id="EnglishToVaiphei" class="tabcontent">
-  <h2>English → Vaiphei</h2>
-  <input type="file" id="excelFileE2V" accept=".xlsx, .xls" />
-  <button id="importExcelE2V">Import Excel</button>
-  <br><br>
-  <input type="text" id="searchE2V" placeholder="Search English..." />
-  <table id="tableE2V">
-    <thead><tr><th>English</th><th>Vaiphei</th></tr></thead>
-    <tbody></tbody>
-  </table>
-</div>
+<section id="addWord">
+  <h2>Add Word</h2>
+  <label>Word: <input type="text" id="wordInput"></label><br>
+  <label>Meaning: <input type="text" id="meaningInput"></label><br>
+  <button onclick="manualAdd()">Add</button>
+  <p id="addMessage"></p>
+</section>
+
+<section id="importExcel">
+  <h2>Import Excel File</h2>
+  <p>Choose which dictionary to import into:</p>
+  <div>
+    <h3>Vaiphei → English</h3>
+    <input type="file" id="excelFileV2E" accept=".xlsx,.xls">
+    <button id="importExcelV2E">Import V→E</button>
+  </div>
+  <br>
+  <div>
+    <h3>English → Vaiphei</h3>
+    <input type="file" id="excelFileE2V" accept=".xlsx,.xls">
+    <button id="importExcelE2V">Import E→V</button>
+  </div>
+</section>
+
+<section id="dictionary">
+  <h2>Dictionary</h2>
+  <div class="tab">
+    <button onclick="openTab(event,'VaipheiToEnglish')" id="defaultTab">Vaiphei → English</button>
+    <button onclick="openTab(event,'EnglishToVaiphei')">English → Vaiphei</button>
+  </div>
+
+  <div id="VaipheiToEnglish" class="tabcontent">
+    <input type="text" id="searchV2E" placeholder="Search Vaiphei...">
+    <table id="tableV2E">
+      <thead><tr><th>Vaiphei</th><th>English</th></tr></thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <div id="EnglishToVaiphei" class="tabcontent">
+    <input type="text" id="searchE2V" placeholder="Search English...">
+    <table id="tableE2V">
+      <thead><tr><th>English</th><th>Vaiphei</th></tr></thead>
+      <tbody></tbody>
+    </table>
+  </div>
+</section>
+
+<section id="settings">
+  <h2>Settings</h2>
+  <p>(Here you can later add theme, export data, reset dictionary, etc.)</p>
+</section>
 
 <!-- SheetJS -->
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
@@ -59,20 +103,33 @@
 <script src="dictionary_e2v.js"></script>
 
 <script>
-  // Default tab open
+  // Page navigation
+  function openPage(pageId) {
+    document.querySelectorAll("section").forEach(s => s.classList.remove("active"));
+    document.getElementById(pageId).classList.add("active");
+  }
+
+  // Dictionary tab navigation
+  function openTab(evt, tabName) {
+    document.querySelectorAll(".tabcontent").forEach(tc => tc.style.display = "none");
+    document.querySelectorAll(".tab button").forEach(btn => btn.classList.remove("active"));
+    document.getElementById(tabName).style.display = "block";
+    evt.currentTarget.classList.add("active");
+  }
   document.getElementById("defaultTab").click();
 
-  function openSection(evt, sectionName) {
-    const tabcontent = document.getElementsByClassName("tabcontent");
-    for (let i = 0; i < tabcontent.length; i++) {
-      tabcontent[i].style.display = "none";
+  // Manual add (default to Vaiphei→English for now)
+  function manualAdd() {
+    const word = document.getElementById("wordInput").value.trim();
+    const meaning = document.getElementById("meaningInput").value.trim();
+    if (!word || !meaning) {
+      document.getElementById("addMessage").innerText = "Please enter both fields.";
+      return;
     }
-    const tablinks = document.getElementsByClassName("tablinks");
-    for (let i = 0; i < tablinks.length; i++) {
-      tablinks[i].className = tablinks[i].className.replace(" activeTab", "");
-    }
-    document.getElementById(sectionName).style.display = "block";
-    evt.currentTarget.className += " activeTab";
+    addV2E(word, meaning); // add to Vaiphei→English
+    document.getElementById("addMessage").innerText = "Word added!";
+    document.getElementById("wordInput").value = "";
+    document.getElementById("meaningInput").value = "";
   }
 </script>
 
