@@ -98,3 +98,46 @@ document.getElementById('searchE2V').addEventListener('input', e => renderE2V(e.
 
 // ===== Initial render =====
 renderAll();
+// ===== Process English → Vaiphei Excel =====
+function processExcelE2V(data) {
+    for (let i = 1; i < data.length; i++) { // skip header
+        const row = data[i];
+        if (!row || row.length < 2) continue;
+
+        const english = row[0].toString().trim();
+        const vaiphei = row[1].toString().trim();
+        if (!english || !vaiphei) continue;
+
+        // Check if Vaiphei already exists in dictionary
+        const existingIndex = dictionary.findIndex(e => e.word.toLowerCase() === vaiphei.toLowerCase());
+        if (existingIndex >= 0) {
+            dictionary[existingIndex].meaning = english;
+        } else {
+            dictionary.push({ word: vaiphei, meaning: english });
+        }
+    }
+
+    // Sort by Vaiphei word
+    dictionary.sort((a,b) => a.word.replace(/-/g,'').toLowerCase().localeCompare(b.word.replace(/-/g,'').toLowerCase()));
+    localStorage.setItem('vaipheiDictionary', JSON.stringify(dictionary));
+    renderAll();
+    alert('English → Vaiphei import completed!');
+}
+
+// ===== Event listener for English → Vaiphei import =====
+document.getElementById('importExcelE2V').addEventListener('click', () => {
+    const fileInput = document.getElementById('excelFileE2V');
+    if (!fileInput.files.length) { alert('Select an Excel file first'); return; }
+
+    const file = fileInput.files[0];
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const data = new Uint8Array(e.target.result);
+        const workbook = XLSX.read(data, { type: 'array' });
+        const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+        const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+        processExcelE2V(jsonData);
+    };
+    reader.readAsArrayBuffer(file);
+});
+
