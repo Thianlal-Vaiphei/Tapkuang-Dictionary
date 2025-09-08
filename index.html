@@ -4,12 +4,17 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Tapkuang Vaiphei Dictionary</title>
+<link rel="stylesheet" href="style.css">
 <style>
   body { font-family: Arial, sans-serif; padding: 20px; }
-  input, button, select { margin: 5px 0; padding: 5px; }
-  table { border-collapse: collapse; width: 100%; margin-top: 20px; }
+  input, button { margin: 5px 0; padding: 5px; }
+  table { border-collapse: collapse; width: 100%; margin-top: 10px; }
   table, th, td { border: 1px solid #ccc; }
   th, td { padding: 8px; text-align: left; }
+  .tab { margin-top: 10px; }
+  .tab button { padding: 10px; margin-right: 5px; cursor: pointer; }
+  .tabcontent { display: none; margin-top: 10px; }
+  .activeTab { display: block; }
 </style>
 </head>
 <body>
@@ -21,35 +26,59 @@
 <input type="file" id="excelFile" accept=".xlsx, .xls" />
 <button id="importExcel">Import Excel</button>
 
-<!-- Translation Direction -->
-<h3>Translation Direction</h3>
-<select id="directionSelect">
-    <option value="v2e">Vaiphei → English</option>
-    <option value="e2v">English → Vaiphei</option>
-</select>
+<!-- Tabs for Dictionary Sections -->
+<div class="tab">
+  <button class="tablinks" onclick="openSection(event, 'VaipheiToEnglish')" id="defaultTab">Vaiphei → English</button>
+  <button class="tablinks" onclick="openSection(event, 'EnglishToVaiphei')">English → Vaiphei</button>
+</div>
+
+<!-- Vaiphei → English -->
+<div id="VaipheiToEnglish" class="tabcontent">
+  <h3>Search Vaiphei → English</h3>
+  <input type="text" id="searchV2E" placeholder="Search Vaiphei..." />
+  <table id="tableV2E">
+    <thead><tr><th>Vaiphei</th><th>English</th></tr></thead>
+    <tbody></tbody>
+  </table>
+</div>
+
+<!-- English → Vaiphei -->
+<div id="EnglishToVaiphei" class="tabcontent">
+  <h3>Search English → Vaiphei</h3>
+  <input type="text" id="searchE2V" placeholder="Search English..." />
+  <table id="tableE2V">
+    <thead><tr><th>English</th><th>Vaiphei</th></tr></thead>
+    <tbody></tbody>
+  </table>
+</div>
 
 <!-- Manual Add / Update -->
 <h3>Add or Update Word</h3>
-<input type="text" id="wordInput" placeholder="Word" />
-<input type="text" id="meaningInput" placeholder="Meaning" />
+<input type="text" id="wordInput" placeholder="Vaiphei Word" />
+<input type="text" id="meaningInput" placeholder="English Meaning" />
 <button id="addUpdateWord">Add / Update</button>
-
-<!-- Search -->
-<h3>Search Dictionary</h3>
-<input type="text" id="searchInput" placeholder="Search word..." />
-
-<!-- Dictionary Table -->
-<h3>Dictionary</h3>
-<table id="dictionaryTable">
-  <thead>
-    <tr><th>Word</th><th>Meaning</th></tr>
-  </thead>
-  <tbody></tbody>
-</table>
 
 <!-- SheetJS -->
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script src="dictionary.js"></script>
+
+<script>
+  // Default tab open
+  document.getElementById("defaultTab").click();
+
+  function openSection(evt, sectionName) {
+    const tabcontent = document.getElementsByClassName("tabcontent");
+    for (let i = 0; i < tabcontent.length; i++) {
+      tabcontent[i].style.display = "none";
+    }
+    const tablinks = document.getElementsByClassName("tablinks");
+    for (let i = 0; i < tablinks.length; i++) {
+      tablinks[i].className = tablinks[i].className.replace(" activeTab", "");
+    }
+    document.getElementById(sectionName).style.display = "block";
+    evt.currentTarget.className += " activeTab";
+  }
+</script>
 
 </body>
 </html>
