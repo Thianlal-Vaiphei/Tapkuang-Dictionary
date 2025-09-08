@@ -21,12 +21,7 @@
 
 <h1>Tapkuang Vaiphei Dictionary</h1>
 
-<!-- Excel Import -->
-<h3>Import from Excel</h3>
-<input type="file" id="excelFile" accept=".xlsx, .xls" />
-<button id="importExcel">Import Excel</button>
-
-<!-- Tabs for Dictionary Sections -->
+<!-- Tabs -->
 <div class="tab">
   <button class="tablinks" onclick="openSection(event, 'VaipheiToEnglish')" id="defaultTab">Vaiphei → English</button>
   <button class="tablinks" onclick="openSection(event, 'EnglishToVaiphei')">English → Vaiphei</button>
@@ -34,7 +29,10 @@
 
 <!-- Vaiphei → English -->
 <div id="VaipheiToEnglish" class="tabcontent">
-  <h3>Search Vaiphei → English</h3>
+  <h2>Vaiphei → English</h2>
+  <input type="file" id="excelFileV2E" accept=".xlsx, .xls" />
+  <button id="importExcelV2E">Import Excel</button>
+  <br><br>
   <input type="text" id="searchV2E" placeholder="Search Vaiphei..." />
   <table id="tableV2E">
     <thead><tr><th>Vaiphei</th><th>English</th></tr></thead>
@@ -44,7 +42,10 @@
 
 <!-- English → Vaiphei -->
 <div id="EnglishToVaiphei" class="tabcontent">
-  <h3>Search English → Vaiphei</h3>
+  <h2>English → Vaiphei</h2>
+  <input type="file" id="excelFileE2V" accept=".xlsx, .xls" />
+  <button id="importExcelE2V">Import Excel</button>
+  <br><br>
   <input type="text" id="searchE2V" placeholder="Search English..." />
   <table id="tableE2V">
     <thead><tr><th>English</th><th>Vaiphei</th></tr></thead>
@@ -52,15 +53,10 @@
   </table>
 </div>
 
-<!-- Manual Add / Update -->
-<h3>Add or Update Word</h3>
-<input type="text" id="wordInput" placeholder="Vaiphei Word" />
-<input type="text" id="meaningInput" placeholder="English Meaning" />
-<button id="addUpdateWord">Add / Update</button>
-
 <!-- SheetJS -->
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-<script src="dictionary.js"></script>
+<script src="dictionary_v2e.js"></script>
+<script src="dictionary_e2v.js"></script>
 
 <script>
   // Default tab open
@@ -82,7 +78,3 @@
 
 </body>
 </html>
-<h3>Import English → Vaiphei</h3>
-<input type="file" id="excelFileE2V" accept=".xlsx, .xls" />
-<button id="importExcelE2V">Import English → Vaiphei</button>
-
