@@ -6,16 +6,23 @@ function saveDictionary() {
     localStorage.setItem('vaipheiDictionary', JSON.stringify(dictionary));
 }
 
-// ===== Render dictionary table =====
+// ===== Render dictionary table with filter and direction =====
 function renderDictionary(filter = '') {
     const tbody = document.getElementById('dictionaryTable').querySelector('tbody');
     tbody.innerHTML = '';
 
-    const filtered = dictionary.filter(e => e.word.toLowerCase().includes(filter.toLowerCase()));
+    const direction = document.getElementById('directionSelect').value; // v2e or e2v
+
+    const filtered = dictionary.filter(entry => {
+        const source = direction === 'v2e' ? entry.word : entry.meaning;
+        return source.toLowerCase().includes(filter.toLowerCase());
+    });
 
     filtered.forEach(entry => {
+        const wordCol = direction === 'v2e' ? entry.word : entry.meaning;
+        const meaningCol = direction === 'v2e' ? entry.meaning : entry.word;
         const tr = document.createElement('tr');
-        tr.innerHTML = `<td>${entry.word}</td><td>${entry.meaning}</td>`;
+        tr.innerHTML = `<td>${wordCol}</td><td>${meaningCol}</td>`;
         tbody.appendChild(tr);
     });
 }
@@ -24,19 +31,16 @@ function renderDictionary(filter = '') {
 function addOrUpdateWord(word, meaning) {
     if (!word || !meaning) return;
 
+    // Always store as Vaiphei → English internally
     const existingIndex = dictionary.findIndex(e => e.word.toLowerCase() === word.toLowerCase());
     if (existingIndex >= 0) {
-        dictionary[existingIndex].meaning = meaning; // update
+        dictionary[existingIndex].meaning = meaning;
     } else {
-        dictionary.push({ word, meaning }); // add
+        dictionary.push({ word, meaning });
     }
 
-    // Sort alphabetically & syllable-aware
-    dictionary.sort((a, b) => {
-        const wA = a.word.replace(/-/g, '').toLowerCase();
-        const wB = b.word.replace(/-/g, '').toLowerCase();
-        return wA.localeCompare(wB);
-    });
+    // Sort alphabetically by Vaiphei
+    dictionary.sort((a, b) => a.word.replace(/-/g, '').toLowerCase().localeCompare(b.word.replace(/-/g, '').toLowerCase()));
 
     saveDictionary();
     renderDictionary(document.getElementById('searchInput').value);
@@ -88,9 +92,14 @@ document.getElementById('addUpdateWord').addEventListener('click', () => {
     document.getElementById('meaningInput').value = '';
 });
 
-// ===== Event: Search =====
+// ===== Event: Search input =====
 document.getElementById('searchInput').addEventListener('input', (e) => {
     renderDictionary(e.target.value.trim());
+});
+
+// ===== Event: Change translation direction =====
+document.getElementById('directionSelect').addEventListener('change', () => {
+    renderDictionary(document.getElementById('searchInput').value);
 });
 
 // ===== Initial render =====
