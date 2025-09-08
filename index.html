@@ -6,7 +6,7 @@
 <title>Tapkuang Vaiphei Dictionary</title>
 <style>
   body { font-family: Arial, sans-serif; padding: 20px; }
-  input, button { margin: 5px 0; padding: 5px; }
+  input, button, select { margin: 5px 0; padding: 5px; }
   table { border-collapse: collapse; width: 100%; margin-top: 20px; }
   table, th, td { border: 1px solid #ccc; }
   th, td { padding: 8px; text-align: left; }
@@ -20,6 +20,13 @@
 <h3>Import from Excel</h3>
 <input type="file" id="excelFile" accept=".xlsx, .xls" />
 <button id="importExcel">Import Excel</button>
+
+<!-- Translation Direction -->
+<h3>Translation Direction</h3>
+<select id="directionSelect">
+    <option value="v2e">Vaiphei → English</option>
+    <option value="e2v">English → Vaiphei</option>
+</select>
 
 <!-- Manual Add / Update -->
 <h3>Add or Update Word</h3>
