@@ -6,127 +6,159 @@
 <title>Tapkuang Vaiphei Dictionary</title>
 <link rel="stylesheet" href="style.css">
 <style>
-  body { font-family: Arial, sans-serif; margin: 0; }
-  header { background: #333; color: white; padding: 10px; text-align: center; }
-  nav { background: #f4f4f4; padding: 10px; display: flex; justify-content: space-around; }
-  nav button { background: none; border: none; padding: 10px; cursor: pointer; font-size: 16px; }
-  nav button:hover { background: #ddd; }
+  body { font-family: Arial, sans-serif; margin: 0; background: #faf9f6; }
+
+  header img {
+    width: 100%;
+    max-height: 250px;
+    object-fit: cover;
+  }
+
+  h1, h2 { text-align: center; }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+    padding: 20px;
+  }
+
+  .card {
+    background: white;
+    padding: 20px;
+    text-align: center;
+    border-radius: 12px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    cursor: pointer;
+    transition: 0.2s;
+  }
+
+  .card:hover {
+    transform: translateY(-3px);
+    background: #f0f0f0;
+  }
+
   section { display: none; padding: 20px; }
   section.active { display: block; }
 
-  /* Dictionary Tabs */
-  .tab { margin-top: 10px; }
-  .tab button { padding: 10px; margin-right: 5px; cursor: pointer; }
-  .tabcontent { display: none; margin-top: 10px; }
-  .activeTab { display: block; }
-
-  table { border-collapse: collapse; width: 100%; margin-top: 10px; }
+  table { width: 100%; border-collapse: collapse; margin-top: 10px; }
   th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+  input, button, select { padding: 8px; margin: 5px 0; }
 </style>
 </head>
 <body>
 
 <header>
-  <h1>Tapkuang Vaiphei Dictionary</h1>
+  <img src="Dictionary.png" alt="Dictionary Cover">
 </header>
 
-<nav>
-  <button onclick="openPage('home')">🏠 Home</button>
-  <button onclick="openPage('addWord')">➕ Add Word</button>
-  <button onclick="openPage('importExcel')">📥 Import Excel</button>
-  <button onclick="openPage('dictionary')">📖 Dictionary</button>
-  <button onclick="openPage('settings')">⚙️ Settings</button>
-</nav>
+<!-- Grid Menu -->
+<div class="grid">
+  <div class="card" onclick="openPage('home')">🏠 Home</div>
+  <div class="card" onclick="openPage('search')">🔍 Hawlna<br>(Search)</div>
+  <div class="card" onclick="openPage('dictionary')">📖 Thumalhilchian<br>(Dictionary)</div>
+  <div class="card" onclick="openPage('importExcel')">📥 Excel Laklutna<br>(Import)</div>
+  <div class="card" onclick="openPage('addWord')">➕ Thumal Belapna<br>(Add Word)</div>
+  <div class="card" onclick="openPage('settings')">⚙️ Munpi<br>(Settings)</div>
+  <div class="card" onclick="openPage('login')">🔑 Lutna<br>(Login)</div>
+  <div class="card" onclick="openPage('logout')">🚪 Pawtna<br>(Logout)</div>
+</div>
 
-<!-- Pages -->
+<!-- Sections -->
 <section id="home" class="active">
   <h2>Welcome</h2>
-  <p>Use the menu to explore the dictionary, add new words, or import from Excel.</p>
+  <p>👋 Tapkuang – Vaiphei Dictionary. Use Hawlna (Search) or Thumalhilchian (Dictionary).</p>
+  <p>I want to make Vaiphei Dictionary App since my Higher Secondary School days... (your full about text here)</p>
 </section>
 
-<section id="addWord">
-  <h2>Add Word</h2>
-  <label>Word: <input type="text" id="wordInput"></label><br>
-  <label>Meaning: <input type="text" id="meaningInput"></label><br>
-  <button onclick="manualAdd()">Add</button>
-  <p id="addMessage"></p>
-</section>
-
-<section id="importExcel">
-  <h2>Import Excel File</h2>
-  <p>Choose which dictionary to import into:</p>
-  <div>
-    <h3>Vaiphei → English</h3>
-    <input type="file" id="excelFileV2E" accept=".xlsx,.xls">
-    <button id="importExcelV2E">Import V→E</button>
-  </div>
-  <br>
-  <div>
-    <h3>English → Vaiphei</h3>
-    <input type="file" id="excelFileE2V" accept=".xlsx,.xls">
-    <button id="importExcelE2V">Import E→V</button>
-  </div>
+<section id="search">
+  <h2>Search Dictionary</h2>
+  <input type="text" id="searchV2E" placeholder="Search Vaiphei...">
+  <table id="tableV2E">
+    <thead><tr><th>Vaiphei</th><th>English</th></tr></thead>
+    <tbody></tbody>
+  </table>
+  <hr>
+  <input type="text" id="searchE2V" placeholder="Search English...">
+  <table id="tableE2V">
+    <thead><tr><th>English</th><th>Vaiphei</th></tr></thead>
+    <tbody></tbody>
+  </table>
 </section>
 
 <section id="dictionary">
   <h2>Dictionary</h2>
-  <div class="tab">
-    <button onclick="openTab(event,'VaipheiToEnglish')" id="defaultTab">Vaiphei → English</button>
-    <button onclick="openTab(event,'EnglishToVaiphei')">English → Vaiphei</button>
-  </div>
+  <button onclick="openTab(event,'VaipheiToEnglish')" id="defaultTab">Vaiphei → English</button>
+  <button onclick="openTab(event,'EnglishToVaiphei')">English → Vaiphei</button>
 
   <div id="VaipheiToEnglish" class="tabcontent">
-    <input type="text" id="searchV2E" placeholder="Search Vaiphei...">
-    <table id="tableV2E">
+    <table id="tableV2E2">
       <thead><tr><th>Vaiphei</th><th>English</th></tr></thead>
       <tbody></tbody>
     </table>
   </div>
 
   <div id="EnglishToVaiphei" class="tabcontent">
-    <input type="text" id="searchE2V" placeholder="Search English...">
-    <table id="tableE2V">
+    <table id="tableE2V2">
       <thead><tr><th>English</th><th>Vaiphei</th></tr></thead>
       <tbody></tbody>
     </table>
   </div>
 </section>
 
-<section id="settings">
-  <h2>Settings</h2>
-  <p>(Here you can later add theme, export data, reset dictionary, etc.)</p>
+<section id="importExcel">
+  <h2>Import Excel File</h2>
+  <h3>Vaiphei → English</h3>
+  <input type="file" id="excelFileV2E">
+  <button id="importExcelV2E">Import</button>
+  <h3>English → Vaiphei</h3>
+  <input type="file" id="excelFileE2V">
+  <button id="importExcelE2V">Import</button>
 </section>
 
-<!-- SheetJS -->
+<section id="addWord">
+  <h2>Add Word</h2>
+  <select id="dictChoice">
+    <option value="v2e">Vaiphei → English</option>
+    <option value="e2v">English → Vaiphei</option>
+  </select><br>
+  <label>Word: <input type="text" id="wordInput"></label><br>
+  <label>Meaning: <input type="text" id="meaningInput"></label><br>
+  <button onclick="manualAdd()">Add</button>
+  <p id="addMessage"></p>
+</section>
+
+<section id="settings"><h2>Settings</h2><p>Theme, export, reset, etc.</p></section>
+<section id="login"><h2>Login</h2><p>Login form here.</p></section>
+<section id="logout"><h2>Logout</h2><p>You are logged out.</p></section>
+
+<!-- SheetJS + Dictionaries -->
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script src="dictionary_v2e.js"></script>
 <script src="dictionary_e2v.js"></script>
 
 <script>
-  // Page navigation
-  function openPage(pageId) {
+  function openPage(id) {
     document.querySelectorAll("section").forEach(s => s.classList.remove("active"));
-    document.getElementById(pageId).classList.add("active");
+    document.getElementById(id).classList.add("active");
   }
 
-  // Dictionary tab navigation
   function openTab(evt, tabName) {
     document.querySelectorAll(".tabcontent").forEach(tc => tc.style.display = "none");
-    document.querySelectorAll(".tab button").forEach(btn => btn.classList.remove("active"));
     document.getElementById(tabName).style.display = "block";
-    evt.currentTarget.classList.add("active");
   }
   document.getElementById("defaultTab").click();
 
-  // Manual add (default to Vaiphei→English for now)
   function manualAdd() {
     const word = document.getElementById("wordInput").value.trim();
     const meaning = document.getElementById("meaningInput").value.trim();
+    const choice = document.getElementById("dictChoice").value;
     if (!word || !meaning) {
       document.getElementById("addMessage").innerText = "Please enter both fields.";
       return;
     }
-    addV2E(word, meaning); // add to Vaiphei→English
+    if (choice === "v2e") addV2E(word, meaning);
+    else addE2V(word, meaning);
     document.getElementById("addMessage").innerText = "Word added!";
     document.getElementById("wordInput").value = "";
     document.getElementById("meaningInput").value = "";
