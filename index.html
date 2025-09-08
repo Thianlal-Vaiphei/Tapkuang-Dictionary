@@ -1,169 +1,273 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Tapkuang Vaiphei Dictionary</title>
-<link rel="stylesheet" href="style.css">
-<style>
-  body { font-family: Arial, sans-serif; margin: 0; background: #faf9f6; }
-
-  header img {
-    width: 100%;
-    max-height: 250px;
-    object-fit: cover;
-  }
-
-  h1, h2 { text-align: center; }
-
-  .grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 15px;
-    padding: 20px;
-  }
-
-  .card {
-    background: white;
-    padding: 20px;
-    text-align: center;
-    border-radius: 12px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-    cursor: pointer;
-    transition: 0.2s;
-  }
-
-  .card:hover {
-    transform: translateY(-3px);
-    background: #f0f0f0;
-  }
-
-  section { display: none; padding: 20px; }
-  section.active { display: block; }
-
-  table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-  th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
-  input, button, select { padding: 8px; margin: 5px 0; }
-</style>
+  <meta charset="UTF-8">
+  <title>Tapkuang Vaiphei Dictionary</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)),
+        url('data:image/png;base64,REPLACE_WITH_BASE64') no-repeat center center fixed;
+      background-size: cover;
+      color: #fff;
+    }
+    header {
+      text-align: center;
+      padding: 2rem;
+    }
+    header h1 {
+      font-size: 2.5rem;
+      margin: 0;
+    }
+    nav {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 1rem;
+      padding: 1rem;
+    }
+    .card {
+      background: rgba(255,255,255,0.1);
+      padding: 1.5rem;
+      text-align: center;
+      border-radius: 1rem;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    .card:hover {
+      background: rgba(255,255,255,0.2);
+    }
+    section {
+      display: none;
+      padding: 1rem;
+      background: rgba(0,0,0,0.6);
+    }
+    section.active {
+      display: block;
+    }
+    h2 {
+      margin-top: 1rem;
+    }
+    .word-entry {
+      display: flex;
+      justify-content: space-between;
+      padding: 0.3rem 0.6rem;
+      border-bottom: 1px solid rgba(255,255,255,0.2);
+    }
+    .admin-controls button {
+      margin-left: 0.5rem;
+    }
+    input, button, select {
+      padding: 0.5rem;
+      margin: 0.3rem;
+    }
+    .letter-heading {
+      background: rgba(255,255,255,0.2);
+      padding: 0.4rem;
+      font-weight: bold;
+      margin-top: 0.6rem;
+    }
+  </style>
 </head>
 <body>
+  <header>
+    <h1>Tapkuang Vaiphei Dictionary</h1>
+  </header>
+  <nav>
+    <div class="card" onclick="showSection('v2e')">Vaiphei → English</div>
+    <div class="card" onclick="showSection('e2v')">English → Vaiphei</div>
+    <div class="card" onclick="showSection('addWord')">Add Word</div>
+    <div class="card" onclick="showSection('importExcel')">Import Excel</div>
+    <div class="card" onclick="showSection('settings')">Settings</div>
+    <div class="card" onclick="showSection('login')">Login</div>
+  </nav>
 
-<header>
-  <img src="Dictionary.png" alt="Dictionary Cover">
-</header>
+  <!-- Vaiphei → English -->
+  <section id="v2e">
+    <h2>Vaiphei → English</h2>
+    <div id="dict-v2e"></div>
+  </section>
 
-<!-- Grid Menu -->
-<div class="grid">
-  <div class="card" onclick="openPage('home')">🏠 Home</div>
-  <div class="card" onclick="openPage('search')">🔍 Hawlna<br>(Search)</div>
-  <div class="card" onclick="openPage('dictionary')">📖 Thumalhilchian<br>(Dictionary)</div>
-  <div class="card" onclick="openPage('importExcel')">📥 Excel Laklutna<br>(Import)</div>
-  <div class="card" onclick="openPage('addWord')">➕ Thumal Belapna<br>(Add Word)</div>
-  <div class="card" onclick="openPage('settings')">⚙️ Munpi<br>(Settings)</div>
-  <div class="card" onclick="openPage('login')">🔑 Lutna<br>(Login)</div>
-  <div class="card" onclick="openPage('logout')">🚪 Pawtna<br>(Logout)</div>
-</div>
+  <!-- English → Vaiphei -->
+  <section id="e2v">
+    <h2>English → Vaiphei</h2>
+    <div id="dict-e2v"></div>
+  </section>
 
-<!-- Sections -->
-<section id="home" class="active">
-  <h2>Welcome</h2>
-  <p>👋 Tapkuang – Vaiphei Dictionary. Use Hawlna (Search) or Thumalhilchian (Dictionary).</p>
-  <p>I want to make Vaiphei Dictionary App since my Higher Secondary School days... (your full about text here)</p>
-</section>
+  <!-- Add Word -->
+  <section id="addWord">
+    <h2>Add Word</h2>
+    <input id="word" placeholder="Word">
+    <input id="meaning" placeholder="Meaning">
+    <select id="dictType">
+      <option value="v2e">Vaiphei → English</option>
+      <option value="e2v">English → Vaiphei</option>
+    </select>
+    <button onclick="addWord()">Save</button>
+  </section>
 
-<section id="search">
-  <h2>Search Dictionary</h2>
-  <input type="text" id="searchV2E" placeholder="Search Vaiphei...">
-  <table id="tableV2E">
-    <thead><tr><th>Vaiphei</th><th>English</th></tr></thead>
-    <tbody></tbody>
-  </table>
-  <hr>
-  <input type="text" id="searchE2V" placeholder="Search English...">
-  <table id="tableE2V">
-    <thead><tr><th>English</th><th>Vaiphei</th></tr></thead>
-    <tbody></tbody>
-  </table>
-</section>
+  <!-- Import Excel -->
+  <section id="importExcel">
+    <h2>Import from Excel</h2>
+    <input type="file" id="excelFile">
+    <select id="importType">
+      <option value="v2e">Vaiphei → English</option>
+      <option value="e2v">English → Vaiphei</option>
+    </select>
+    <button onclick="importExcel()">Import</button>
+  </section>
 
-<section id="dictionary">
-  <h2>Dictionary</h2>
-  <button onclick="openTab(event,'VaipheiToEnglish')" id="defaultTab">Vaiphei → English</button>
-  <button onclick="openTab(event,'EnglishToVaiphei')">English → Vaiphei</button>
+  <!-- Settings -->
+  <section id="settings">
+    <h2>Settings</h2>
+    <p>Change Admin Password</p>
+    <input id="curPass" type="password" placeholder="Current Password">
+    <input id="newPass" type="password" placeholder="New Password">
+    <button onclick="changePassword()">Change</button>
+    <button onclick="resetPassword()">Reset to Default</button>
+  </section>
 
-  <div id="VaipheiToEnglish" class="tabcontent">
-    <table id="tableV2E2">
-      <thead><tr><th>Vaiphei</th><th>English</th></tr></thead>
-      <tbody></tbody>
-    </table>
-  </div>
+  <!-- Login -->
+  <section id="login">
+    <h2>Admin Login</h2>
+    <input id="loginPass" type="password" placeholder="Password">
+    <button onclick="login()">Login</button>
+    <button onclick="logout()">Logout</button>
+  </section>
 
-  <div id="EnglishToVaiphei" class="tabcontent">
-    <table id="tableE2V2">
-      <thead><tr><th>English</th><th>Vaiphei</th></tr></thead>
-      <tbody></tbody>
-    </table>
-  </div>
-</section>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <script>
+    // ===== Data =====
+    let dictV2E = { a:[{word:"a",meaning:"yes"}] };
+    let dictE2V = { a:[{word:"apple",meaning:"tuhpui"}] };
 
-<section id="importExcel">
-  <h2>Import Excel File</h2>
-  <h3>Vaiphei → English</h3>
-  <input type="file" id="excelFileV2E">
-  <button id="importExcelV2E">Import</button>
-  <h3>English → Vaiphei</h3>
-  <input type="file" id="excelFileE2V">
-  <button id="importExcelE2V">Import</button>
-</section>
+    // ===== Utils =====
+    const VAIPHEI_ORDER = ["a","aw","b","ch","d","e","f","g","ng","h","i","j","k","l","m","n","o","p","r","s","t","u","v","z"];
+    function isAdmin(){ return sessionStorage.getItem("isAdmin")==="1"; }
 
-<section id="addWord">
-  <h2>Add Word</h2>
-  <select id="dictChoice">
-    <option value="v2e">Vaiphei → English</option>
-    <option value="e2v">English → Vaiphei</option>
-  </select><br>
-  <label>Word: <input type="text" id="wordInput"></label><br>
-  <label>Meaning: <input type="text" id="meaningInput"></label><br>
-  <button onclick="manualAdd()">Add</button>
-  <p id="addMessage"></p>
-</section>
-
-<section id="settings"><h2>Settings</h2><p>Theme, export, reset, etc.</p></section>
-<section id="login"><h2>Login</h2><p>Login form here.</p></section>
-<section id="logout"><h2>Logout</h2><p>You are logged out.</p></section>
-
-<!-- SheetJS + Dictionaries -->
-<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-<script src="dictionary_v2e.js"></script>
-<script src="dictionary_e2v.js"></script>
-
-<script>
-  function openPage(id) {
-    document.querySelectorAll("section").forEach(s => s.classList.remove("active"));
-    document.getElementById(id).classList.add("active");
-  }
-
-  function openTab(evt, tabName) {
-    document.querySelectorAll(".tabcontent").forEach(tc => tc.style.display = "none");
-    document.getElementById(tabName).style.display = "block";
-  }
-  document.getElementById("defaultTab").click();
-
-  function manualAdd() {
-    const word = document.getElementById("wordInput").value.trim();
-    const meaning = document.getElementById("meaningInput").value.trim();
-    const choice = document.getElementById("dictChoice").value;
-    if (!word || !meaning) {
-      document.getElementById("addMessage").innerText = "Please enter both fields.";
-      return;
+    // ===== UI =====
+    function showSection(id){
+      document.querySelectorAll("section").forEach(s=>s.classList.remove("active"));
+      document.getElementById(id).classList.add("active");
+      if(id==="v2e") renderV2E();
+      if(id==="e2v") renderE2V();
     }
-    if (choice === "v2e") addV2E(word, meaning);
-    else addE2V(word, meaning);
-    document.getElementById("addMessage").innerText = "Word added!";
-    document.getElementById("wordInput").value = "";
-    document.getElementById("meaningInput").value = "";
-  }
-</script>
 
+    function renderV2E(){
+      let html="";
+      VAIPHEI_ORDER.forEach(letter=>{
+        let entries = dictV2E[letter]||[];
+        if(entries.length){
+          html+=`<div class="letter-heading">${letter.toUpperCase()}</div>`;
+          entries.forEach((e,i)=>{
+            html+=`<div class="word-entry">${e.word} — ${e.meaning}`;
+            if(isAdmin()){
+              html+=`<span class="admin-controls"><button onclick="editWord('v2e','${letter}',${i})">✏️</button><button onclick="deleteWord('v2e','${letter}',${i})">❌</button></span>`;
+            }
+            html+=`</div>`;
+          });
+        }
+      });
+      document.getElementById("dict-v2e").innerHTML=html;
+    }
+
+    function renderE2V(){
+      let html="";
+      for(let c=65;c<=90;c++){
+        let letter=String.fromCharCode(c).toLowerCase();
+        let entries = dictE2V[letter]||[];
+        if(entries.length){
+          html+=`<div class="letter-heading">${letter.toUpperCase()}</div>`;
+          entries.forEach((e,i)=>{
+            html+=`<div class="word-entry">${e.word} — ${e.meaning}`;
+            if(isAdmin()){
+              html+=`<span class="admin-controls"><button onclick="editWord('e2v','${letter}',${i})">✏️</button><button onclick="deleteWord('e2v','${letter}',${i})">❌</button></span>`;
+            }
+            html+=`</div>`;
+          });
+        }
+      }
+      document.getElementById("dict-e2v").innerHTML=html;
+    }
+
+    // ===== Word management =====
+    function addWord(){
+      if(!isAdmin()){alert("Admin only");return;}
+      let w=document.getElementById("word").value.trim();
+      let m=document.getElementById("meaning").value.trim();
+      let type=document.getElementById("dictType").value;
+      if(!w||!m) return;
+      let key=w.toLowerCase().replace(/[^a-z]/g,'');
+      if(!key) return;
+      if(type==="v2e"){ dictV2E[key]=dictV2E[key]||[]; dictV2E[key].push({word:w,meaning:m}); renderV2E(); }
+      else { dictE2V[key]=dictE2V[key]||[]; dictE2V[key].push({word:w,meaning:m}); renderE2V(); }
+    }
+
+    function editWord(type,letter,i){
+      let obj=(type==="v2e"?dictV2E:dictE2V)[letter][i];
+      let nw=prompt("Edit word:",obj.word);
+      let nm=prompt("Edit meaning:",obj.meaning);
+      if(nw&&nm){ obj.word=nw; obj.meaning=nm; (type==="v2e"?renderV2E():renderE2V()); }
+    }
+
+    function deleteWord(type,letter,i){
+      if(confirm("Delete this word?")){
+        (type==="v2e"?dictV2E:dictE2V)[letter].splice(i,1);
+        (type==="v2e"?renderV2E():renderE2V());
+      }
+    }
+
+    // ===== Excel Import =====
+    function importExcel(){
+      if(!isAdmin()){alert("Admin only");return;}
+      let file=document.getElementById("excelFile").files[0];
+      if(!file) return;
+      let type=document.getElementById("importType").value;
+      let reader=new FileReader();
+      reader.onload=function(e){
+        let data=new Uint8Array(e.target.result);
+        let wb=XLSX.read(data,{type:'array'});
+        let sheet=wb.Sheets[wb.SheetNames[0]];
+        let rows=XLSX.utils.sheet_to_json(sheet,{header:1});
+        rows.slice(1).forEach(r=>{
+          if(r[0]&&r[1]){
+            let w=r[0].toString().trim();
+            let m=r[1].toString().trim();
+            let key=w.toLowerCase().replace(/[^a-z]/g,'');
+            if(!key) return;
+            if(type==="v2e"){ dictV2E[key]=dictV2E[key]||[]; dictV2E[key].push({word:w,meaning:m}); }
+            else { dictE2V[key]=dictE2V[key]||[]; dictE2V[key].push({word:w,meaning:m}); }
+          }
+        });
+        if(type==="v2e") renderV2E(); else renderE2V();
+      };
+      reader.readAsArrayBuffer(file);
+    }
+
+    // ===== Admin Login =====
+    function login(){
+      let p=document.getElementById("loginPass").value;
+      let saved=localStorage.getItem("adminPassword")||"tapkuang123";
+      if(p===saved){ sessionStorage.setItem("isAdmin","1"); alert("Logged in"); }
+      else alert("Wrong password");
+    }
+    function logout(){ sessionStorage.removeItem("isAdmin"); alert("Logged out"); }
+    function changePassword(){
+      if(!isAdmin()){alert("Admin only");return;}
+      let cur=document.getElementById("curPass").value;
+      let nw=document.getElementById("newPass").value;
+      let saved=localStorage.getItem("adminPassword")||"tapkuang123";
+      if(cur===saved && nw){ localStorage.setItem("adminPassword",nw); alert("Password changed"); }
+      else alert("Wrong current password");
+    }
+    function resetPassword(){
+      if(!isAdmin()){alert("Admin only");return;}
+      localStorage.setItem("adminPassword","tapkuang123");
+      alert("Password reset to default");
+    }
+
+    // ===== Init =====
+    showSection("v2e");
+  </script>
 </body>
 </html>
