@@ -1,47 +1,50 @@
-// ======= Load existing dictionary from localStorage or initialize =======
+// ===== Load dictionary from localStorage =====
 let dictionary = JSON.parse(localStorage.getItem('vaipheiDictionary') || '[]');
 
-// ======= Save dictionary to localStorage =======
+// ===== Save dictionary to localStorage =====
 function saveDictionary() {
     localStorage.setItem('vaipheiDictionary', JSON.stringify(dictionary));
 }
 
-// ======= Render dictionary table =======
-function renderDictionary() {
+// ===== Render dictionary table =====
+function renderDictionary(filter = '') {
     const tbody = document.getElementById('dictionaryTable').querySelector('tbody');
     tbody.innerHTML = '';
-    dictionary.forEach(entry => {
+
+    const filtered = dictionary.filter(e => e.word.toLowerCase().includes(filter.toLowerCase()));
+
+    filtered.forEach(entry => {
         const tr = document.createElement('tr');
         tr.innerHTML = `<td>${entry.word}</td><td>${entry.meaning}</td>`;
         tbody.appendChild(tr);
     });
 }
 
-// ======= Add or Update a word =======
+// ===== Add or update a word =====
 function addOrUpdateWord(word, meaning) {
     if (!word || !meaning) return;
 
     const existingIndex = dictionary.findIndex(e => e.word.toLowerCase() === word.toLowerCase());
     if (existingIndex >= 0) {
-        dictionary[existingIndex].meaning = meaning; // update existing
+        dictionary[existingIndex].meaning = meaning; // update
     } else {
-        dictionary.push({ word, meaning }); // add new
+        dictionary.push({ word, meaning }); // add
     }
 
-    // Sort alphabetically and by syllable (ignore hyphens)
+    // Sort alphabetically & syllable-aware
     dictionary.sort((a, b) => {
-        const wordA = a.word.replace(/-/g, '').toLowerCase();
-        const wordB = b.word.replace(/-/g, '').toLowerCase();
-        return wordA.localeCompare(wordB);
+        const wA = a.word.replace(/-/g, '').toLowerCase();
+        const wB = b.word.replace(/-/g, '').toLowerCase();
+        return wA.localeCompare(wB);
     });
 
     saveDictionary();
-    renderDictionary();
+    renderDictionary(document.getElementById('searchInput').value);
 }
 
-// ======= Process Excel Data =======
+// ===== Process Excel data =====
 function processExcelData(data) {
-    for (let i = 1; i < data.length; i++) { // skip header row
+    for (let i = 1; i < data.length; i++) { // skip header
         const row = data[i];
         if (!row || row.length < 2) continue;
 
@@ -54,10 +57,10 @@ function processExcelData(data) {
     alert('Excel import completed and dictionary sorted!');
 }
 
-// ======= Excel Import Event Listener =======
-document.getElementById('importExcel').addEventListener('click', function() {
+// ===== Event: Excel import =====
+document.getElementById('importExcel').addEventListener('click', () => {
     const fileInput = document.getElementById('excelFile');
-    if (!fileInput.files.length) { alert('Please select an Excel file'); return; }
+    if (!fileInput.files.length) { alert('Select an Excel file first'); return; }
 
     const file = fileInput.files[0];
     const reader = new FileReader();
@@ -74,9 +77,21 @@ document.getElementById('importExcel').addEventListener('click', function() {
     reader.readAsArrayBuffer(file);
 });
 
-// ======= Initial render =======
-renderDictionary();
+// ===== Event: Manual add/update =====
+document.getElementById('addUpdateWord').addEventListener('click', () => {
+    const word = document.getElementById('wordInput').value.trim();
+    const meaning = document.getElementById('meaningInput').value.trim();
+    if (!word || !meaning) { alert('Enter both word and meaning'); return; }
 
-// ======= Optional: Existing features =======
-// Keep all your existing dictionary functions (search, add manually, delete, etc.) below
-// Make sure any function that modifies the dictionary calls saveDictionary() and renderDictionary()
+    addOrUpdateWord(word, meaning);
+    document.getElementById('wordInput').value = '';
+    document.getElementById('meaningInput').value = '';
+});
+
+// ===== Event: Search =====
+document.getElementById('searchInput').addEventListener('input', (e) => {
+    renderDictionary(e.target.value.trim());
+});
+
+// ===== Initial render =====
+renderDictionary();
