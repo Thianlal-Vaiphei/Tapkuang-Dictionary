@@ -1,3 +1,20 @@
+// Load dictionary with backward compatibility
+let dictionary = JSON.parse(localStorage.getItem("dictionary")) || [];
+
+// If new dictionary empty, try old storage keys
+if (dictionary.length === 0) {
+  let oldKeys = ["wordlist", "vaiphei_dict", "thumal", "TapkuangDictionary"];
+  for (let key of oldKeys) {
+    let oldData = JSON.parse(localStorage.getItem(key) || "[]");
+    if (oldData.length > 0) {
+      dictionary = oldData;
+      // Save into new standard key
+      localStorage.setItem("dictionary", JSON.stringify(dictionary));
+      alert("✅ Old wordlist found and restored!");
+      break;
+    }
+  }
+}
 <!DOCTYPE html>
 <html lang="en">
 <head>
