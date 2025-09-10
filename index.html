@@ -498,7 +498,6 @@ function resetPassConfirm(){ if(!requireAdmin()) return; if(confirm('Reset admin
 selectAlphaV('all');
 selectAlphaE('all');
 
-</script>
   <script>
 // ================= PAGE NAVIGATION =================
 function showPage(id) {
@@ -612,6 +611,70 @@ document.addEventListener("DOMContentLoaded", () => {
   buildFullDictionary("dictListV2E", "v2e");
   buildFullDictionary("dictListE2V", "e2v");
 });
+  
+</script>
+  <!-- ================= HOME PAGE ================= -->
+<div id="homePage" class="page">
+  <img src="Dictionary.png" alt="Cover" class="cover">
+  <h1>TAPKUANG VAIPHEI DICTIONARY</h1>
+  <p>By PH Thianneilal Vaiphei</p>
+  <div class="menu">
+    <button onclick="showPage('searchMenu')">🔎 Hawlna (Search)</button>
+    <button onclick="showPage('dictionaryMenu')">📖 Thumalhilchianna (Dictionary)</button>
+    <button onclick="showPage('importPage')">⬆ Import / Export Excel</button>
+    <button onclick="adminCheck('addPage')">➕ Add Word</button>
+    <button onclick="showPage('settingsPage')">⚙ Munpi (Settings)</button>
+    <button onclick="showPage('aboutPage')">ℹ About</button>
+    <button onclick="showPage('loginPage')" id="loginBtn">🔑 Login</button>
+    <button onclick="logout()" id="logoutBtn" style="display:none">🚪 Logout</button>
+  </div>
+</div>
+
+<!-- ================= SEARCH MENU ================= -->
+<div id="searchMenu" class="page" style="display:none">
+  <h2>🔎 Hawlna (Search)</h2>
+  <button onclick="showPage('searchV2E')">Vaiphei → English</button>
+  <button onclick="showPage('searchE2V')">English → Vaiphei</button>
+  <button onclick="showPage('homePage')">🏠 Back</button>
+</div>
+
+<!-- ================= DICTIONARY MENU ================= -->
+<div id="dictionaryMenu" class="page" style="display:none">
+  <h2>📖 Thumalhilchianna (Dictionary)</h2>
+  <button onclick="showPage('dictV2E')">Vaiphei → English</button>
+  <button onclick="showPage('dictE2V')">English → Vaiphei</button>
+  <button onclick="showPage('homePage')">🏠 Back</button>
+</div>
+
+<!-- ================= VAI PAGES (SEARCH) ================= -->
+<div id="searchV2E" class="page" style="display:none">
+  <h2>Vaiphei → English (Search)</h2>
+  <div id="v2eFilter" class="alphabet"></div>
+  <input type="text" id="searchInputV2E" placeholder="Search Vaiphei word...">
+  <div id="resultsV2E"></div>
+  <button onclick="showPage('searchMenu')">⬅ Back</button>
+</div>
+
+<div id="searchE2V" class="page" style="display:none">
+  <h2>English → Vaiphei (Search)</h2>
+  <div id="e2vFilter" class="alphabet"></div>
+  <input type="text" id="searchInputE2V" placeholder="Search English word...">
+  <div id="resultsE2V"></div>
+  <button onclick="showPage('searchMenu')">⬅ Back</button>
+</div>
+
+<!-- ================= FULL DICTIONARY (BROWSE) ================= -->
+<div id="dictV2E" class="page" style="display:none">
+  <h2>Full Vaiphei → English Dictionary</h2>
+  <div id="dictListV2E"></div>
+  <button onclick="showPage('dictionaryMenu')">⬅ Back</button>
+</div>
+
+<div id="dictE2V" class="page" style="display:none">
+  <h2>Full English → Vaiphei Dictionary</h2>
+  <div id="dictListE2V"></div>
+  <button onclick="showPage('dictionaryMenu')">⬅ Back</button>
+</div>
 </script>
 </body>
 </html>
