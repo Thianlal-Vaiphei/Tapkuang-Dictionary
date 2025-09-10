@@ -4,116 +4,160 @@
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
 <title>Tapkuang Vaiphei Dictionary</title>
+
+<!-- SheetJS for import/export -->
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+
 <style>
-  :root{--accent:#e0c97a;--card:#fff;--bg:#fbf8f3;}
-  body{margin:0;font-family:Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:#222;}
-  header{background:#222;color:#fff;padding:0;display:flex;align-items:center;justify-content:center}
-  header img{width:100%;max-height:260px;object-fit:cover;display:block}
-  main{max-width:1100px;margin:16px auto;padding:12px}
+  :root{--accent:#d1b16a;--card:#fff;--bg:#fbf8f3;}
+  body{margin:0;font-family: "Segoe UI", Roboto, Arial, sans-serif;background:var(--bg);color:#222;}
+  header{background:#fff;padding:0;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 6px rgba(0,0,0,0.06)}
+  header img{width:100%;max-height:360px;object-fit:cover;display:block}
+  main{max-width:1000px;margin:18px auto;padding:12px}
   .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:16px}
-  .card{background:var(--card);border-radius:10px;padding:14px;box-shadow:0 6px 16px rgba(0,0,0,0.06);cursor:pointer;text-align:center}
+  .card{background:var(--card);border-radius:12px;padding:14px;box-shadow:0 6px 14px rgba(0,0,0,0.06);cursor:pointer;text-align:left}
   .card h3{margin:6px 0;font-size:18px}
-  .page{display:none;background:var(--card);padding:14px;border-radius:10px;box-shadow:0 6px 12px rgba(0,0,0,0.04);margin-bottom:16px}
+  .card .sub{color:#777;font-size:13px}
+  .page{display:none;background:var(--card);padding:14px;border-radius:12px;box-shadow:0 6px 12px rgba(0,0,0,0.04);margin-bottom:16px}
   .page.active{display:block}
-  .tabs{margin-bottom:10px}
-  .tabbtn{padding:8px 12px;border-radius:8px;border:0;background:#f2f2f2;margin-right:8px;cursor:pointer}
-  .tabbtn.active{background:var(--accent);color:#fff}
-  .group-title{font-weight:700;margin-top:12px;margin-bottom:6px;background:#f7f7f7;padding:6px;border-radius:6px}
-  .list-row{display:flex;justify-content:space-between;padding:6px 8px;border-bottom:1px solid #eee}
+  .muted{color:#666;font-size:13px}
+  .alphabet{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
+  .alpha-btn{border-radius:50%;width:46px;height:46px;border:2px solid var(--accent);display:flex;align-items:center;justify-content:center;cursor:pointer;background:#fff}
+  .alpha-btn.active{background:var(--accent);color:#fff}
+  .search-row{display:flex;gap:8px;margin-bottom:10px}
+  .search-row input{flex:1;padding:8px;border:1px solid #ddd;border-radius:8px}
+  .list{margin-top:10px}
+  .row{display:flex;justify-content:space-between;padding:10px;border-bottom:1px solid #f2f2f2}
+  .row .word{font-weight:700;color:#6b3f00}
   .controls button{margin-left:6px}
   input[type=text], input[type=password], select{width:100%;padding:8px;margin:6px 0;border-radius:6px;border:1px solid #ddd;box-sizing:border-box}
   button{background:var(--accent);border:0;padding:8px 12px;border-radius:6px;cursor:pointer}
-  .muted{color:#666;font-size:13px}
-  @media (max-width:900px){ .grid{grid-template-columns:repeat(1,1fr)} }
+  @media (max-width:900px){ .grid{grid-template-columns:repeat(1,1fr)} .alpha-btn{width:40px;height:40px} }
 </style>
 </head>
 <body>
-<header><img src="Dictionary.png" alt="Tapkuang Vaiphei Dictionary Cover"></header>
-<main>
 
-  <!-- Menu grid -->
+<!-- Header with cover image (external file) -->
+<header>
+  <img src="Dictionary.png" alt="Tapkuang Vaiphei Dictionary Cover">
+</header>
+
+<main>
+  <!-- Menu grid like your Home page -->
   <div class="grid">
-    <div class="card" onclick="openPage('home')"><h3>🏠 Home</h3><div class="muted">Welcome</div></div>
-    <div class="card" onclick="openPage('search')"><h3>🔎 Hawlna</h3><div class="muted">Search</div></div>
-    <div class="card" onclick="openPage('dictionary')"><h3>📖 Thumalhilchian</h3><div class="muted">Dictionary</div></div>
-    <div class="card" onclick="openPage('import')"><h3>📥 Excel laklutna</h3><div class="muted">Import Excel</div></div>
-    <div class="card" onclick="openPage('add')"><h3>➕ Thumal belapna</h3><div class="muted">Add Word</div></div>
-    <div class="card" onclick="openPage('settings')"><h3>⚙️ Munpi</h3><div class="muted">Settings</div></div>
-    <div class="card" onclick="openPage('login')"><h3>🔑 Lutna</h3><div class="muted">Admin Login</div></div>
-    <div class="card" onclick="logout()"><h3>🚪 Pawtna</h3><div class="muted">Logout</div></div>
-    <div class="card" onclick="openPage('about')"><h3>ℹ️ About</h3><div class="muted">Info</div></div>
+    <div class="card" onclick="showPage('home')">
+      <h3>Home</h3><div class="sub">Welcome</div>
+    </div>
+
+    <div class="card" onclick="showPage('searchV')">
+      <h3>Hawlna</h3><div class="sub">Vaiphei → English Search</div>
+    </div>
+
+    <div class="card" onclick="showPage('searchE')">
+      <h3>Thumalhilchian</h3><div class="sub">English → Vaiphei Search</div>
+    </div>
+
+    <div class="card" onclick="showPage('import')">
+      <h3>Excel laklutna</h3><div class="sub">Import CSV/XLSX</div>
+    </div>
+
+    <div class="card" onclick="showPage('add')">
+      <h3>Thumal belapna</h3><div class="sub">Add Word</div>
+    </div>
+
+    <div class="card" onclick="showPage('settings')">
+      <h3>Munpi</h3><div class="sub">Settings</div>
+    </div>
+
+    <div class="card" onclick="showPage('login')">
+      <h3>Lutna</h3><div class="sub">Login/Setup</div>
+    </div>
+
+    <div class="card" onclick="logout()">
+      <h3>Pawtna</h3><div class="sub">Logout</div>
+    </div>
+
+    <div class="card" onclick="showPage('about')">
+      <h3>About</h3><div class="sub">Info</div>
+    </div>
   </div>
 
-  <!-- Home -->
+  <!-- Home content -->
   <section id="home" class="page active">
-    <h2>Welcome to Tapkuang Vaiphei Dictionary</h2>
-    <p class="muted">Use the grid above to navigate. The cover image is shown at the top.</p>
-  </section>
-
-  <!-- Search -->
-  <section id="search" class="page">
-    <h2>Search</h2>
-    <div style="display:flex;gap:12px;flex-wrap:wrap">
-      <div style="flex:1">
-        <h4>Vaiphei → English</h4>
-        <input id="qV2E" type="text" placeholder="Search Vaiphei..." oninput="renderSearchV2E()">
-        <div id="searchV2E"></div>
-      </div>
-      <div style="flex:1">
-        <h4>English → Vaiphei</h4>
-        <input id="qE2V" type="text" placeholder="Search English..." oninput="renderSearchE2V()">
-        <div id="searchE2V"></div>
-      </div>
+    <h2>Tapkuang – Vaiphei Dictionary</h2>
+    <div style="padding:12px;background:#fff7e6;border-radius:10px;">
+      <p class="muted">👋 Tapkuang – Vaiphei Dictionary. Use Hawlna (Vaiphei → English) or Thumalhilchian (English → Vaiphei).</p>
+    </div>
+    <div style="margin-top:12px">
+      <p>I want to make Vaiphei Dictionary App since my Higher Secondary School days. But due to lack of my knowledge in Information and Technology I concealed my dreams for many days. But today I can make out my long dreams ‘Tapkuang – Vaiphei Dictionary App’ which is the first Vaiphei Dictionary in App form. I give utmost thanks to God Almighty who made live my dormant dream. I hope this Dictionary serves all the Vaipheis and those who use this language in building up their vocabularies which can enable them to have self-confidence in using English and Vaiphei. All users are requested to help correct mistakes. Thank you.</p>
     </div>
   </section>
 
-  <!-- Dictionary -->
-  <section id="dictionary" class="page">
-    <h2>Dictionary</h2>
-    <div class="tabs">
-      <button id="tabV" class="tabbtn active" onclick="showTab('v')">Vaiphei → English</button>
-      <button id="tabE" class="tabbtn" onclick="showTab('e')">English → Vaiphei</button>
+  <!-- Vaiphei -> English Search Page -->
+  <section id="searchV" class="page">
+    <h2>Vaiphei → English</h2>
+
+    <!-- alphabet row: ALL + custom Vaiphei order -->
+    <div class="alphabet" id="alphaV"></div>
+
+    <div class="search-row">
+      <input id="qV" type="text" placeholder="Hawlna (Search Vaiphei)..." oninput="renderV()">
+      <button onclick="exportV()">Export Excel</button>
     </div>
 
-    <div id="tab_v" class="tabcontent" style="display:block">
-      <div id="groupsV"></div>
-    </div>
-
-    <div id="tab_e" class="tabcontent" style="display:none">
-      <div id="groupsE"></div>
-    </div>
+    <div class="list" id="listV"></div>
   </section>
 
-  <!-- Import -->
+  <!-- English -> Vaiphei Search Page -->
+  <section id="searchE" class="page">
+    <h2>English → Vaiphei</h2>
+
+    <!-- alphabet row A-Z -->
+    <div class="alphabet" id="alphaE"></div>
+
+    <div class="search-row">
+      <input id="qE" type="text" placeholder="Search English..." oninput="renderE()">
+      <button onclick="exportE()">Export Excel</button>
+    </div>
+
+    <div class="list" id="listE"></div>
+  </section>
+
+  <!-- Import Page -->
   <section id="import" class="page">
-    <h2>Import Excel (Admin only)</h2>
+    <h2>Import Excel / CSV</h2>
     <div style="display:flex;gap:12px;flex-wrap:wrap">
       <div style="flex:1">
         <h4>Vaiphei → English (V→E)</h4>
         <input type="file" id="fileV" accept=".xlsx,.xls,.csv">
-        <button onclick="importV()">Import V→E</button>
+        <div style="margin-top:8px"><button onclick="importV()">Import V→E</button></div>
       </div>
       <div style="flex:1">
         <h4>English → Vaiphei (E→V)</h4>
         <input type="file" id="fileE" accept=".xlsx,.xls,.csv">
-        <button onclick="importE()">Import E→V</button>
+        <div style="margin-top:8px"><button onclick="importE()">Import E→V</button></div>
       </div>
     </div>
-    <p class="muted">Excel format: first column = Word, second column = Meaning. First row may be header.</p>
+    <p class="muted">Excel: two columns — Word | Meaning. First row may be header (it will be skipped).</p>
   </section>
 
-  <!-- Add / Edit -->
+  <!-- Add/Edit -->
   <section id="add" class="page">
     <h2 id="addTitle">Add Word</h2>
-    <label>Dictionary: 
-      <select id="whichDict"><option value="v2e">Vaiphei → English</option><option value="e2v">English → Vaiphei</option></select>
+    <label>Dictionary:
+      <select id="addDict">
+        <option value="v2e">Vaiphei → English</option>
+        <option value="e2v">English → Vaiphei</option>
+      </select>
     </label>
-    <label>Word<input id="inputWord" type="text"></label>
-    <label>Meaning<input id="inputMeaning" type="text"></label>
+
+    <label>Word<input id="addWord" type="text"></label>
+    <label>Meaning<input id="addMeaning" type="text"></label>
+
     <div style="margin-top:8px">
-      <button id="btnSave" onclick="saveNew()">Save</button>
-      <button id="btnUpdate" onclick="saveUpdate()" style="display:none">Update</button>
-      <button onclick="cancelEdit()" id="btnCancel" style="display:none">Cancel</button>
+      <button id="btnAdd" onclick="doAdd()">Add</button>
+      <button id="btnUpdate" onclick="doUpdate()" style="display:none">Update</button>
+      <button id="btnCancel" onclick="cancelEdit()" style="display:none">Cancel</button>
     </div>
     <p id="addMsg" class="muted"></p>
   </section>
@@ -124,284 +168,262 @@
     <p>Change admin password (must be logged in as admin)</p>
     <label>Current password<input id="curPass" type="password"></label>
     <label>New password<input id="newPass" type="password"></label>
-    <button onclick="changeAdminPass()">Change Password</button>
+    <div style="margin-top:8px"><button onclick="changePass()">Change Password</button></div>
     <hr>
-    <button onclick="resetAdminPass()">Reset password to default (tapkuang123)</button>
-    <p class="muted">Admin-only controls are protected and appear only after login.</p>
+    <div><button onclick="resetPassConfirm()">Reset password to default</button></div>
+    <p class="muted">Default admin password: <strong>tapkuang123</strong></p>
   </section>
 
   <!-- Login -->
   <section id="login" class="page">
     <h2>Admin Login</h2>
-    <label>Password<input id="loginPass" type="password"></label>
-    <div style="margin-top:8px"><button onclick="adminLogin()">Login</button> <button onclick="forgotReset()">Forgot/Reset</button></div>
+    <label>Password<input id="loginInput" type="password"></label>
+    <div style="margin-top:8px"><button onclick="login()">Login</button>
+    <button onclick="forgot()">Forgot / Reset</button></div>
     <p id="loginMsg" class="muted"></p>
   </section>
 
   <!-- About -->
   <section id="about" class="page">
     <h2>About</h2>
-    <p class="muted">Tapkuang Vaiphei Dictionary — maintain separate Vaiphei→English and English→Vaiphei sheets. Admin-only add/edit/delete/import features.</p>
+    <p class="muted">This app is the Tapkuang – Vaiphei Dictionary. Thank you.</p>
   </section>
 
 </main>
 
-<!-- SheetJS CDN -->
-<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-
 <script>
-/* -------------------------
-   Storage keys and startup
-   ------------------------- */
-const KEY_V = 'v2eWords'; // saved as array of {word,meaning}
+/* --------------------
+   Persistence keys
+   -------------------- */
+const KEY_V = 'v2eWords';
 const KEY_E = 'e2vWords';
-const ADMIN_PASS_KEY = 'adminPassword';
-const DEFAULT_ADMIN_PASS = 'tapkuang123';
+const KEY_ADMIN = 'adminPassword';
+const DEFAULT_PASS = 'tapkuang123';
 
-/* Vaiphei custom order */
-const VAIP_ORDER = ["a","aw","b","ch","d","e","f","g","ng","h","i","j","k","l","m","n","o","p","r","s","t","u","v","z"];
+/* Vaiphei alphabet order */
+const VAIP_ORDER = ['all','a','aw','b','ch','d','e','f','g','ng','h','i','j','k','l','m','n','o','p','r','s','t','u','v','z'];
+const EN_ORDER = ['all', ...'abcdefghijklmnopqrstuvwxyz'.toUpperCase().split('').map(x=>x.toLowerCase())];
 
-/* Load or initialize */
-function loadData(){
-  try {
-    window.v2e = JSON.parse(localStorage.getItem(KEY_V) || '[]');
-  } catch { window.v2e = []; }
-  try {
-    window.e2v = JSON.parse(localStorage.getItem(KEY_E) || '[]');
-  } catch { window.e2v = []; }
-  if(!localStorage.getItem(ADMIN_PASS_KEY)) localStorage.setItem(ADMIN_PASS_KEY, DEFAULT_ADMIN_PASS);
+/* In-memory lists */
+let v2e = [];
+let e2v = [];
+
+/* Editing state */
+let editing = null; // {dict: 'v2e'|'e2v', wordOriginal: string}
+
+/* Init: load data */
+function load(){
+  try{ v2e = JSON.parse(localStorage.getItem(KEY_V) || '[]'); } catch(e){ v2e = []; }
+  try{ e2v = JSON.parse(localStorage.getItem(KEY_E) || '[]'); } catch(e){ e2v = []; }
+  if(!localStorage.getItem(KEY_ADMIN)) localStorage.setItem(KEY_ADMIN, DEFAULT_PASS);
+  buildAlphaButtons();
+  showPage('home');
+  renderV(); renderE();
 }
-loadData();
+load();
 
-/* -------------------------
-   Admin helpers
-   ------------------------- */
+/* --------------------
+   Helpers
+   -------------------- */
+function saveV(){ localStorage.setItem(KEY_V, JSON.stringify(v2e)); }
+function saveE(){ localStorage.setItem(KEY_E, JSON.stringify(e2v)); }
 function isAdmin(){ return sessionStorage.getItem('isAdmin')==='1'; }
-function requireAdmin(){ if(!isAdmin()){ alert('Admin only — please log in.'); return false } return true; }
-
-/* -------------------------
-   UI navigation
-   ------------------------- */
-function openPage(id){
+function requireAdmin(){ if(!isAdmin()){ alert('Admin only — please login.'); return false; } return true; }
+function escapeHtml(s){ return String(s).replace(/[&<>"']/g, c=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' })[c]); }
+function showPage(id){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-  if(id==='dictionary') { renderGroupsV(); renderGroupsE(); }
-  if(id==='search') { renderSearchV2E(); renderSearchE2V(); }
-  // update Save/Update visibility when opening Add page
-  resetAddForm();
-}
-function showTab(which){
-  document.getElementById('tab_v').style.display = which==='v' ? 'block' : 'none';
-  document.getElementById('tab_e').style.display = which==='e' ? 'block' : 'none';
-  document.getElementById('tabV').classList.toggle('active', which==='v');
-  document.getElementById('tabE').classList.toggle('active', which==='e');
+  const el = document.getElementById(id);
+  if(el) el.classList.add('active');
+  // update search render when opening
+  if(id==='searchV'){ renderV(); }
+  if(id==='searchE'){ renderE(); }
+  // reset add form when going to add
+  if(id==='add'){ resetAddForm(); }
 }
 
-/* -------------------------
-   Save helpers
-   ------------------------- */
-function persistV(){ localStorage.setItem(KEY_V, JSON.stringify(window.v2e)); }
-function persistE(){ localStorage.setItem(KEY_E, JSON.stringify(window.e2v)); }
-
-/* -------------------------
-   Rendering: Grouped lists
-   ------------------------- */
-
-function renderGroupsV(){
-  // Group by VAIP_ORDER; for words not starting with listed prefixes, put in 'Other'
-  const container = document.getElementById('groupsV');
-  container.innerHTML = '';
-  // normalize words to string
-  window.v2e.sort((a,b)=>{
-    const na = (a.word||'').toLowerCase().replace(/-/g,'');
-    const nb = (b.word||'').toLowerCase().replace(/-/g,'');
-    const ix = VAIP_ORDER.findIndex(o=> na.startsWith(o));
-    const iy = VAIP_ORDER.findIndex(o=> nb.startsWith(o));
-    if(ix!==iy) return (ix===-1?999:ix) - (iy===-1?999:iy);
-    return na.localeCompare(nb);
+/* --------------------
+   Build alphabet buttons
+   -------------------- */
+function buildAlphaButtons(){
+  const aV = document.getElementById('alphaV');
+  aV.innerHTML = '';
+  VAIP_ORDER.forEach(code=>{
+    const btn = document.createElement('div');
+    btn.className = 'alpha-btn';
+    btn.textContent = code.toUpperCase();
+    btn.onclick = ()=>{ selectAlphaV(code); };
+    aV.appendChild(btn);
   });
-  VAIP_ORDER.forEach(pref=>{
-    const group = window.v2e.filter(x=> (x.word||'').toLowerCase().replace(/-/g,'').startsWith(pref));
-    const el = document.createElement('div');
-    el.innerHTML = `<div class="group-title">${pref.toUpperCase()}</div>`;
-    const list = document.createElement('div');
-    if(group.length===0) list.innerHTML = '<div class="muted">— no entries —</div>';
-    else group.forEach((it, idx)=>{
-      const row = document.createElement('div');
-      row.className='list-row';
-      row.innerHTML = `<div><strong>${escapeHtml(it.word)}</strong> — <span>${escapeHtml(it.meaning)}</span></div>`;
-      if(isAdmin()){
-        const ctrl = document.createElement('div');
-        const k = encodeURIComponent(it.word);
-        ctrl.innerHTML = `<button onclick="startEdit('v2e','${k}')">Edit</button><button onclick="doDelete('v2e','${k}')">Delete</button>`;
-        row.appendChild(ctrl);
-      }
-      list.appendChild(row);
-    });
-    el.appendChild(list); container.appendChild(el);
+
+  const aE = document.getElementById('alphaE');
+  aE.innerHTML = '';
+  EN_ORDER.forEach(code=>{
+    const btn = document.createElement('div');
+    btn.className = 'alpha-btn';
+    btn.textContent = code.toUpperCase();
+    btn.onclick = ()=>{ selectAlphaE(code); };
+    aE.appendChild(btn);
   });
 }
 
-function renderGroupsE(){
-  const container = document.getElementById('groupsE');
-  container.innerHTML = '';
-  window.e2v.sort((a,b)=> (a.word||'').toLowerCase().localeCompare((b.word||'').toLowerCase()));
-  for(let c=65;c<=90;c++){
-    const letter = String.fromCharCode(c).toLowerCase();
-    const group = window.e2v.filter(x=> (x.word||'').toLowerCase().startsWith(letter));
-    const el = document.createElement('div');
-    el.innerHTML = `<div class="group-title">${letter.toUpperCase()}</div>`;
-    const list = document.createElement('div');
-    if(group.length===0) list.innerHTML = '<div class="muted">— no entries —</div>';
-    else group.forEach(it=>{
-      const row = document.createElement('div');
-      row.className='list-row';
-      row.innerHTML = `<div><strong>${escapeHtml(it.word)}</strong> — <span>${escapeHtml(it.meaning)}</span></div>`;
-      if(isAdmin()){
-        const ctrl = document.createElement('div');
-        const k = encodeURIComponent(it.word);
-        ctrl.innerHTML = `<button onclick="startEdit('e2v','${k}')">Edit</button><button onclick="doDelete('e2v','${k}')">Delete</button>`;
-        row.appendChild(ctrl);
-      }
-      list.appendChild(row);
-    });
-    el.appendChild(list); container.appendChild(el);
-  }
+/* selected alpha state */
+let selectedAlphaV = 'all';
+let selectedAlphaE = 'all';
+function selectAlphaV(code){
+  selectedAlphaV = code;
+  Array.from(document.getElementById('alphaV').children).forEach(btn=>btn.classList.toggle('active', btn.textContent.toLowerCase()===code));
+  renderV();
+}
+function selectAlphaE(code){
+  selectedAlphaE = code;
+  Array.from(document.getElementById('alphaE').children).forEach(btn=>btn.classList.toggle('active', btn.textContent.toLowerCase()===code));
+  renderE();
 }
 
-/* -------------------------
-   Search renderers
-   ------------------------- */
-function renderSearchV2E(){
-  const q = (document.getElementById('qV2E').value||'').toLowerCase();
-  const out = document.getElementById('searchV2E'); out.innerHTML='';
-  window.v2e.filter(x=> (x.word||'').toLowerCase().includes(q) || (x.meaning||'').toLowerCase().includes(q))
-    .forEach(it=>{
-      const d = document.createElement('div'); d.className='list-row';
-      d.innerHTML = `<div><strong>${escapeHtml(it.word)}</strong> — ${escapeHtml(it.meaning)}</div>`;
-      if(isAdmin()){
-        const ctrl = document.createElement('div'); ctrl.innerHTML=`<button onclick="startEdit('v2e','${encodeURIComponent(it.word)}')">Edit</button><button onclick="doDelete('v2e','${encodeURIComponent(it.word)}')">Delete</button>`;
-        d.appendChild(ctrl);
-      }
-      out.appendChild(d);
-    });
-}
-function renderSearchE2V(){
-  const q = (document.getElementById('qE2V').value||'').toLowerCase();
-  const out = document.getElementById('searchE2V'); out.innerHTML='';
-  window.e2v.filter(x=> (x.word||'').toLowerCase().includes(q) || (x.meaning||'').toLowerCase().includes(q))
-    .forEach(it=>{
-      const d = document.createElement('div'); d.className='list-row';
-      d.innerHTML = `<div><strong>${escapeHtml(it.word)}</strong> — ${escapeHtml(it.meaning)}</div>`;
-      if(isAdmin()){
-        const ctrl = document.createElement('div'); ctrl.innerHTML=`<button onclick="startEdit('e2v','${encodeURIComponent(it.word)}')">Edit</button><button onclick="doDelete('e2v','${encodeURIComponent(it.word)}')">Delete</button>`;
-        d.appendChild(ctrl);
-      }
-      out.appendChild(d);
-    });
+/* --------------------
+   Render Vaiphei -> English
+   -------------------- */
+function renderV(){
+  const q = (document.getElementById('qV').value||'').toLowerCase();
+  const out = document.getElementById('listV'); out.innerHTML = '';
+  // filter by alphabet then search
+  const list = v2e.filter(item=>{
+    if(selectedAlphaV && selectedAlphaV!=='all'){
+      const w = (item.word||'').toLowerCase();
+      if(!w.startsWith(selectedAlphaV)) return false;
+    }
+    if(!q) return true;
+    return (item.word||'').toLowerCase().includes(q) || (item.meaning||'').toLowerCase().includes(q);
+  });
+  if(list.length===0){ out.innerHTML = '<div class="muted">No results</div>'; return; }
+  list.forEach(item=>{
+    const row = document.createElement('div'); row.className='row';
+    row.innerHTML = `<div><div class="word">${escapeHtml(item.word)}</div><div>${escapeHtml(item.meaning)}</div></div>`;
+    if(isAdmin()){
+      const ctrl = document.createElement('div'); ctrl.className='controls';
+      ctrl.innerHTML = `<button onclick="startEdit('v2e','${encodeURIComponent(item.word)}')">Edit</button><button onclick="remove('v2e','${encodeURIComponent(item.word)}')">Delete</button>`;
+      row.appendChild(ctrl);
+    }
+    out.appendChild(row);
+  });
 }
 
-/* -------------------------
-   Add / Edit / Delete flows
-   ------------------------- */
-let editing = null; // {dict:'v2e'|'e2v', key: originalWord}
+/* --------------------
+   Render English -> Vaiphei
+   -------------------- */
+function renderE(){
+  const q = (document.getElementById('qE').value||'').toLowerCase();
+  const out = document.getElementById('listE'); out.innerHTML = '';
+  const list = e2v.filter(item=>{
+    if(selectedAlphaE && selectedAlphaE!=='all'){
+      const w = (item.word||'').toLowerCase();
+      if(!w.startsWith(selectedAlphaE)) return false;
+    }
+    if(!q) return true;
+    return (item.word||'').toLowerCase().includes(q) || (item.meaning||'').toLowerCase().includes(q);
+  });
+  if(list.length===0){ out.innerHTML = '<div class="muted">No results</div>'; return; }
+  list.forEach(item=>{
+    const row = document.createElement('div'); row.className='row';
+    row.innerHTML = `<div><div class="word">${escapeHtml(item.word)}</div><div>${escapeHtml(item.meaning)}</div></div>`;
+    if(isAdmin()){
+      const ctrl = document.createElement('div'); ctrl.className='controls';
+      ctrl.innerHTML = `<button onclick="startEdit('e2v','${encodeURIComponent(item.word)}')">Edit</button><button onclick="remove('e2v','${encodeURIComponent(item.word)}')">Delete</button>`;
+      row.appendChild(ctrl);
+    }
+    out.appendChild(row);
+  });
+}
 
+/* --------------------
+   Add / Edit / Delete
+   -------------------- */
 function resetAddForm(){
   editing = null;
-  document.getElementById('addTitle').innerText = 'Add Word';
-  document.getElementById('inputWord').value='';
-  document.getElementById('inputMeaning').value='';
-  document.getElementById('btnSave').style.display='';
-  document.getElementById('btnUpdate').style.display='none';
-  document.getElementById('btnCancel').style.display='none';
-  document.getElementById('addMsg').innerText='';
+  document.getElementById('addTitle').textContent = 'Add Word';
+  document.getElementById('addWord').value = '';
+  document.getElementById('addMeaning').value = '';
+  document.getElementById('btnAdd').style.display = '';
+  document.getElementById('btnUpdate').style.display = 'none';
+  document.getElementById('btnCancel').style.display = 'none';
+  document.getElementById('addMsg').textContent = '';
 }
 
-function saveNew(){
+function doAdd(){
   if(!requireAdmin()) return;
-  const dict = document.getElementById('whichDict').value;
-  const w = document.getElementById('inputWord').value.trim();
-  const m = document.getElementById('inputMeaning').value.trim();
-  if(!w || !m){ document.getElementById('addMsg').innerText='Enter both fields'; return; }
-  if(dict==='v2e'){
-    window.v2e.push({word:w,meaning:m});
-    persistV(); renderGroupsV();
-  } else {
-    window.e2v.push({word:w,meaning:m});
-    persistE(); renderGroupsE();
-  }
-  document.getElementById('addMsg').innerText='Saved.';
+  const dict = document.getElementById('addDict').value;
+  const w = document.getElementById('addWord').value.trim();
+  const m = document.getElementById('addMeaning').value.trim();
+  if(!w || !m){ document.getElementById('addMsg').textContent = 'Enter both fields'; return; }
+  if(dict==='v2e'){ v2e.push({word:w,meaning:m}); saveV(); renderV(); alert('Added'); }
+  else { e2v.push({word:w,meaning:m}); saveE(); renderE(); alert('Added'); }
   resetAddForm();
 }
 
-function startEdit(dict,keyEncoded){
+function startEdit(dict, keyEnc){
   if(!requireAdmin()) return;
-  const key = decodeURIComponent(keyEncoded);
-  editing = {dict, key};
-  let item;
-  if(dict==='v2e') item = window.v2e.find(x=>x.word===key);
-  else item = window.e2v.find(x=>x.word===key);
-  if(!item) return alert('Not found.');
-  document.getElementById('addTitle').innerText='Edit Word';
-  document.getElementById('whichDict').value = dict==='v2e' ? 'v2e':'e2v';
-  document.getElementById('inputWord').value = item.word;
-  document.getElementById('inputMeaning').value = item.meaning;
-  document.getElementById('btnSave').style.display='none';
-  document.getElementById('btnUpdate').style.display='';
-  document.getElementById('btnCancel').style.display='';
-  openPage('add');
+  const key = decodeURIComponent(keyEnc);
+  const list = dict==='v2e' ? v2e : e2v;
+  const item = list.find(x=>x.word===key);
+  if(!item) return alert('Not found');
+  editing = {dict, original: key};
+  document.getElementById('addTitle').textContent = 'Edit Word';
+  document.getElementById('addDict').value = dict;
+  document.getElementById('addWord').value = item.word;
+  document.getElementById('addMeaning').value = item.meaning;
+  document.getElementById('btnAdd').style.display = 'none';
+  document.getElementById('btnUpdate').style.display = '';
+  document.getElementById('btnCancel').style.display = '';
+  showPage('add');
 }
 
-function saveUpdate(){
+function doUpdate(){
   if(!requireAdmin() || !editing) return;
-  const dict = document.getElementById('whichDict').value;
-  const w = document.getElementById('inputWord').value.trim();
-  const m = document.getElementById('inputMeaning').value.trim();
-  if(!w||!m) return;
-  // find original item by editing.key
+  const dict = document.getElementById('addDict').value;
+  const w = document.getElementById('addWord').value.trim();
+  const m = document.getElementById('addMeaning').value.trim();
+  if(!w || !m) return;
   if(editing.dict==='v2e'){
-    const idx = window.v2e.findIndex(x=>x.word===editing.key);
-    if(idx!==-1){ window.v2e[idx] = {word:w,meaning:m}; persistV(); renderGroupsV(); }
+    const idx = v2e.findIndex(x=>x.word===editing.original);
+    if(idx!==-1){ v2e[idx] = {word:w,meaning:m}; saveV(); renderV(); }
   } else {
-    const idx = window.e2v.findIndex(x=>x.word===editing.key);
-    if(idx!==-1){ window.e2v[idx] = {word:w,meaning:m}; persistE(); renderGroupsE(); }
+    const idx = e2v.findIndex(x=>x.word===editing.original);
+    if(idx!==-1){ e2v[idx] = {word:w,meaning:m}; saveE(); renderE(); }
   }
-  editing = null; resetAddForm(); document.getElementById('addMsg').innerText='Updated.';
+  editing = null;
+  resetAddForm();
+  alert('Updated');
 }
 
 function cancelEdit(){ editing=null; resetAddForm(); }
 
 /* delete */
-function doDelete(dict, keyEncoded){
+function remove(dict, keyEnc){
   if(!requireAdmin()) return;
-  const key = decodeURIComponent(keyEncoded);
-  if(!confirm('Delete "'+key+'"?')) return;
-  if(dict==='v2e'){
-    window.v2e = window.v2e.filter(x=>x.word!==key); persistV(); renderGroupsV();
-  } else {
-    window.e2v = window.e2v.filter(x=>x.word!==key); persistE(); renderGroupsE();
-  }
+  if(!confirm('Delete this entry?')) return;
+  const key = decodeURIComponent(keyEnc);
+  if(dict==='v2e'){ v2e = v2e.filter(x=>x.word!==key); saveV(); renderV(); }
+  else { e2v = e2v.filter(x=>x.word!==key); saveE(); renderE(); }
 }
 
-/* -------------------------
-   Excel import (V and E) - saved immediately
-   ------------------------- */
+/* --------------------
+   Import functions
+   -------------------- */
 function importV(){
   if(!requireAdmin()) return;
   const f = document.getElementById('fileV').files[0];
-  if(!f) return alert('Choose a Vaiphei→English Excel file');
+  if(!f) return alert('Choose a file');
   const r = new FileReader();
   r.onload = e => {
     const wb = XLSX.read(new Uint8Array(e.target.result), {type:'array'});
     const ws = wb.Sheets[wb.SheetNames[0]];
     const rows = XLSX.utils.sheet_to_json(ws, {header:1});
-    // rows[0] assumed header; start from 1
     for(let i=1;i<rows.length;i++){
       const row = rows[i]; if(!row) continue;
       const w = (row[0]||'').toString().trim(); const m = (row[1]||'').toString().trim();
-      if(w && m) window.v2e.push({word:w,meaning:m});
+      if(w && m) v2e.push({word:w,meaning:m});
     }
-    persistV(); renderGroupsV(); alert('Imported V→E and saved.');
+    saveV(); renderV(); alert('Imported and saved V→E');
   };
   r.readAsArrayBuffer(f);
 }
@@ -409,7 +431,7 @@ function importV(){
 function importE(){
   if(!requireAdmin()) return;
   const f = document.getElementById('fileE').files[0];
-  if(!f) return alert('Choose an English→Vaiphei Excel file');
+  if(!f) return alert('Choose a file');
   const r = new FileReader();
   r.onload = e => {
     const wb = XLSX.read(new Uint8Array(e.target.result), {type:'array'});
@@ -418,49 +440,63 @@ function importE(){
     for(let i=1;i<rows.length;i++){
       const row = rows[i]; if(!row) continue;
       const w = (row[0]||'').toString().trim(); const m = (row[1]||'').toString().trim();
-      if(w && m) window.e2v.push({word:w,meaning:m});
+      if(w && m) e2v.push({word:w,meaning:m});
     }
-    persistE(); renderGroupsE(); alert('Imported E→V and saved.');
+    saveE(); renderE(); alert('Imported and saved E→V');
   };
   r.readAsArrayBuffer(f);
 }
 
-/* -------------------------
-   Admin login and password management
-   ------------------------- */
-function adminLogin(){
-  const p = document.getElementById('loginPass').value;
-  const saved = localStorage.getItem(ADMIN_PASS_KEY) || DEFAULT_ADMIN_PASS;
-  if(p === saved){ sessionStorage.setItem('isAdmin','1'); alert('Logged in as admin'); updateAdminButtons(); openPage('home'); }
-  else { document.getElementById('loginMsg').innerText = 'Incorrect password'; }
+/* --------------------
+   Export functions (create workbook and download)
+   -------------------- */
+function exportV(){
+  if(v2e.length===0) return alert('No V→E entries to export');
+  const ws_data = [['Vaiphei','English']];
+  v2e.forEach(r=>ws_data.push([r.word, r.meaning]));
+  const wb = XLSX.utils.book_new();
+  const ws = XLSX.utils.aoa_to_sheet(ws_data);
+  XLSX.utils.book_append_sheet(wb, ws, 'V2E');
+  XLSX.writeFile(wb, 'vaiphei_to_english.xlsx');
 }
-function logout(){ sessionStorage.removeItem('isAdmin'); alert('Logged out'); updateAdminButtons(); }
-function forgotReset(){ if(confirm('Reset admin password to default?')){ localStorage.setItem(ADMIN_PASS_KEY, DEFAULT_ADMIN_PASS); alert('Reset. Default: '+DEFAULT_ADMIN_PASS); } }
-function changeAdminPass(){
+
+function exportE(){
+  if(e2v.length===0) return alert('No E→V entries to export');
+  const ws_data = [['English','Vaiphei']];
+  e2v.forEach(r=>ws_data.push([r.word, r.meaning]));
+  const wb = XLSX.utils.book_new();
+  const ws = XLSX.utils.aoa_to_sheet(ws_data);
+  XLSX.utils.book_append_sheet(wb, ws, 'E2V');
+  XLSX.writeFile(wb, 'english_to_vaiphei.xlsx');
+}
+
+/* --------------------
+   Admin / password
+   -------------------- */
+function login(){
+  const p = document.getElementById('loginInput').value || '';
+  const saved = localStorage.getItem(KEY_ADMIN) || DEFAULT_PASS;
+  if(p === saved){ sessionStorage.setItem('isAdmin','1'); alert('Logged in as admin'); document.getElementById('loginMsg').textContent = ''; renderV(); renderE(); showPage('home'); }
+  else document.getElementById('loginMsg').textContent = 'Incorrect password';
+}
+function logout(){ sessionStorage.removeItem('isAdmin'); alert('Logged out'); renderV(); renderE(); }
+function forgot(){ if(confirm('Reset admin password to default?')){ localStorage.setItem(KEY_ADMIN, DEFAULT_PASS); alert('Reset done. Default: '+DEFAULT_PASS); } }
+function changePass(){
   if(!requireAdmin()) return;
-  const cur = document.getElementById('curPass').value;
-  const nw = document.getElementById('newPass').value;
-  const saved = localStorage.getItem(ADMIN_PASS_KEY) || DEFAULT_ADMIN_PASS;
-  if(cur!==saved){ alert('Current password incorrect'); return; }
-  if(!nw){ alert('Enter new password'); return; }
-  localStorage.setItem(ADMIN_PASS_KEY, nw); alert('Password changed.');
+  const cur = document.getElementById('curPass').value || '';
+  const nw = document.getElementById('newPass').value || '';
+  const saved = localStorage.getItem(KEY_ADMIN) || DEFAULT_PASS;
+  if(cur !== saved) return alert('Current password incorrect');
+  if(!nw) return alert('Enter new password');
+  localStorage.setItem(KEY_ADMIN, nw); alert('Password changed');
 }
-function resetAdminPass(){ if(!requireAdmin()) return; if(confirm('Reset admin password to default?')){ localStorage.setItem(ADMIN_PASS_KEY, DEFAULT_ADMIN_PASS); alert('Reset done'); } }
+function resetPassConfirm(){ if(!requireAdmin()) return; if(confirm('Reset admin password to default?')){ localStorage.setItem(KEY_ADMIN, DEFAULT_PASS); alert('Reset done.'); } }
 
-/* update admin buttons presence (re-render lists to show/hide edit/delete) */
-function updateAdminButtons(){
-  renderGroupsV(); renderGroupsE(); renderSearchV2E(); renderSearchE2V();
-}
-
-/* -------------------------
-   Utilities
-   ------------------------- */
-function escapeHtml(s){ return String(s).replace(/[&<>"']/g, c=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' })[c]); }
-
-/* -------------------------
-   Initial render
-   ------------------------- */
-renderGroupsV(); renderGroupsE();
+/* --------------------
+   Initialization: set alphabets default active
+   -------------------- */
+selectAlphaV('all');
+selectAlphaE('all');
 
 </script>
 </body>
