@@ -499,5 +499,119 @@ selectAlphaV('all');
 selectAlphaE('all');
 
 </script>
+  <script>
+// ================= PAGE NAVIGATION =================
+function showPage(id) {
+  document.querySelectorAll(".page").forEach(p => p.style.display = "none");
+  document.getElementById(id).style.display = "block";
+}
+
+// ================= LOCAL STORAGE =================
+let v2eData = JSON.parse(localStorage.getItem("v2eData")) || [];
+let e2vData = JSON.parse(localStorage.getItem("e2vData")) || [];
+
+function saveData() {
+  localStorage.setItem("v2eData", JSON.stringify(v2eData));
+  localStorage.setItem("e2vData", JSON.stringify(e2vData));
+}
+
+// ================= ALPHABET FILTERS =================
+const v2eAlphabet = ["A","AW","B","CH","D","E","F","G","NG","H","I","J","K","L","M","N","O","P","R","S","T","U","V","Z"];
+const e2vAlphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
+
+function buildAlphabet(containerId, type) {
+  const container = document.getElementById(containerId);
+  container.innerHTML = "";
+  const letters = type === "v2e" ? v2eAlphabet : e2vAlphabet;
+  letters.forEach(letter => {
+    let btn = document.createElement("button");
+    btn.textContent = letter;
+    btn.onclick = () => filterByLetter(letter, type);
+    container.appendChild(btn);
+  });
+}
+
+// ================= SEARCH =================
+function searchDictionary(inputId, resultsId, type) {
+  const query = document.getElementById(inputId).value.toLowerCase();
+  const resultsDiv = document.getElementById(resultsId);
+  resultsDiv.innerHTML = "";
+
+  let data = (type === "v2e") ? v2eData : e2vData;
+
+  let filtered = data.filter(entry => entry.word.toLowerCase().includes(query));
+  displayResults(filtered, resultsDiv);
+}
+
+function filterByLetter(letter, type) {
+  const resultsDiv = (type === "v2e") ? document.getElementById("resultsV2E") : document.getElementById("resultsE2V");
+  resultsDiv.innerHTML = "";
+
+  let data = (type === "v2e") ? v2eData : e2vData;
+  let filtered = data.filter(entry => entry.word.toUpperCase().startsWith(letter));
+  displayResults(filtered, resultsDiv);
+}
+
+function displayResults(list, container) {
+  if (list.length === 0) {
+    container.innerHTML = "<p>No results found.</p>";
+    return;
+  }
+  list.forEach(entry => {
+    let div = document.createElement("div");
+    div.className = "word-entry";
+    div.innerHTML = `<b>${entry.word}</b> → ${entry.meaning}`;
+    container.appendChild(div);
+  });
+}
+
+// ================= FULL DICTIONARY =================
+function buildFullDictionary(containerId, type) {
+  const container = document.getElementById(containerId);
+  container.innerHTML = "";
+
+  let data = (type === "v2e") ? v2eData : e2vData;
+  let letters = (type === "v2e") ? v2eAlphabet : e2vAlphabet;
+
+  letters.forEach(letter => {
+    let group = data.filter(entry => entry.word.toUpperCase().startsWith(letter));
+    if (group.length > 0) {
+      let section = document.createElement("div");
+      section.innerHTML = `<h3>${letter}</h3>`;
+      group.forEach(entry => {
+        let p = document.createElement("p");
+        p.innerHTML = `<b>${entry.word}</b> → ${entry.meaning}`;
+        section.appendChild(p);
+      });
+      container.appendChild(section);
+    }
+  });
+}
+
+// ================= EXPORT TO EXCEL =================
+function exportToExcel(type) {
+  let data = (type === "v2e") ? v2eData : e2vData;
+  let ws = XLSX.utils.json_to_sheet(data);
+  let wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, type === "v2e" ? "Vaiphei-English" : "English-Vaiphei");
+  XLSX.writeFile(wb, type === "v2e" ? "vaiphei_to_english.xlsx" : "english_to_vaiphei.xlsx");
+}
+
+// ================= INIT =================
+document.addEventListener("DOMContentLoaded", () => {
+  buildAlphabet("v2eFilter", "v2e");
+  buildAlphabet("e2vFilter", "e2v");
+
+  document.getElementById("searchInputV2E").addEventListener("input", () => {
+    searchDictionary("searchInputV2E", "resultsV2E", "v2e");
+  });
+  document.getElementById("searchInputE2V").addEventListener("input", () => {
+    searchDictionary("searchInputE2V", "resultsE2V", "e2v");
+  });
+
+  buildFullDictionary("dictListV2E", "v2e");
+  buildFullDictionary("dictListE2V", "e2v");
+});
+</script>
 </body>
 </html>
