@@ -4,15 +4,20 @@
   <meta charset="UTF-8">
   <title>Tapkuang Vaiphei Dictionary</title>
   <style>
-    body { font-family: Arial, sans-serif; text-align: center; margin: 0; padding: 0; }
-    .page { display: none; padding: 20px; }
-    .menu button { display: block; margin: 8px auto; padding: 10px 20px; font-size: 16px; }
-    .alphabet button { margin: 2px; padding: 5px 10px; }
-    .word-entry { border-bottom: 1px solid #ccc; padding: 4px; }
-    img.cover { max-width: 100%; height: auto; margin: 20px 0; }
-    h1 { margin: 10px 0; }
+    body { font-family: Arial, sans-serif; margin: 0; padding: 0; background: #f9f9f9; }
+    .page { display: none; padding: 20px; text-align: center; }
+    .menu button { display: block; margin: 10px auto; padding: 12px 20px; font-size: 16px; width: 220px; border-radius: 6px; border: none; background: #0066cc; color: white; cursor: pointer; }
+    .menu button:hover { background: #004999; }
+    .alphabet button { margin: 3px; padding: 5px 10px; border: 1px solid #ccc; background: #eee; cursor: pointer; border-radius: 4px; }
+    .alphabet button:hover { background: #ddd; }
+    .word-entry { border-bottom: 1px solid #ccc; padding: 6px; text-align: left; max-width: 600px; margin: 0 auto; }
+    img.cover { width: 100%; max-height: 400px; object-fit: cover; display: block; }
+    h1 { margin: 15px 0; font-size: 28px; }
+    h2 { margin-top: 10px; }
+    .import-area { margin: 15px 0; }
+    input[type="file"] { margin: 10px auto; display: block; }
   </style>
-  <!-- SheetJS library for Excel import/export -->
+  <!-- SheetJS -->
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 </head>
 <body>
@@ -25,6 +30,7 @@
   <div class="menu">
     <button onclick="showPage('searchMenu')">🔎 Hawlna (Search)</button>
     <button onclick="showPage('dictionaryMenu')">📖 Thumalhilchianna (Dictionary)</button>
+    <button onclick="showPage('importPage')">⬆ Import Excel</button>
     <button onclick="exportToExcel('v2e')">⬇ Export V→E Excel</button>
     <button onclick="exportToExcel('e2v')">⬇ Export E→V Excel</button>
     <button onclick="showPage('aboutPage')">ℹ About</button>
@@ -77,6 +83,20 @@
   <button onclick="showPage('dictionaryMenu')">⬅ Back</button>
 </div>
 
+<!-- ================= IMPORT PAGE ================= -->
+<div id="importPage" class="page">
+  <h2>⬆ Import Excel</h2>
+  <div class="import-area">
+    <h3>Vaiphei → English</h3>
+    <input type="file" id="importV2E" accept=".xlsx">
+  </div>
+  <div class="import-area">
+    <h3>English → Vaiphei</h3>
+    <input type="file" id="importE2V" accept=".xlsx">
+  </div>
+  <button onclick="showPage('homePage')">🏠 Back</button>
+</div>
+
 <!-- ================= ABOUT PAGE ================= -->
 <div id="aboutPage" class="page">
   <h2>About</h2>
@@ -97,12 +117,8 @@ function showPage(id) {
 }
 
 // ================= LOCAL STORAGE =================
-let v2eData = JSON.parse(localStorage.getItem("v2eData")) || [
-  { word: "A", meaning: "Example English" }
-];
-let e2vData = JSON.parse(localStorage.getItem("e2vData")) || [
-  { word: "Apple", meaning: "Tham" }
-];
+let v2eData = JSON.parse(localStorage.getItem("v2eData")) || [];
+let e2vData = JSON.parse(localStorage.getItem("e2vData")) || [];
 
 function saveData() {
   localStorage.setItem("v2eData", JSON.stringify(v2eData));
@@ -189,6 +205,34 @@ function exportToExcel(type) {
   XLSX.utils.book_append_sheet(wb, ws, type === "v2e" ? "Vaiphei-English" : "English-Vaiphei");
   XLSX.writeFile(wb, type === "v2e" ? "vaiphei_to_english.xlsx" : "english_to_vaiphei.xlsx");
 }
+
+// ================= IMPORT EXCEL =================
+function importExcel(file, type) {
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    const data = new Uint8Array(e.target.result);
+    const workbook = XLSX.read(data, { type: 'array' });
+    const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+    const json = XLSX.utils.sheet_to_json(firstSheet);
+    if (type === "v2e") {
+      v2eData = json.map(row => ({ word: row.Word, meaning: row.Meaning }));
+    } else {
+      e2vData = json.map(row => ({ word: row.Word, meaning: row.Meaning }));
+    }
+    saveData();
+    buildFullDictionary("dictListV2E", "v2e");
+    buildFullDictionary("dictListE2V", "e2v");
+    alert("Import successful for " + (type === "v2e" ? "Vaiphei→English" : "English→Vaiphei"));
+  };
+  reader.readAsArrayBuffer(file);
+}
+
+document.getElementById("importV2E").addEventListener("change", (e) => {
+  importExcel(e.target.files[0], "v2e");
+});
+document.getElementById("importE2V").addEventListener("change", (e) => {
+  importExcel(e.target.files[0], "e2v");
+});
 
 // ================= INIT =================
 document.addEventListener("DOMContentLoaded", () => {
