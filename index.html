@@ -2,253 +2,195 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Tapkuang Vaiphei Dictionary</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tapkuang – Vaiphei Dictionary</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
   <style>
-    body { font-family: Arial, sans-serif; margin: 0; padding: 0; background: #f9f9f9; }
-    .page { display: none; padding: 20px; text-align: center; }
-    .menu button { display: block; margin: 10px auto; padding: 12px 20px; font-size: 16px; width: 220px; border-radius: 6px; border: none; background: #0066cc; color: white; cursor: pointer; }
-    .menu button:hover { background: #004999; }
-    .alphabet button { margin: 3px; padding: 5px 10px; border: 1px solid #ccc; background: #eee; cursor: pointer; border-radius: 4px; }
-    .alphabet button:hover { background: #ddd; }
-    .word-entry { border-bottom: 1px solid #ccc; padding: 6px; text-align: left; max-width: 600px; margin: 0 auto; }
-    img.cover { width: 100%; max-height: 400px; object-fit: cover; display: block; }
-    h1 { margin: 15px 0; font-size: 28px; }
-    h2 { margin-top: 10px; }
-    .import-area { margin: 15px 0; }
-    input[type="file"] { margin: 10px auto; display: block; }
+    body { font-family: Arial, sans-serif; background: #faf7f2; margin:0; padding:0; }
+    header { text-align:center; background:#f5e6c9; padding:15px; }
+    header h1 { margin:0; font-size:18px; }
+    .credit { text-align:center; font-size:14px; font-weight:bold; color:#333; margin-top:8px; }
+    .grid { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; padding:20px; }
+    .card {
+      background:white; padding:15px; border-radius:10px; text-align:center;
+      box-shadow:0 2px 5px rgba(0,0,0,0.1); cursor:pointer; transition:transform 0.2s;
+    }
+    .card:hover { transform:scale(1.05); }
+    section { display:none; padding:20px; }
+    section.active { display:block; }
+    input, button { padding:8px; margin:5px 0; }
+    .word { margin:5px 0; padding:8px; background:#fff; border-radius:5px; }
+    .letters button { margin:2px; padding:5px 10px; }
+    .intro { background:#fff; margin:15px; padding:15px; border-radius:10px; font-size:14px; line-height:1.6; }
+    footer { padding:12px; text-align:center; font-size:13px; color:#555; background:#f5e6c9; margin-top:20px; }
   </style>
-  <!-- SheetJS -->
-  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 </head>
 <body>
+  <header>
+    <h1>Tapkuang – Vaiphei Dictionary</h1>
+    <div class="credit">By PH Thianneilal Vaiphei</div>
+  </header>
 
-<!-- ================= HOME PAGE ================= -->
-<div id="homePage" class="page" style="display:block">
-  <img src="Dictionary.png" alt="Cover" class="cover">
-  <h1>TAPKUANG VAIPHEI DICTIONARY</h1>
-  <p>By PH Thianneilal Vaiphei</p>
-  <div class="menu">
-    <button onclick="showPage('searchMenu')">🔎 Hawlna (Search)</button>
-    <button onclick="showPage('dictionaryMenu')">📖 Thumalhilchianna (Dictionary)</button>
-    <button onclick="showPage('importPage')">⬆ Import Excel</button>
-    <button onclick="exportToExcel('v2e')">⬇ Export V→E Excel</button>
-    <button onclick="exportToExcel('e2v')">⬇ Export E→V Excel</button>
-    <button onclick="showPage('aboutPage')">ℹ About</button>
-  </div>
-</div>
+  <!-- Home -->
+  <section id="home" class="active">
+    <div class="grid">
+      <div class="card" onclick="showPage('home')">Home</div>
+      <div class="card" onclick="showPage('search')">Hawlna<br><small>Search</small></div>
+      <div class="card" onclick="showPage('dictionary')">Thumalhilchian<br><small>Dictionary</small></div>
+      <div class="card" onclick="document.getElementById('fileInput').click()">Excel laklutna<br><small>Import</small></div>
+      <div class="card" onclick="showPage('addWord')">Thumal belapna<br><small>Add Word</small></div>
+      <div class="card" onclick="exportExcel()">Export Excel</div>
+      <div class="card" onclick="alert('Settings page coming soon')">Munpi<br><small>Settings</small></div>
+      <div class="card" onclick="login()">Lutna<br><small>Login</small></div>
+      <div class="card" onclick="logout()">Pawtna<br><small>Logout</small></div>
+    </div>
 
-<!-- ================= SEARCH MENU ================= -->
-<div id="searchMenu" class="page">
-  <h2>🔎 Hawlna (Search)</h2>
-  <button onclick="showPage('searchV2E')">Vaiphei → English</button>
-  <button onclick="showPage('searchE2V')">English → Vaiphei</button>
-  <button onclick="showPage('homePage')">🏠 Back</button>
-</div>
+    <!-- 👇 Intro paragraph -->
+    <div class="intro">
+      <p>
+        I want to make Vaiphei Dictionary App since my Higher Secondary School days. But due to lack of my knowledge in Information and Technology I concealed my dreams for many days. 
+        But today I can make out my long dreams ‘Tapkuang – Vaiphei Dictionary App’ which is the first Vaiphei Dictionary in App form.
+      </p>
+      <p>
+        I give utmost thanks to God Almighty who made live my dormant dream. I hope this Dictionary serves all the Vaipheis and those who use this language in building up their vocabularies which can enable them to have self-confidence in using English and Vaiphei.
+      </p>
+      <p>
+        All users are requested to help correct mistakes. May God bless you all.
+      </p>
+    </div>
+  </section>
 
-<!-- ================= DICTIONARY MENU ================= -->
-<div id="dictionaryMenu" class="page">
-  <h2>📖 Thumalhilchianna (Dictionary)</h2>
-  <button onclick="showPage('dictV2E')">Vaiphei → English</button>
-  <button onclick="showPage('dictE2V')">English → Vaiphei</button>
-  <button onclick="showPage('homePage')">🏠 Back</button>
-</div>
+  <!-- Search Page -->
+  <section id="search">
+    <h2>Search Dictionary</h2>
+    <input type="text" id="searchBox" placeholder="Type word..." oninput="doSearch()">
+    <div class="letters"></div>
+    <div id="searchResults"></div>
+    <button onclick="showPage('home')">⬅ Back</button>
+  </section>
 
-<!-- ================= SEARCH PAGES ================= -->
-<div id="searchV2E" class="page">
-  <h2>Vaiphei → English (Search)</h2>
-  <div id="v2eFilter" class="alphabet"></div>
-  <input type="text" id="searchInputV2E" placeholder="Search Vaiphei word...">
-  <div id="resultsV2E"></div>
-  <button onclick="showPage('searchMenu')">⬅ Back</button>
-</div>
+  <!-- Dictionary Page -->
+  <section id="dictionary">
+    <h2>All Words</h2>
+    <div id="allWords"></div>
+    <button onclick="showPage('home')">⬅ Back</button>
+  </section>
 
-<div id="searchE2V" class="page">
-  <h2>English → Vaiphei (Search)</h2>
-  <div id="e2vFilter" class="alphabet"></div>
-  <input type="text" id="searchInputE2V" placeholder="Search English word...">
-  <div id="resultsE2V"></div>
-  <button onclick="showPage('searchMenu')">⬅ Back</button>
-</div>
+  <!-- Add Word Page -->
+  <section id="addWord">
+    <h2>Add Word</h2>
+    <input type="text" id="vaipheiInput" placeholder="Vaiphei word"><br>
+    <input type="text" id="englishInput" placeholder="English meaning"><br>
+    <button onclick="saveWord()">Save</button>
+    <button onclick="showPage('home')">⬅ Back</button>
+  </section>
 
-<!-- ================= FULL DICTIONARY PAGES ================= -->
-<div id="dictV2E" class="page">
-  <h2>Full Vaiphei → English Dictionary</h2>
-  <div id="dictListV2E"></div>
-  <button onclick="showPage('dictionaryMenu')">⬅ Back</button>
-</div>
+  <input type="file" id="fileInput" accept=".xlsx,.xls" style="display:none" onchange="importExcel(event)">
 
-<div id="dictE2V" class="page">
-  <h2>Full English → Vaiphei Dictionary</h2>
-  <div id="dictListE2V"></div>
-  <button onclick="showPage('dictionaryMenu')">⬅ Back</button>
-</div>
+  <footer>
+    © Ph Thianneilal Vaiphei 2025
+  </footer>
 
-<!-- ================= IMPORT PAGE ================= -->
-<div id="importPage" class="page">
-  <h2>⬆ Import Excel</h2>
-  <div class="import-area">
-    <h3>Vaiphei → English</h3>
-    <input type="file" id="importV2E" accept=".xlsx">
-  </div>
-  <div class="import-area">
-    <h3>English → Vaiphei</h3>
-    <input type="file" id="importE2V" accept=".xlsx">
-  </div>
-  <button onclick="showPage('homePage')">🏠 Back</button>
-</div>
+  <script>
+    let dictionary = JSON.parse(localStorage.getItem("dictionary") || "[]");
+    let loggedIn = false;
 
-<!-- ================= ABOUT PAGE ================= -->
-<div id="aboutPage" class="page">
-  <h2>About</h2>
-  <p>
-    This dictionary is built for the Vaiphei community to preserve and share our language.  
-    It is a tool for students, teachers, and all who wish to learn.  
-    Thank you.
-  </p>
-  <button onclick="showPage('homePage')">🏠 Back</button>
-</div>
+    function showPage(id){
+      document.querySelectorAll("section").forEach(s=>s.classList.remove("active"));
+      document.getElementById(id).classList.add("active");
+      if(id==="dictionary") renderAll();
+      if(id==="search") renderLetters();
+    }
 
-<!-- ================= SCRIPT ================= -->
-<script>
-// ================= PAGE NAVIGATION =================
-function showPage(id) {
-  document.querySelectorAll(".page").forEach(p => p.style.display = "none");
-  document.getElementById(id).style.display = "block";
-}
+    function login(){
+      let pass = prompt("Enter password:");
+      if(pass==="tapkuang123"){ loggedIn=true; alert("Login successful"); }
+      else alert("Wrong password");
+    }
+    function logout(){ loggedIn=false; alert("Logged out"); }
 
-// ================= LOCAL STORAGE =================
-let v2eData = JSON.parse(localStorage.getItem("v2eData")) || [];
-let e2vData = JSON.parse(localStorage.getItem("e2vData")) || [];
+    function saveWord(){
+      if(!loggedIn){ alert("Login required"); return; }
+      let v=document.getElementById("vaipheiInput").value.trim();
+      let e=document.getElementById("englishInput").value.trim();
+      if(v && e){
+        dictionary.push({vaiphei:v, english:e});
+        localStorage.setItem("dictionary", JSON.stringify(dictionary));
+        alert("Word saved!");
+        document.getElementById("vaipheiInput").value="";
+        document.getElementById("englishInput").value="";
+      }
+    }
 
-function saveData() {
-  localStorage.setItem("v2eData", JSON.stringify(v2eData));
-  localStorage.setItem("e2vData", JSON.stringify(e2vData));
-}
-
-// ================= ALPHABET FILTERS =================
-const v2eAlphabet = ["A","AW","B","CH","D","E","F","G","NG","H","I","J","K","L","M","N","O","P","R","S","T","U","V","Z"];
-const e2vAlphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
-
-function buildAlphabet(containerId, type) {
-  const container = document.getElementById(containerId);
-  container.innerHTML = "";
-  const letters = type === "v2e" ? v2eAlphabet : e2vAlphabet;
-  letters.forEach(letter => {
-    let btn = document.createElement("button");
-    btn.textContent = letter;
-    btn.onclick = () => filterByLetter(letter, type);
-    container.appendChild(btn);
-  });
-}
-
-// ================= SEARCH =================
-function searchDictionary(inputId, resultsId, type) {
-  const query = document.getElementById(inputId).value.toLowerCase();
-  const resultsDiv = document.getElementById(resultsId);
-  resultsDiv.innerHTML = "";
-
-  let data = (type === "v2e") ? v2eData : e2vData;
-  let filtered = data.filter(entry => entry.word.toLowerCase().includes(query));
-  displayResults(filtered, resultsDiv);
-}
-
-function filterByLetter(letter, type) {
-  const resultsDiv = (type === "v2e") ? document.getElementById("resultsV2E") : document.getElementById("resultsE2V");
-  resultsDiv.innerHTML = "";
-
-  let data = (type === "v2e") ? v2eData : e2vData;
-  let filtered = data.filter(entry => entry.word.toUpperCase().startsWith(letter));
-  displayResults(filtered, resultsDiv);
-}
-
-function displayResults(list, container) {
-  if (list.length === 0) {
-    container.innerHTML = "<p>No results found.</p>";
-    return;
-  }
-  list.forEach(entry => {
-    let div = document.createElement("div");
-    div.className = "word-entry";
-    div.innerHTML = `<b>${entry.word}</b> → ${entry.meaning}`;
-    container.appendChild(div);
-  });
-}
-
-// ================= FULL DICTIONARY =================
-function buildFullDictionary(containerId, type) {
-  const container = document.getElementById(containerId);
-  container.innerHTML = "";
-
-  let data = (type === "v2e") ? v2eData : e2vData;
-  let letters = (type === "v2e") ? v2eAlphabet : e2vAlphabet;
-
-  letters.forEach(letter => {
-    let group = data.filter(entry => entry.word.toUpperCase().startsWith(letter));
-    if (group.length > 0) {
-      let section = document.createElement("div");
-      section.innerHTML = `<h3>${letter}</h3>`;
-      group.forEach(entry => {
-        let p = document.createElement("p");
-        p.innerHTML = `<b>${entry.word}</b> → ${entry.meaning}`;
-        section.appendChild(p);
+    function renderAll(){
+      let out=document.getElementById("allWords");
+      out.innerHTML="";
+      dictionary.forEach(w=>{
+        let div=document.createElement("div");
+        div.className="word";
+        div.textContent=w.vaiphei+" = "+w.english;
+        out.appendChild(div);
       });
-      container.appendChild(section);
     }
-  });
-}
 
-// ================= EXPORT TO EXCEL =================
-function exportToExcel(type) {
-  let data = (type === "v2e") ? v2eData : e2vData;
-  let ws = XLSX.utils.json_to_sheet(data);
-  let wb = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb, ws, type === "v2e" ? "Vaiphei-English" : "English-Vaiphei");
-  XLSX.writeFile(wb, type === "v2e" ? "vaiphei_to_english.xlsx" : "english_to_vaiphei.xlsx");
-}
-
-// ================= IMPORT EXCEL =================
-function importExcel(file, type) {
-  const reader = new FileReader();
-  reader.onload = (e) => {
-    const data = new Uint8Array(e.target.result);
-    const workbook = XLSX.read(data, { type: 'array' });
-    const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
-    const json = XLSX.utils.sheet_to_json(firstSheet);
-    if (type === "v2e") {
-      v2eData = json.map(row => ({ word: row.Word, meaning: row.Meaning }));
-    } else {
-      e2vData = json.map(row => ({ word: row.Word, meaning: row.Meaning }));
+    function renderLetters(){
+      let lettersDiv=document.querySelector(".letters");
+      lettersDiv.innerHTML="";
+      let letters="ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
+      letters.forEach(l=>{
+        let btn=document.createElement("button");
+        btn.textContent=l;
+        btn.onclick=()=>filterByLetter(l);
+        lettersDiv.appendChild(btn);
+      });
     }
-    saveData();
-    buildFullDictionary("dictListV2E", "v2e");
-    buildFullDictionary("dictListE2V", "e2v");
-    alert("Import successful for " + (type === "v2e" ? "Vaiphei→English" : "English→Vaiphei"));
-  };
-  reader.readAsArrayBuffer(file);
-}
 
-document.getElementById("importV2E").addEventListener("change", (e) => {
-  importExcel(e.target.files[0], "v2e");
-});
-document.getElementById("importE2V").addEventListener("change", (e) => {
-  importExcel(e.target.files[0], "e2v");
-});
+    function filterByLetter(l){
+      let results=dictionary.filter(w=>w.vaiphei.toUpperCase().startsWith(l));
+      displayResults(results);
+    }
 
-// ================= INIT =================
-document.addEventListener("DOMContentLoaded", () => {
-  buildAlphabet("v2eFilter", "v2e");
-  buildAlphabet("e2vFilter", "e2v");
+    function doSearch(){
+      let q=document.getElementById("searchBox").value.toLowerCase();
+      let results=dictionary.filter(w=> w.vaiphei.toLowerCase().includes(q) || w.english.toLowerCase().includes(q));
+      displayResults(results);
+    }
 
-  document.getElementById("searchInputV2E").addEventListener("input", () => {
-    searchDictionary("searchInputV2E", "resultsV2E", "v2e");
-  });
-  document.getElementById("searchInputE2V").addEventListener("input", () => {
-    searchDictionary("searchInputE2V", "resultsE2V", "e2v");
-  });
+    function displayResults(results){
+      let out=document.getElementById("searchResults");
+      out.innerHTML="";
+      if(results.length===0){ out.textContent="No results"; return; }
+      results.forEach(w=>{
+        let div=document.createElement("div");
+        div.className="word";
+        div.textContent=w.vaiphei+" = "+w.english;
+        out.appendChild(div);
+      });
+    }
 
-  buildFullDictionary("dictListV2E", "v2e");
-  buildFullDictionary("dictListE2V", "e2v");
-});
-</script>
+    function importExcel(evt){
+      if(!loggedIn){ alert("Login required"); return; }
+      let file=evt.target.files[0]; if(!file) return;
+      let reader=new FileReader();
+      reader.onload=function(e){
+        let data=new Uint8Array(e.target.result);
+        let wb=XLSX.read(data,{type:"array"});
+        let ws=wb.Sheets[wb.SheetNames[0]];
+        let rows=XLSX.utils.sheet_to_json(ws);
+        dictionary=rows.map(r=>({vaiphei:r.Vaiphei||"", english:r.English||""}));
+        localStorage.setItem("dictionary", JSON.stringify(dictionary));
+        alert("Imported "+dictionary.length+" words");
+      };
+      reader.readAsArrayBuffer(file);
+    }
+
+    function exportExcel(){
+      if(!loggedIn){ alert("Login required"); return; }
+      let ws=XLSX.utils.json_to_sheet(dictionary);
+      let wb=XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, "Dictionary");
+      XLSX.writeFile(wb, "Tapkuang_Dictionary.xlsx");
+    }
+  </script>
 </body>
 </html>
