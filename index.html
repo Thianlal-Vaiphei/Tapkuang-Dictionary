@@ -11,10 +11,7 @@
     header h1 { margin:0; font-size:18px; }
     .credit { text-align:center; font-size:14px; font-weight:bold; color:#333; margin-top:8px; }
     .grid { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; padding:20px; }
-    .card {
-      background:white; padding:15px; border-radius:10px; text-align:center;
-      box-shadow:0 2px 5px rgba(0,0,0,0.1); cursor:pointer; transition:transform 0.2s;
-    }
+    .card { background:white; padding:15px; border-radius:10px; text-align:center; box-shadow:0 2px 5px rgba(0,0,0,0.1); cursor:pointer; transition:transform 0.2s; }
     .card:hover { transform:scale(1.05); }
     section { display:none; padding:20px; }
     section.active { display:block; }
@@ -35,44 +32,45 @@
   <section id="home" class="active">
     <div class="grid">
       <div class="card" onclick="showPage('home')">Home</div>
-      <div class="card" onclick="showPage('search')">Hawlna<br><small>Search</small></div>
-      <div class="card" onclick="showPage('dictionary')">Thumalhilchian<br><small>Dictionary</small></div>
-      <div class="card" onclick="document.getElementById('fileInput').click()">Excel laklutna<br><small>Import</small></div>
+      <div class="card" onclick="showPage('searchVE')">Hawlna<br><small>Vaiphei → English</small></div>
+      <div class="card" onclick="showPage('searchEV')">Hawlna<br><small>English → Vaiphei</small></div>
+      <div class="card" onclick="document.getElementById('fileVE').click()">Excel laklutna<br><small>Import V→E</small></div>
+      <div class="card" onclick="document.getElementById('fileEV').click()">Excel laklutna<br><small>Import E→V</small></div>
+      <div class="card" onclick="exportExcel('VE')">Export Excel<br><small>V→E</small></div>
+      <div class="card" onclick="exportExcel('EV')">Export Excel<br><small>E→V</small></div>
       <div class="card" onclick="showPage('addWord')">Thumal belapna<br><small>Add Word</small></div>
-      <div class="card" onclick="exportExcel()">Export Excel</div>
-      <div class="card" onclick="alert('Settings page coming soon')">Munpi<br><small>Settings</small></div>
       <div class="card" onclick="login()">Lutna<br><small>Login</small></div>
       <div class="card" onclick="logout()">Pawtna<br><small>Logout</small></div>
     </div>
 
-    <!-- 👇 Intro paragraph -->
+    <!-- Intro -->
     <div class="intro">
       <p>
-        I want to make Vaiphei Dictionary App since my Higher Secondary School days. But due to lack of my knowledge in Information and Technology I concealed my dreams for many days. 
-        But today I can make out my long dreams ‘Tapkuang – Vaiphei Dictionary App’ which is the first Vaiphei Dictionary in App form.
+        Tapkuang – Vaiphei Dictionary App is the first of its kind. 
+        It allows you to build Vaiphei ↔ English vocabulary step by step.
       </p>
       <p>
-        I give utmost thanks to God Almighty who made live my dormant dream. I hope this Dictionary serves all the Vaipheis and those who use this language in building up their vocabularies which can enable them to have self-confidence in using English and Vaiphei.
-      </p>
-      <p>
-        All users are requested to help correct mistakes. May God bless you all.
+        May this dictionary help all Vaipheis and learners of the language. 
+        Suggestions and corrections are welcome. 
       </p>
     </div>
   </section>
 
-  <!-- Search Page -->
-  <section id="search">
-    <h2>Search Dictionary</h2>
-    <input type="text" id="searchBox" placeholder="Type word..." oninput="doSearch()">
-    <div class="letters"></div>
-    <div id="searchResults"></div>
+  <!-- Search V→E -->
+  <section id="searchVE">
+    <h2>Search Vaiphei → English</h2>
+    <input type="text" id="searchBoxVE" placeholder="Type Vaiphei word..." oninput="doSearch('VE')">
+    <div class="letters" id="lettersVE"></div>
+    <div id="searchResultsVE"></div>
     <button onclick="showPage('home')">⬅ Back</button>
   </section>
 
-  <!-- Dictionary Page -->
-  <section id="dictionary">
-    <h2>All Words</h2>
-    <div id="allWords"></div>
+  <!-- Search E→V -->
+  <section id="searchEV">
+    <h2>Search English → Vaiphei</h2>
+    <input type="text" id="searchBoxEV" placeholder="Type English word..." oninput="doSearch('EV')">
+    <div class="letters" id="lettersEV"></div>
+    <div id="searchResultsEV"></div>
     <button onclick="showPage('home')">⬅ Back</button>
   </section>
 
@@ -81,116 +79,75 @@
     <h2>Add Word</h2>
     <input type="text" id="vaipheiInput" placeholder="Vaiphei word"><br>
     <input type="text" id="englishInput" placeholder="English meaning"><br>
-    <button onclick="saveWord()">Save</button>
+    <button onclick="saveWord('VE')">Save as V→E</button>
+    <button onclick="saveWord('EV')">Save as E→V</button>
     <button onclick="showPage('home')">⬅ Back</button>
   </section>
 
-  <input type="file" id="fileInput" accept=".xlsx,.xls" style="display:none" onchange="importExcel(event)">
+  <!-- Hidden file inputs -->
+  <input type="file" id="fileVE" accept=".xlsx,.xls" style="display:none" onchange="importExcel(event,'VE')">
+  <input type="file" id="fileEV" accept=".xlsx,.xls" style="display:none" onchange="importExcel(event,'EV')">
 
   <footer>
     © Ph Thianneilal Vaiphei 2025
   </footer>
 
   <script>
-    let dictionary = JSON.parse(localStorage.getItem("dictionary") || "[]");
-    let loggedIn = false;
+    <script>
+  // ... keep everything else the same above ...
 
-    function showPage(id){
-      document.querySelectorAll("section").forEach(s=>s.classList.remove("active"));
-      document.getElementById(id).classList.add("active");
-      if(id==="dictionary") renderAll();
-      if(id==="search") renderLetters();
-    }
+  function displayResults(mode,results){
+    let out=document.getElementById("searchResults"+mode);
+    out.innerHTML="";
+    if(results.length===0){ out.textContent="No results"; return; }
 
-    function login(){
-      let pass = prompt("Enter password:");
-      if(pass==="tapkuang123"){ loggedIn=true; alert("Login successful"); }
-      else alert("Wrong password");
-    }
-    function logout(){ loggedIn=false; alert("Logged out"); }
+    results.forEach((w,i)=>{
+      let div=document.createElement("div");
+      div.className="word";
+      let text=(mode==="VE") ? (w.vaiphei+" = "+w.english) : (w.english+" = "+w.vaiphei);
+      div.innerHTML = text;
 
-    function saveWord(){
-      if(!loggedIn){ alert("Login required"); return; }
-      let v=document.getElementById("vaipheiInput").value.trim();
-      let e=document.getElementById("englishInput").value.trim();
-      if(v && e){
-        dictionary.push({vaiphei:v, english:e});
-        localStorage.setItem("dictionary", JSON.stringify(dictionary));
-        alert("Word saved!");
-        document.getElementById("vaipheiInput").value="";
-        document.getElementById("englishInput").value="";
-      }
-    }
-
-    function renderAll(){
-      let out=document.getElementById("allWords");
-      out.innerHTML="";
-      dictionary.forEach(w=>{
-        let div=document.createElement("div");
-        div.className="word";
-        div.textContent=w.vaiphei+" = "+w.english;
-        out.appendChild(div);
-      });
-    }
-
-    function renderLetters(){
-      let lettersDiv=document.querySelector(".letters");
-      lettersDiv.innerHTML="";
-      let letters="ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
-      letters.forEach(l=>{
-        let btn=document.createElement("button");
-        btn.textContent=l;
-        btn.onclick=()=>filterByLetter(l);
-        lettersDiv.appendChild(btn);
-      });
-    }
-
-    function filterByLetter(l){
-      let results=dictionary.filter(w=>w.vaiphei.toUpperCase().startsWith(l));
-      displayResults(results);
-    }
-
-    function doSearch(){
-      let q=document.getElementById("searchBox").value.toLowerCase();
-      let results=dictionary.filter(w=> w.vaiphei.toLowerCase().includes(q) || w.english.toLowerCase().includes(q));
-      displayResults(results);
-    }
-
-    function displayResults(results){
-      let out=document.getElementById("searchResults");
-      out.innerHTML="";
-      if(results.length===0){ out.textContent="No results"; return; }
-      results.forEach(w=>{
-        let div=document.createElement("div");
-        div.className="word";
-        div.textContent=w.vaiphei+" = "+w.english;
-        out.appendChild(div);
-      });
-    }
-
-    function importExcel(evt){
-      if(!loggedIn){ alert("Login required"); return; }
-      let file=evt.target.files[0]; if(!file) return;
-      let reader=new FileReader();
-      reader.onload=function(e){
-        let data=new Uint8Array(e.target.result);
-        let wb=XLSX.read(data,{type:"array"});
-        let ws=wb.Sheets[wb.SheetNames[0]];
-        let rows=XLSX.utils.sheet_to_json(ws);
-        dictionary=rows.map(r=>({vaiphei:r.Vaiphei||"", english:r.English||""}));
-        localStorage.setItem("dictionary", JSON.stringify(dictionary));
-        alert("Imported "+dictionary.length+" words");
+      // --- Edit button ---
+      let editBtn=document.createElement("button");
+      editBtn.textContent="✎ Edit";
+      editBtn.style.marginLeft="10px";
+      editBtn.onclick=()=>{
+        if(!loggedIn){ alert("Login required"); return; }
+        let newV=prompt("Vaiphei:", w.vaiphei);
+        let newE=prompt("English:", w.english);
+        if(mode==="VE"){
+          dictionaryVE[i]={vaiphei:newV||w.vaiphei, english:newE||w.english};
+          localStorage.setItem("dictionaryVE",JSON.stringify(dictionaryVE));
+        } else {
+          dictionaryEV[i]={english:newE||w.english, vaiphei:newV||w.vaiphei};
+          localStorage.setItem("dictionaryEV",JSON.stringify(dictionaryEV));
+        }
+        doSearch(mode);
       };
-      reader.readAsArrayBuffer(file);
-    }
+      div.appendChild(editBtn);
 
-    function exportExcel(){
-      if(!loggedIn){ alert("Login required"); return; }
-      let ws=XLSX.utils.json_to_sheet(dictionary);
-      let wb=XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(wb, ws, "Dictionary");
-      XLSX.writeFile(wb, "Tapkuang_Dictionary.xlsx");
-    }
-  </script>
+      // --- Delete button ---
+      let delBtn=document.createElement("button");
+      delBtn.textContent="🗑 Delete";
+      delBtn.style.marginLeft="5px";
+      delBtn.onclick=()=>{
+        if(!loggedIn){ alert("Login required"); return; }
+        if(confirm("Delete this word?")){
+          if(mode==="VE"){
+            dictionaryVE.splice(i,1);
+            localStorage.setItem("dictionaryVE",JSON.stringify(dictionaryVE));
+          } else {
+            dictionaryEV.splice(i,1);
+            localStorage.setItem("dictionaryEV",JSON.stringify(dictionaryEV));
+          }
+          doSearch(mode);
+        }
+      };
+      div.appendChild(delBtn);
+
+      out.appendChild(div);
+    });
+  }
+</script>
 </body>
 </html>
