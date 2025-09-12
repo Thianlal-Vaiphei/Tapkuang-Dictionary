@@ -2,152 +2,185 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Tapkuang – Vaiphei Dictionary</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
   <style>
-    body { font-family: Arial, sans-serif; background: #faf7f2; margin:0; padding:0; }
-    header { text-align:center; background:#f5e6c9; padding:15px; }
-    header h1 { margin:0; font-size:18px; }
-    .credit { text-align:center; font-size:14px; font-weight:bold; color:#333; margin-top:8px; }
-    .grid { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; padding:20px; }
-    .card { background:white; padding:15px; border-radius:10px; text-align:center; box-shadow:0 2px 5px rgba(0,0,0,0.1); cursor:pointer; transition:transform 0.2s; }
-    .card:hover { transform:scale(1.05); }
-    section { display:none; padding:20px; }
-    section.active { display:block; }
-    input, button { padding:8px; margin:5px 0; }
-    .word { margin:5px 0; padding:8px; background:#fff; border-radius:5px; }
-    .letters button { margin:2px; padding:5px 10px; }
-    .intro { background:#fff; margin:15px; padding:15px; border-radius:10px; font-size:14px; line-height:1.6; }
-    footer { padding:12px; text-align:center; font-size:13px; color:#555; background:#f5e6c9; margin-top:20px; }
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0; padding: 0;
+      background: url("cover.jpg") no-repeat center center fixed;
+      background-size: cover;
+    }
+    header {
+      background: rgba(0,0,0,0.6);
+      color: white; padding: 10px;
+      text-align: center;
+    }
+    nav {
+      background: #333; display: flex; justify-content: center;
+    }
+    nav button {
+      margin: 5px; padding: 8px 12px;
+      border: none; border-radius: 5px;
+      background: #555; color: white;
+      cursor: pointer;
+    }
+    nav button:hover { background: #777; }
+    section { padding: 20px; background: rgba(255,255,255,0.9); margin: 10px; border-radius: 10px; }
+    .hidden { display: none; }
+    table { width: 100%; border-collapse: collapse; }
+    td, th { border: 1px solid #ccc; padding: 5px; text-align: left; }
+    .admin-only { display: none; }
+    footer { text-align:center; padding:10px; background:#eee; }
   </style>
 </head>
 <body>
   <header>
-    <h1>Tapkuang – Vaiphei Dictionary</h1>
-    <div class="credit">By PH Thianneilal Vaiphei</div>
+    <h1>📖 Tapkuang – Vaiphei Dictionary</h1>
   </header>
 
-  <!-- Home -->
-  <section id="home" class="active">
-    <div class="grid">
-      <div class="card" onclick="showPage('home')">Home</div>
-      <div class="card" onclick="showPage('searchVE')">Hawlna<br><small>Vaiphei → English</small></div>
-      <div class="card" onclick="showPage('searchEV')">Hawlna<br><small>English → Vaiphei</small></div>
-      <div class="card" onclick="document.getElementById('fileVE').click()">Excel laklutna<br><small>Import V→E</small></div>
-      <div class="card" onclick="document.getElementById('fileEV').click()">Excel laklutna<br><small>Import E→V</small></div>
-      <div class="card" onclick="exportExcel('VE')">Export Excel<br><small>V→E</small></div>
-      <div class="card" onclick="exportExcel('EV')">Export Excel<br><small>E→V</small></div>
-      <div class="card" onclick="showPage('addWord')">Thumal belapna<br><small>Add Word</small></div>
-      <div class="card" onclick="login()">Lutna<br><small>Login</small></div>
-      <div class="card" onclick="logout()">Pawtna<br><small>Logout</small></div>
-    </div>
+  <nav>
+    <button onclick="showPage('search')">🔍 Hawlna</button>
+    <button onclick="showPage('add')">➕ Thumal belapna</button>
+    <button onclick="showPage('import')">⬆ Import Excel</button>
+    <button onclick="showPage('export')">⬇ Export Excel</button>
+    <button onclick="showPage('login')">🔑 Lutna</button>
+    <button onclick="logout()">🚪 Pawtna</button>
+  </nav>
 
-    <!-- Intro -->
-    <div class="intro">
-      <p>
-        Tapkuang – Vaiphei Dictionary App is the first of its kind. 
-        It allows you to build Vaiphei ↔ English vocabulary step by step.
-      </p>
-      <p>
-        May this dictionary help all Vaipheis and learners of the language. 
-        Suggestions and corrections are welcome. 
-      </p>
-    </div>
-  </section>
-
-  <!-- Search V→E -->
-  <section id="searchVE">
-    <h2>Search Vaiphei → English</h2>
-    <input type="text" id="searchBoxVE" placeholder="Type Vaiphei word..." oninput="doSearch('VE')">
-    <div class="letters" id="lettersVE"></div>
-    <div id="searchResultsVE"></div>
-    <button onclick="showPage('home')">⬅ Back</button>
-  </section>
-
-  <!-- Search E→V -->
-  <section id="searchEV">
-    <h2>Search English → Vaiphei</h2>
-    <input type="text" id="searchBoxEV" placeholder="Type English word..." oninput="doSearch('EV')">
-    <div class="letters" id="lettersEV"></div>
-    <div id="searchResultsEV"></div>
-    <button onclick="showPage('home')">⬅ Back</button>
+  <!-- Search Page -->
+  <section id="search">
+    <h2>🔍 Hawlna</h2>
+    <select id="modeSearch">
+      <option value="ve">Vaiphei → English</option>
+      <option value="ev">English → Vaiphei</option>
+    </select>
+    <input type="text" id="searchBox" placeholder="Type to search..." oninput="searchWord()">
+    <div id="results"></div>
   </section>
 
   <!-- Add Word Page -->
-  <section id="addWord">
-    <h2>Add Word</h2>
-    <input type="text" id="vaipheiInput" placeholder="Vaiphei word"><br>
-    <input type="text" id="englishInput" placeholder="English meaning"><br>
-    <button onclick="saveWord('VE')">Save as V→E</button>
-    <button onclick="saveWord('EV')">Save as E→V</button>
-    <button onclick="showPage('home')">⬅ Back</button>
+  <section id="add" class="hidden admin-only">
+    <h2>➕ Add New Word</h2>
+    <select id="modeAdd">
+      <option value="ve">Vaiphei → English</option>
+      <option value="ev">English → Vaiphei</option>
+    </select><br><br>
+    <input type="text" id="wordInput" placeholder="Word">
+    <input type="text" id="meaningInput" placeholder="Meaning">
+    <button onclick="addWord()">Add</button>
+    <div id="addMsg"></div>
   </section>
 
-  <!-- Hidden file inputs -->
-  <input type="file" id="fileVE" accept=".xlsx,.xls" style="display:none" onchange="importExcel(event,'VE')">
-  <input type="file" id="fileEV" accept=".xlsx,.xls" style="display:none" onchange="importExcel(event,'EV')">
+  <!-- Import -->
+  <section id="import" class="hidden admin-only">
+    <h2>⬆ Import Excel</h2>
+    <select id="modeImport">
+      <option value="ve">Vaiphei → English</option>
+      <option value="ev">English → Vaiphei</option>
+    </select><br><br>
+    <input type="file" id="importFile">
+    <button onclick="importExcel()">Import</button>
+  </section>
+
+  <!-- Export -->
+  <section id="export" class="hidden admin-only">
+    <h2>⬇ Export Excel</h2>
+    <button onclick="exportExcel('ve')">Export V→E</button>
+    <button onclick="exportExcel('ev')">Export E→V</button>
+  </section>
+
+  <!-- Login -->
+  <section id="login" class="hidden">
+    <h2>🔑 Admin Login</h2>
+    <input type="password" id="adminPass" placeholder="Enter password">
+    <button onclick="login()">Login</button>
+    <div id="loginMsg"></div>
+  </section>
 
   <footer>
-    © Ph Thianneilal Vaiphei 2025
+    <p>© Ph Thianneilal Vaiphei 2025</p>
   </footer>
 
   <script>
-    <script>
-  // ... keep everything else the same above ...
+    let dictionary = { ve: [], ev: [] };
+    const ADMIN_PASSWORD = "tapkuang";
 
-  function displayResults(mode,results){
-    let out=document.getElementById("searchResults"+mode);
-    out.innerHTML="";
-    if(results.length===0){ out.textContent="No results"; return; }
+    // Load from localStorage
+    function loadDictionary() {
+      const data = localStorage.getItem("dictionary");
+      if (data) dictionary = JSON.parse(data);
+    }
+    function saveDictionary() {
+      localStorage.setItem("dictionary", JSON.stringify(dictionary));
+    }
 
-    results.forEach((w,i)=>{
-      let div=document.createElement("div");
-      div.className="word";
-      let text=(mode==="VE") ? (w.vaiphei+" = "+w.english) : (w.english+" = "+w.vaiphei);
-      div.innerHTML = text;
+    function showPage(id) {
+      document.querySelectorAll("section").forEach(sec => sec.classList.add("hidden"));
+      document.getElementById(id).classList.remove("hidden");
+    }
 
-      // --- Edit button ---
-      let editBtn=document.createElement("button");
-      editBtn.textContent="✎ Edit";
-      editBtn.style.marginLeft="10px";
-      editBtn.onclick=()=>{
-        if(!loggedIn){ alert("Login required"); return; }
-        let newV=prompt("Vaiphei:", w.vaiphei);
-        let newE=prompt("English:", w.english);
-        if(mode==="VE"){
-          dictionaryVE[i]={vaiphei:newV||w.vaiphei, english:newE||w.english};
-          localStorage.setItem("dictionaryVE",JSON.stringify(dictionaryVE));
-        } else {
-          dictionaryEV[i]={english:newE||w.english, vaiphei:newV||w.vaiphei};
-          localStorage.setItem("dictionaryEV",JSON.stringify(dictionaryEV));
-        }
-        doSearch(mode);
+    function addWord() {
+      const mode = document.getElementById("modeAdd").value;
+      const word = document.getElementById("wordInput").value.trim();
+      const meaning = document.getElementById("meaningInput").value.trim();
+      if (!word || !meaning) return;
+      if (dictionary[mode].some(item => item.word === word)) {
+        document.getElementById("addMsg").innerText = "❌ Already exists!";
+        return;
+      }
+      dictionary[mode].push({ word, meaning });
+      saveDictionary();
+      document.getElementById("addMsg").innerText = "✅ Added successfully!";
+    }
+
+    function searchWord() {
+      const mode = document.getElementById("modeSearch").value;
+      const q = document.getElementById("searchBox").value.toLowerCase();
+      const res = dictionary[mode].filter(item => item.word.toLowerCase().startsWith(q));
+      let html = "<table><tr><th>Word</th><th>Meaning</th></tr>";
+      res.forEach(item => html += `<tr><td>${item.word}</td><td>${item.meaning}</td></tr>`);
+      html += "</table>";
+      document.getElementById("results").innerHTML = html;
+    }
+
+    function importExcel() {
+      const file = document.getElementById("importFile").files[0];
+      const mode = document.getElementById("modeImport").value;
+      const reader = new FileReader();
+      reader.onload = e => {
+        const data = new Uint8Array(e.target.result);
+        const workbook = XLSX.read(data, { type: 'array' });
+        const sheet = workbook.Sheets[workbook.SheetNames[0]];
+        const rows = XLSX.utils.sheet_to_json(sheet);
+        rows.forEach(r => dictionary[mode].push({ word: r.Word, meaning: r.Meaning }));
+        saveDictionary();
+        alert("Imported!");
       };
-      div.appendChild(editBtn);
+      reader.readAsArrayBuffer(file);
+    }
 
-      // --- Delete button ---
-      let delBtn=document.createElement("button");
-      delBtn.textContent="🗑 Delete";
-      delBtn.style.marginLeft="5px";
-      delBtn.onclick=()=>{
-        if(!loggedIn){ alert("Login required"); return; }
-        if(confirm("Delete this word?")){
-          if(mode==="VE"){
-            dictionaryVE.splice(i,1);
-            localStorage.setItem("dictionaryVE",JSON.stringify(dictionaryVE));
-          } else {
-            dictionaryEV.splice(i,1);
-            localStorage.setItem("dictionaryEV",JSON.stringify(dictionaryEV));
-          }
-          doSearch(mode);
-        }
-      };
-      div.appendChild(delBtn);
+    function exportExcel(mode) {
+      const ws = XLSX.utils.json_to_sheet(dictionary[mode]);
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, "Dictionary");
+      XLSX.writeFile(wb, `dictionary_${mode}.xlsx`);
+    }
 
-      out.appendChild(div);
-    });
-  }
-</script>
+    function login() {
+      const pass = document.getElementById("adminPass").value;
+      if (pass === ADMIN_PASSWORD) {
+        document.querySelectorAll(".admin-only").forEach(el => el.style.display = "block");
+        document.getElementById("loginMsg").innerText = "✅ Logged in!";
+      } else {
+        document.getElementById("loginMsg").innerText = "❌ Wrong password!";
+      }
+    }
+    function logout() {
+      document.querySelectorAll(".admin-only").forEach(el => el.style.display = "none");
+    }
+
+    loadDictionary();
+  </script>
 </body>
 </html>
