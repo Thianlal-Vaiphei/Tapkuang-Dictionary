@@ -17,7 +17,7 @@
       text-align: center;
     }
     nav {
-      background: #333; display: flex; justify-content: center;
+      background: #333; display: flex; flex-wrap: wrap; justify-content: center;
     }
     nav button {
       margin: 5px; padding: 8px 12px;
@@ -26,9 +26,9 @@
       cursor: pointer;
     }
     nav button:hover { background: #777; }
-    section { padding: 20px; background: rgba(255,255,255,0.9); margin: 10px; border-radius: 10px; }
+    section { padding: 20px; background: rgba(255,255,255,0.95); margin: 10px; border-radius: 10px; }
     .hidden { display: none; }
-    table { width: 100%; border-collapse: collapse; }
+    table { width: 100%; border-collapse: collapse; margin-top:10px;}
     td, th { border: 1px solid #ccc; padding: 5px; text-align: left; }
     .admin-only { display: none; }
     footer { text-align:center; padding:10px; background:#eee; }
@@ -42,8 +42,8 @@
   <nav>
     <button onclick="showPage('search')">🔍 Hawlna</button>
     <button onclick="showPage('add')">➕ Thumal belapna</button>
-    <button onclick="showPage('import')">⬆ Import Excel</button>
-    <button onclick="showPage('export')">⬇ Export Excel</button>
+    <button onclick="showPage('import')">⬆ Excel laklutna</button>
+    <button onclick="showPage('export')">⬇ Excel belhna</button>
     <button onclick="showPage('login')">🔑 Lutna</button>
     <button onclick="logout()">🚪 Pawtna</button>
   </nav>
@@ -59,9 +59,9 @@
     <div id="results"></div>
   </section>
 
-  <!-- Add Word Page -->
+  <!-- Add/Edit/Delete -->
   <section id="add" class="hidden admin-only">
-    <h2>➕ Add New Word</h2>
+    <h2>➕ Thumal belapna</h2>
     <select id="modeAdd">
       <option value="ve">Vaiphei → English</option>
       <option value="ev">English → Vaiphei</option>
@@ -70,11 +70,13 @@
     <input type="text" id="meaningInput" placeholder="Meaning">
     <button onclick="addWord()">Add</button>
     <div id="addMsg"></div>
+    <h3>📋 Current Words</h3>
+    <div id="wordList"></div>
   </section>
 
   <!-- Import -->
   <section id="import" class="hidden admin-only">
-    <h2>⬆ Import Excel</h2>
+    <h2>⬆ Excel laklutna</h2>
     <select id="modeImport">
       <option value="ve">Vaiphei → English</option>
       <option value="ev">English → Vaiphei</option>
@@ -85,14 +87,14 @@
 
   <!-- Export -->
   <section id="export" class="hidden admin-only">
-    <h2>⬇ Export Excel</h2>
+    <h2>⬇ Excel belhna</h2>
     <button onclick="exportExcel('ve')">Export V→E</button>
     <button onclick="exportExcel('ev')">Export E→V</button>
   </section>
 
   <!-- Login -->
   <section id="login" class="hidden">
-    <h2>🔑 Admin Login</h2>
+    <h2>🔑 Lutna</h2>
     <input type="password" id="adminPass" placeholder="Enter password">
     <button onclick="login()">Login</button>
     <div id="loginMsg"></div>
@@ -106,18 +108,20 @@
     let dictionary = { ve: [], ev: [] };
     const ADMIN_PASSWORD = "tapkuang";
 
-    // Load from localStorage
     function loadDictionary() {
       const data = localStorage.getItem("dictionary");
       if (data) dictionary = JSON.parse(data);
+      refreshWordList();
     }
     function saveDictionary() {
       localStorage.setItem("dictionary", JSON.stringify(dictionary));
+      refreshWordList();
     }
 
     function showPage(id) {
       document.querySelectorAll("section").forEach(sec => sec.classList.add("hidden"));
       document.getElementById(id).classList.remove("hidden");
+      if (id==="add") refreshWordList();
     }
 
     function addWord() {
@@ -125,14 +129,36 @@
       const word = document.getElementById("wordInput").value.trim();
       const meaning = document.getElementById("meaningInput").value.trim();
       if (!word || !meaning) return;
-      if (dictionary[mode].some(item => item.word === word)) {
-        document.getElementById("addMsg").innerText = "❌ Already exists!";
-        return;
+      const idx = dictionary[mode].findIndex(item => item.word === word);
+      if (idx !== -1) {
+        dictionary[mode][idx].meaning = meaning;
+        document.getElementById("addMsg").innerText = "✏️ Updated!";
+      } else {
+        dictionary[mode].push({ word, meaning });
+        document.getElementById("addMsg").innerText = "✅ Added!";
       }
-      dictionary[mode].push({ word, meaning });
       saveDictionary();
-      document.getElementById("addMsg").innerText = "✅ Added successfully!";
+      document.getElementById("wordInput").value = "";
+      document.getElementById("meaningInput").value = "";
     }
+
+    function deleteWord(mode, word) {
+      dictionary[mode] = dictionary[mode].filter(item => item.word !== word);
+      saveDictionary();
+    }
+
+    function refreshWordList() {
+      const mode = document.getElementById("modeAdd").value;
+      let html = "<table><tr><th>Word</th><th>Meaning</th><th>Action</th></tr>";
+      dictionary[mode].forEach(item => {
+        html += `<tr><td>${item.word}</td><td>${item.meaning}</td>
+        <td><button onclick="deleteWord('${mode}','${item.word}')">❌ Delete</button></td></tr>`;
+      });
+      html += "</table>";
+      document.getElementById("wordList").innerHTML = html;
+    }
+
+    document.getElementById("modeAdd").addEventListener("change", refreshWordList);
 
     function searchWord() {
       const mode = document.getElementById("modeSearch").value;
@@ -147,15 +173,20 @@
     function importExcel() {
       const file = document.getElementById("importFile").files[0];
       const mode = document.getElementById("modeImport").value;
+      if (!file) return;
       const reader = new FileReader();
       reader.onload = e => {
         const data = new Uint8Array(e.target.result);
         const workbook = XLSX.read(data, { type: 'array' });
         const sheet = workbook.Sheets[workbook.SheetNames[0]];
         const rows = XLSX.utils.sheet_to_json(sheet);
-        rows.forEach(r => dictionary[mode].push({ word: r.Word, meaning: r.Meaning }));
+        rows.forEach(r => {
+          if (r.Word && r.Meaning) {
+            dictionary[mode].push({ word: r.Word, meaning: r.Meaning });
+          }
+        });
         saveDictionary();
-        alert("Imported!");
+        alert("✅ Imported!");
       };
       reader.readAsArrayBuffer(file);
     }
@@ -176,6 +207,7 @@
         document.getElementById("loginMsg").innerText = "❌ Wrong password!";
       }
     }
+
     function logout() {
       document.querySelectorAll(".admin-only").forEach(el => el.style.display = "none");
     }
