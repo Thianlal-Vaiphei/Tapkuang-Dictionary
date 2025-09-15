@@ -5,77 +5,25 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Tapkuang - Vaiphei Dictionary</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 0;
-      background: #f9f9f9;
-    }
-    header {
-      background: #004080;
-      color: white;
-      padding: 1rem;
-      text-align: center;
-    }
-    nav {
-      display: flex;
-      justify-content: center;
-      background: #ddd;
-      padding: 0.5rem;
-    }
+    body { font-family: Arial, sans-serif; margin: 0; padding: 0; background: #f5f5f5; }
+    header { background: #003366; color: white; text-align: center; padding: 15px; }
+    nav { display: flex; flex-wrap: wrap; justify-content: center; background: #004080; }
     nav button {
-      margin: 0 5px;
-      padding: 8px 15px;
-      border: none;
-      background: #004080;
-      color: white;
-      cursor: pointer;
-      border-radius: 5px;
+      margin: 5px; padding: 10px 15px; border: none; border-radius: 6px;
+      background: #0066cc; color: white; cursor: pointer;
     }
-    nav button:hover {
-      background: #0066cc;
+    nav button:hover { background: #0052a3; }
+    section { display: none; padding: 20px; }
+    section.active { display: block; }
+    h2 { color: #003366; }
+    .sub-menu { margin: 15px 0; }
+    .sub-menu button {
+      margin: 3px; padding: 8px 12px; border: none;
+      border-radius: 5px; background: #e0e0e0; cursor: pointer;
     }
-    section {
-      padding: 20px;
-      display: none;
-    }
-    section.active {
-      display: block;
-    }
-    .dict-tabs button {
-      margin: 0 5px;
-      padding: 8px 12px;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-    .dict-tabs button.active {
-      background: #004080;
-      color: white;
-    }
-    .word-list {
-      margin-top: 15px;
-    }
-    .word-item {
-      padding: 8px;
-      background: #fff;
-      margin-bottom: 5px;
-      border-radius: 5px;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-    }
-    .word-vaiphei {
-      font-weight: bold;
-      color: black; /* FIXED: No blur, solid black text */
-    }
-    .word-english {
-      color: #333;
-    }
+    .sub-menu button:hover { background: #ccc; }
     footer {
-      text-align: center;
-      background: #004080;
-      color: white;
-      padding: 1rem;
-      margin-top: 20px;
+      margin-top: 20px; text-align: center; background: #003366; color: white; padding: 10px;
     }
   </style>
 </head>
@@ -86,85 +34,70 @@
 
   <nav>
     <button onclick="showSection('home')">🏠 Home</button>
-    <button onclick="showSection('dictionary')">📖 Dictionary</button>
+    <button onclick="showSection('dictionary')">📖 Thumalhilchian</button>
     <button onclick="showSection('search')">🔍 Hawlna</button>
     <button onclick="showSection('import')">⬆️ Import</button>
     <button onclick="showSection('export')">⬇️ Export</button>
     <button onclick="showSection('addword')">➕ Add Word</button>
-    <button onclick="showSection('settings')">⚙️ Settings</button>
-    <button onclick="showSection('login')">🔑 Login</button>
+    <button onclick="showSection('settings')">⚙️ Munpi</button>
+    <button onclick="showSection('login')">🔑 Lutna / Pawtna</button>
   </nav>
 
   <!-- Home -->
   <section id="home" class="active">
-    <h2>Welcome to Tapkuang Dictionary</h2>
-    <p>This is the Vaiphei-English Dictionary web app. Use the navigation above to explore.</p>
+    <h2>Welcome</h2>
+    <p>This is the Tapkuang Vaiphei ↔ English Dictionary App.</p>
   </section>
 
   <!-- Dictionary -->
   <section id="dictionary">
     <h2>📖 Thumalhilchian (Dictionary)</h2>
-    <div class="dict-tabs">
-      <button id="tab-v2e" class="active" onclick="showDict('v2e')">Vaiphei → English</button>
-      <button id="tab-e2v" onclick="showDict('e2v')">English → Vaiphei</button>
-    </div>
-    <input type="text" id="dictSearch" placeholder="Search word..." onkeyup="filterWords()" />
-    <div id="v2e" class="word-list">
-      <div class="word-item"><span class="word-vaiphei">Nupi</span> → <span class="word-english">Woman</span></div>
-      <div class="word-item"><span class="word-vaiphei">Pa</span> → <span class="word-english">Father</span></div>
-    </div>
-    <div id="e2v" class="word-list" style="display:none;">
-      <div class="word-item"><span class="word-english">Man</span> → <span class="word-vaiphei">Nupa</span></div>
-      <div class="word-item"><span class="word-english">Child</span> → <span class="word-vaiphei">Nupi-te</span></div>
+    <div class="sub-menu">
+      <button onclick="alert('Open Vaiphei → English Dictionary')">V2E</button>
+      <button onclick="alert('Open English → Vaiphei Dictionary')">E2V</button>
     </div>
   </section>
 
   <!-- Search -->
   <section id="search">
-    <h2>🔍 Hawlna (Search)</h2>
-    <p>Search both Vaiphei-English and English-Vaiphei dictionaries.</p>
-    <input type="text" id="globalSearch" placeholder="Type a word..." onkeyup="globalFilter()" />
-    <div id="globalResults" class="word-list"></div>
+    <h2>🔍 Hawlna</h2>
+    <p>Search words across dictionary.</p>
   </section>
 
   <!-- Import -->
   <section id="import">
-    <h2>⬆️ Import Excel File</h2>
-    <input type="file" id="importFile" />
+    <h2>⬆️ Import Dictionary</h2>
+    <div class="sub-menu">
+      <button onclick="alert('Import V2E Excel File')">Import V2E</button>
+      <button onclick="alert('Import E2V Excel File')">Import E2V</button>
+    </div>
   </section>
 
   <!-- Export -->
   <section id="export">
     <h2>⬇️ Export Dictionary</h2>
-    <button>Export Vaiphei → English</button>
-    <button>Export English → Vaiphei</button>
+    <div class="sub-menu">
+      <button onclick="alert('Export V2E Excel File')">Export V2E</button>
+      <button onclick="alert('Export E2V Excel File')">Export E2V</button>
+    </div>
   </section>
 
   <!-- Add Word -->
   <section id="addword">
     <h2>➕ Add/Edit/Delete Word</h2>
-    <form>
-      <input type="text" placeholder="Vaiphei word" required />
-      <input type="text" placeholder="English word" required />
-      <button type="submit">Save</button>
-    </form>
+    <p>Word management tools here.</p>
   </section>
 
   <!-- Settings -->
   <section id="settings">
-    <h2>⚙️ Settings</h2>
-    <p>Customize your dictionary preferences.</p>
+    <h2>⚙️ Munpi</h2>
+    <p>Customize your preferences.</p>
   </section>
 
   <!-- Login -->
   <section id="login">
-    <h2>🔑 Login</h2>
-    <p>Admin login to manage words.</p>
-    <form>
-      <input type="text" placeholder="Username" />
-      <input type="password" placeholder="Password" />
-      <button type="submit">Login</button>
-    </form>
+    <h2>🔑 Lutna / Pawtna</h2>
+    <p>Admin login for adding words.</p>
   </section>
 
   <footer>
@@ -175,34 +108,6 @@
     function showSection(id) {
       document.querySelectorAll("section").forEach(sec => sec.classList.remove("active"));
       document.getElementById(id).classList.add("active");
-    }
-
-    function showDict(tab) {
-      document.getElementById("v2e").style.display = (tab === "v2e") ? "block" : "none";
-      document.getElementById("e2v").style.display = (tab === "e2v") ? "block" : "none";
-      document.getElementById("tab-v2e").classList.remove("active");
-      document.getElementById("tab-e2v").classList.remove("active");
-      document.getElementById("tab-" + tab).classList.add("active");
-    }
-
-    function filterWords() {
-      let input = document.getElementById("dictSearch").value.toLowerCase();
-      let visibleTab = document.querySelector(".dict-tabs button.active").id.replace("tab-","");
-      let list = document.getElementById(visibleTab).getElementsByClassName("word-item");
-      for (let item of list) {
-        item.style.display = item.textContent.toLowerCase().includes(input) ? "" : "none";
-      }
-    }
-
-    function globalFilter() {
-      let input = document.getElementById("globalSearch").value.toLowerCase();
-      let results = document.getElementById("globalResults");
-      results.innerHTML = "";
-      document.querySelectorAll(".word-item").forEach(item => {
-        if (item.textContent.toLowerCase().includes(input)) {
-          results.appendChild(item.cloneNode(true));
-        }
-      });
     }
   </script>
 </body>
