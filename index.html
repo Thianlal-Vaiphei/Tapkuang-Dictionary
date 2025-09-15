@@ -1,610 +1,209 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Tapkuang - Vaiphei Dictionary</title>
-
-<!-- SheetJS for Excel import/export -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-
-<style>
-  /* Layout & styling tuned to match your approved design (gold / cream) */
-  :root{
-    --bg:#f7f2e6; --card:#ffffff; --gold:#c79d3a; --accent:#a26f1a; --muted:#8b8b8b;
-    font-synthesis: none;
-  }
-  html,body{height:100%;margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;}
-  body{
-    background:var(--bg);
-    color:#2b2b2b;
-    -webkit-font-smoothing:antialiased;
-    -moz-osx-font-smoothing:grayscale;
-  }
-
-  /* cover area */
-  .cover {
-    background: no-repeat center/cover url('cover.jpg');
-    min-height:180px;
-    border-bottom:6px solid rgba(0,0,0,0.06);
-    display:flex; align-items:flex-end; padding:18px;
-  }
-  .title {
-    background:linear-gradient(180deg, rgba(255,255,255,0.85), rgba(255,255,255,0.9));
-    padding:10px 16px; border-radius:8px; margin-left:8px;
-  }
-  .title h1{margin:0;font-size:20px;color:var(--accent);letter-spacing:0.5px}
-  .credit{font-weight:700;margin-top:6px;color:#222;font-size:13px;text-transform:uppercase}
-
-  /* main content */
-  .container{max-width:920px;margin:18px auto;padding:0 14px;}
-  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
-
-  .card{
-    background:var(--card);
-    border-radius:14px;
-    padding:18px;
-    box-shadow: 0 6px 18px rgba(0,0,0,0.04);
-    border:2px solid rgba(199,157,58,0.12);
-    cursor:pointer; text-align:left;
-  }
-  .card small{display:block;color:var(--muted);margin-top:6px}
-
-  /* intro box */
-  .intro{
-    margin-top:16px;background:var(--card);padding:16px;border-radius:12px;border:1px solid rgba(199,157,58,0.06);color:#444;line-height:1.55
-  }
-
-  /* pages */
-  .page{display:none;margin-top:18px;background:var(--card);border-radius:12px;padding:14px;border:1px solid rgba(0,0,0,0.02)}
-  .page.active{display:block}
-
-  /* alphabet */
-  .alpha{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
-  .alpha button{
-    width:46px;height:46px;border-radius:999px;border:2px solid rgba(199,157,58,0.4);
-    background:white;color:var(--accent);font-weight:700;cursor:pointer;
-  }
-  .alpha button.active{background:var(--gold);color:white;box-shadow:0 4px 10px rgba(162,111,26,0.18)}
-
-  /* list */
-  .entry{padding:12px 10px;border-bottom:1px solid rgba(0,0,0,0.03)}
-  .entry b{color:var(--accent);display:block;margin-bottom:6px}
-  .entry .meta{color:var(--muted);font-size:13px}
-
-  /* controls */
-  .controls{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
-  .controls input[type=text]{padding:10px;border-radius:8px;border:1px solid rgba(0,0,0,0.08);flex:1}
-  .controls button{padding:10px 12px;border-radius:8px;border:none;background:var(--gold);color:#fff;font-weight:700;cursor:pointer}
-
-  /* small table for edit/delete */
-  .row-actions button{margin-left:8px;padding:6px 8px;border-radius:8px;border:none;background:#eee;cursor:pointer}
-  .row-actions button.danger{background:#f8d0cf;color:#8b1d1d}
-
-  footer{margin:26px auto;text-align:center;color:#6b6b6b}
-  @media (max-width:720px){
-    .grid{grid-template-columns:repeat(2,1fr)}
-    .alpha button{width:40px;height:40px}
-  }
-  @media (max-width:420px){
-    .grid{grid-template-columns:1fr}
-  }
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tapkuang - Vaiphei Dictionary</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #f9f9f9;
+    }
+    header {
+      background: #004080;
+      color: white;
+      padding: 1rem;
+      text-align: center;
+    }
+    nav {
+      display: flex;
+      justify-content: center;
+      background: #ddd;
+      padding: 0.5rem;
+    }
+    nav button {
+      margin: 0 5px;
+      padding: 8px 15px;
+      border: none;
+      background: #004080;
+      color: white;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+    nav button:hover {
+      background: #0066cc;
+    }
+    section {
+      padding: 20px;
+      display: none;
+    }
+    section.active {
+      display: block;
+    }
+    .dict-tabs button {
+      margin: 0 5px;
+      padding: 8px 12px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .dict-tabs button.active {
+      background: #004080;
+      color: white;
+    }
+    .word-list {
+      margin-top: 15px;
+    }
+    .word-item {
+      padding: 8px;
+      background: #fff;
+      margin-bottom: 5px;
+      border-radius: 5px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    .word-vaiphei {
+      font-weight: bold;
+      color: black; /* FIXED: No blur, solid black text */
+    }
+    .word-english {
+      color: #333;
+    }
+    footer {
+      text-align: center;
+      background: #004080;
+      color: white;
+      padding: 1rem;
+      margin-top: 20px;
+    }
+  </style>
 </head>
 <body>
+  <header>
+    <h1>📘 Tapkuang - Vaiphei Dictionary</h1>
+  </header>
 
-  <!-- COVER + TITLE -->
-  <div class="cover" role="banner">
-    <div class="title">
-      <h1>Tapkuang - Vaiphei Dictionary</h1>
-      <div class="credit">By PH THIANNEILAL VAIPHEI</div>
+  <nav>
+    <button onclick="showSection('home')">🏠 Home</button>
+    <button onclick="showSection('dictionary')">📖 Dictionary</button>
+    <button onclick="showSection('search')">🔍 Hawlna</button>
+    <button onclick="showSection('import')">⬆️ Import</button>
+    <button onclick="showSection('export')">⬇️ Export</button>
+    <button onclick="showSection('addword')">➕ Add Word</button>
+    <button onclick="showSection('settings')">⚙️ Settings</button>
+    <button onclick="showSection('login')">🔑 Login</button>
+  </nav>
+
+  <!-- Home -->
+  <section id="home" class="active">
+    <h2>Welcome to Tapkuang Dictionary</h2>
+    <p>This is the Vaiphei-English Dictionary web app. Use the navigation above to explore.</p>
+  </section>
+
+  <!-- Dictionary -->
+  <section id="dictionary">
+    <h2>📖 Thumalhilchian (Dictionary)</h2>
+    <div class="dict-tabs">
+      <button id="tab-v2e" class="active" onclick="showDict('v2e')">Vaiphei → English</button>
+      <button id="tab-e2v" onclick="showDict('e2v')">English → Vaiphei</button>
     </div>
-  </div>
-
-  <div class="container">
-
-    <!-- MENU CARDS (like your screenshot) -->
-    <div class="grid" aria-hidden="false">
-      <div class="card" onclick="openPage('homePage')">
-        Home <small>Intro</small>
-      </div>
-
-      <div class="card" onclick="openPage('searchPage')">
-        Hawlna <small>Search</small>
-      </div>
-
-      <div class="card" onclick="openPage('dictPage')">
-        Thumalhilchian <small>Dictionary</small>
-      </div>
-
-      <div class="card" onclick="document.getElementById('fileVE').click()">
-        Excel laklutna <small>Import V→E</small>
-      </div>
-
-      <div class="card" onclick="document.getElementById('fileEV').click()">
-        Excel laklutna <small>Import E→V</small>
-      </div>
-
-      <div class="card" onclick="openPage('addPage')">
-        Thumal belapna <small>Add Word</small>
-      </div>
-
-      <div class="card" onclick="exportMode('ve')">
-        Export (V→E) <small>Download</small>
-      </div>
-
-      <div class="card" onclick="exportMode('ev')">
-        Export (E→V) <small>Download</small>
-      </div>
-
-      <div class="card" onclick="openPage('settingsPage')">
-        Munpi <small>Settings</small>
-      </div>
-
-      <div class="card" onclick="loginPrompt()">
-        Lutna <small>Login/Setup</small>
-      </div>
-
-      <div class="card" onclick="logout()" >
-        Pawtna <small>Logout</small>
-      </div>
+    <input type="text" id="dictSearch" placeholder="Search word..." onkeyup="filterWords()" />
+    <div id="v2e" class="word-list">
+      <div class="word-item"><span class="word-vaiphei">Nupi</span> → <span class="word-english">Woman</span></div>
+      <div class="word-item"><span class="word-vaiphei">Pa</span> → <span class="word-english">Father</span></div>
     </div>
-
-    <!-- Info box -->
-    <div class="intro" id="introText">
-      <p><strong>👋 Tapkuang – Vaiphei Dictionary.</strong> Use Hawlna (Search) or Thumalhilchian (Dictionary).</p>
-      <p>I want to make Vaiphei Dictionary App since my Higher Secondary School days. But due to lack of my knowledge in Information and Technology I concealed my dreams for many days. But today I can make out my long dreams ‘Tapkuang – Vaiphei Dictionary App’ which is the first Vaiphei Dictionary in App form. I give utmost thanks to God Almighty who made live my dormant dream. I hope this Dictionary serves all the Vaipheis and those who use this language in building up their vocabularies which can enable them to have self-confidence in using English and Vaiphei. All users are requested to help correct mistakes. May God bless you all.</p>
+    <div id="e2v" class="word-list" style="display:none;">
+      <div class="word-item"><span class="word-english">Man</span> → <span class="word-vaiphei">Nupa</span></div>
+      <div class="word-item"><span class="word-english">Child</span> → <span class="word-vaiphei">Nupi-te</span></div>
     </div>
+  </section>
 
-    <!-- PAGES: Home (kept), Search, Dictionary, Add, Settings -->
-    <div id="homePage" class="page active">
-      <!-- small welcome / summary -->
-      <p style="margin:0;font-weight:600;color:var(--accent)">Welcome — Tapkuang Vaiphei Dictionary</p>
-      <p style="margin-top:8px;color:#555">Use the menu above (Hawlna / Thumalhilchian / Thumal belapna) to search, browse, add or import words.</p>
-    </div>
+  <!-- Search -->
+  <section id="search">
+    <h2>🔍 Hawlna (Search)</h2>
+    <p>Search both Vaiphei-English and English-Vaiphei dictionaries.</p>
+    <input type="text" id="globalSearch" placeholder="Type a word..." onkeyup="globalFilter()" />
+    <div id="globalResults" class="word-list"></div>
+  </section>
 
-    <!-- SEARCH PAGE -->
-    <div id="searchPage" class="page">
-      <div style="display:flex;gap:12px;align-items:center;margin-bottom:12px;flex-wrap:wrap">
-        <label style="font-weight:700;color:var(--accent)">Mode</label>
-        <select id="searchMode" onchange="renderAlphabet()">
-          <option value="ve">Vaiphei → English</option>
-          <option value="ev">English → Vaiphei</option>
-        </select>
-        <div style="flex:1"></div>
-        <input id="searchInput" type="text" placeholder="Hawlna (Search)..." oninput="renderList()" style="min-width:220px;padding:10px;border-radius:8px;border:1px solid rgba(0,0,0,0.06)">
-      </div>
+  <!-- Import -->
+  <section id="import">
+    <h2>⬆️ Import Excel File</h2>
+    <input type="file" id="importFile" />
+  </section>
 
-      <div class="alpha" id="alphabetBar" aria-hidden="false"></div>
+  <!-- Export -->
+  <section id="export">
+    <h2>⬇️ Export Dictionary</h2>
+    <button>Export Vaiphei → English</button>
+    <button>Export English → Vaiphei</button>
+  </section>
 
-      <div id="resultsList" style="margin-top:8px"></div>
+  <!-- Add Word -->
+  <section id="addword">
+    <h2>➕ Add/Edit/Delete Word</h2>
+    <form>
+      <input type="text" placeholder="Vaiphei word" required />
+      <input type="text" placeholder="English word" required />
+      <button type="submit">Save</button>
+    </form>
+  </section>
 
-      <div style="display:flex;justify-content:space-between;margin-top:12px;color:var(--muted)">
-        <div>Page <span id="pageNum">1</span></div>
-        <div id="pageControls"></div>
-      </div>
-    </div>
+  <!-- Settings -->
+  <section id="settings">
+    <h2>⚙️ Settings</h2>
+    <p>Customize your dictionary preferences.</p>
+  </section>
 
-    <!-- DICTIONARY PAGE (full list) -->
-    <div id="dictPage" class="page">
-      <h3 style="margin-top:0;color:var(--accent)">Thumalhilchian — Full list</h3>
-      <div id="dictAll" style="max-height:420px;overflow:auto"></div>
-    </div>
-
-    <!-- ADD WORD PAGE -->
-    <div id="addPage" class="page">
-      <h3 style="margin-top:0;color:var(--accent)">Thumal belapna — Add / Edit</h3>
-
-      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap" class="controls">
-        <select id="addMode">
-          <option value="ve">Vaiphei → English</option>
-          <option value="ev">English → Vaiphei</option>
-        </select>
-
-        <input id="fieldWord" type="text" placeholder="Vaiphei (or English when in E→V)" />
-        <input id="fieldMeaning" type="text" placeholder="English (or Vaiphei when in E→V)" />
-        <button onclick="addOrUpdate()">Save</button>
-        <button onclick="clearAddForm()">Clear</button>
-      </div>
-
-      <div id="addMessage" style="margin-top:8px;color:green"></div>
-
-      <div style="margin-top:14px">
-        <h4 style="margin:8px 0;color:var(--accent)">Your words (editable)</h4>
-        <div id="manageList" style="max-height:320px;overflow:auto"></div>
-      </div>
-    </div>
-
-    <!-- SETTINGS PAGE (placeholder) -->
-    <div id="settingsPage" class="page">
-      <h3 style="margin-top:0;color:var(--accent)">Munpi — Settings</h3>
-      <p>Admin: <strong id="adminStatus">Not logged in</strong></p>
-      <p>Admin email (for help): <em>lalvaiphei60@gmail.com</em></p>
-      <p style="color:var(--muted)">Note: Add / Edit / Import / Export require admin (Lutna).</p>
-    </div>
-
-  </div> <!-- container -->
-
-  <!-- Hidden file inputs for import -->
-  <input id="fileVE" type="file" accept=".xlsx,.xls,.csv" style="display:none" />
-  <input id="fileEV" type="file" accept=".xlsx,.xls,.csv" style="display:none" />
+  <!-- Login -->
+  <section id="login">
+    <h2>🔑 Login</h2>
+    <p>Admin login to manage words.</p>
+    <form>
+      <input type="text" placeholder="Username" />
+      <input type="password" placeholder="Password" />
+      <button type="submit">Login</button>
+    </form>
+  </section>
 
   <footer>
-    © Ph Thianneilal Vaiphei 2025
+    <p>© Ph Thianneilal Vaiphei 2025</p>
   </footer>
 
-<script>
-/* ---------------------------
-   Tapkuang - Single-file app
-   - Two dictionaries: ve (Vaiphei->English), ev (English->Vaiphei)
-   - Admin protects add/edit/delete/import/export
----------------------------- */
-
-const ALPHABET = ["ALL","A","AW","B","CH","D","E","F","G","NG","H","I","J","K","L","M","N","O","P","R","S","T","U","V","Z"];
-const PAGE_SIZE = 10;
-const ADMIN_PW_KEY = "tapkuang_admin_pw"; // can be updated later
-const ADMIN_SESS_KEY = "tapkuang_is_admin";
-
-let state = {
-  ve: [],   // {word, meaning}
-  ev: [],   // {word, meaning}
-  isAdmin: !!localStorage.getItem(ADMIN_SESS_KEY),
-  searchMode: 've',
-  page: 1,
-  filterLetter: 'ALL',
-  editingIndex: null,
-  editingMode: null
-};
-
-// Utilities: load/save
-function loadAll(){
-  const raw = localStorage.getItem("tapkuang_data_v1");
-  if(raw){
-    try{
-      const parsed = JSON.parse(raw);
-      state.ve = parsed.ve || [];
-      state.ev = parsed.ev || [];
-    }catch(e){
-      console.error("load error", e);
-      state.ve = []; state.ev = [];
+  <script>
+    function showSection(id) {
+      document.querySelectorAll("section").forEach(sec => sec.classList.remove("active"));
+      document.getElementById(id).classList.add("active");
     }
-  }
-  renderAdminState();
-}
-function saveAll(){
-  const payload = { ve: state.ve, ev: state.ev };
-  localStorage.setItem("tapkuang_data_v1", JSON.stringify(payload));
-}
 
-// Admin UI
-function renderAdminState(){
-  document.getElementById("adminStatus").textContent = state.isAdmin ? "Logged in" : "Not logged in";
-  // admin-only controls: show/hide pages or buttons by class? We already hide full pages; when logged in allow edit area
-  // Show manage/add page controls when admin
-  const addPage = document.getElementById('addPage');
-  if(state.isAdmin) addPage.querySelectorAll('.controls')[0].style.display = 'flex';
-}
-
-// Navigation
-function openPage(id){
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-  // reset filter when going to search
-  if(id === 'searchPage'){
-    state.searchMode = document.getElementById('searchMode').value = 've';
-    state.filterLetter = 'ALL';
-    state.page = 1;
-    renderAlphabet();
-    renderList();
-  }
-  if(id === 'addPage'){
-    renderManageList();
-  }
-  if(id === 'dictPage'){
-    renderDictAll();
-  }
-  if(id === 'settingsPage'){
-    renderAdminState();
-  }
-}
-
-// Alphabet bar
-function renderAlphabet(){
-  const bar = document.getElementById('alphabetBar');
-  bar.innerHTML = '';
-  const mode = document.getElementById('searchMode').value;
-  ALPHABET.forEach(letter => {
-    const btn = document.createElement('button');
-    btn.textContent = letter;
-    btn.className = (letter === state.filterLetter) ? 'active' : '';
-    btn.onclick = () => { state.filterLetter = letter; state.page = 1; renderList(); updateAlphaActive(); };
-    bar.appendChild(btn);
-  });
-  updateAlphaActive();
-}
-function updateAlphaActive(){
-  const bar = document.getElementById('alphabetBar');
-  Array.from(bar.children).forEach(b => {
-    if(b.textContent === state.filterLetter) b.classList.add('active');
-    else b.classList.remove('active');
-  });
-}
-
-// Rendering list (search page)
-function renderList(){
-  const mode = document.getElementById('searchMode').value;
-  state.searchMode = mode;
-  const q = document.getElementById('searchInput').value.trim().toLowerCase();
-  const arr = (mode === 've') ? state.ve : state.ev;
-
-  // filter by search text and letter token (support AW,CH,NG)
-  const filtered = arr.filter(item => {
-    // letter filter
-    if(state.filterLetter !== 'ALL'){
-      const tok = firstToken(item.word);
-      if(tok !== state.filterLetter) return false;
+    function showDict(tab) {
+      document.getElementById("v2e").style.display = (tab === "v2e") ? "block" : "none";
+      document.getElementById("e2v").style.display = (tab === "e2v") ? "block" : "none";
+      document.getElementById("tab-v2e").classList.remove("active");
+      document.getElementById("tab-e2v").classList.remove("active");
+      document.getElementById("tab-" + tab).classList.add("active");
     }
-    // text filter
-    if(!q) return true;
-    return item.word.toLowerCase().includes(q) || item.meaning.toLowerCase().includes(q);
-  });
 
-  // sort with Vaiphei custom order when mode VE; otherwise alphabetic
-  filtered.sort((a,b) => {
-    if(mode === 've'){
-      const ai = ALPHABET.indexOf(firstToken(a.word));
-      const bi = ALPHABET.indexOf(firstToken(b.word));
-      if(ai !== bi) return ai - bi;
-    }
-    return a.word.localeCompare(b.word);
-  });
-
-  // paging
-  const total = filtered.length;
-  const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
-  if(state.page > totalPages) state.page = totalPages;
-  const start = (state.page - 1) * PAGE_SIZE;
-  const pageSlice = filtered.slice(start, start + PAGE_SIZE);
-
-  // build html
-  const container = document.getElementById('resultsList');
-  container.innerHTML = '';
-  if(pageSlice.length === 0){
-    container.innerHTML = '<p style="color:var(--muted)">No results</p>';
-  } else {
-    pageSlice.forEach((item, idx) => {
-      const div = document.createElement('div');
-      div.className = 'entry';
-      div.innerHTML = `<b>${escapeHtml(item.word)}</b><div class="meta">${escapeHtml(item.meaning)}</div>`;
-      // actions (edit/delete) only show if admin
-      const actions = document.createElement('div');
-      actions.className = 'row-actions';
-      if(state.isAdmin){
-        const globalIndex = arr.indexOf(item); // find index in whole array for editing
-        const editBtn = document.createElement('button');
-        editBtn.textContent = '✎ Edit';
-        editBtn.onclick = () => startEdit(mode, globalIndex);
-        actions.appendChild(editBtn);
-
-        const delBtn = document.createElement('button');
-        delBtn.textContent = '🗑 Delete';
-        delBtn.className = 'danger';
-        delBtn.onclick = () => { if(confirm('Delete this entry?')) { arr.splice(globalIndex,1); saveAll(); renderList(); renderManageList(); } };
-        actions.appendChild(delBtn);
+    function filterWords() {
+      let input = document.getElementById("dictSearch").value.toLowerCase();
+      let visibleTab = document.querySelector(".dict-tabs button.active").id.replace("tab-","");
+      let list = document.getElementById(visibleTab).getElementsByClassName("word-item");
+      for (let item of list) {
+        item.style.display = item.textContent.toLowerCase().includes(input) ? "" : "none";
       }
-      div.appendChild(actions);
-      container.appendChild(div);
-    });
-  }
-
-  // page controls
-  document.getElementById('pageNum').textContent = state.page + ' / ' + Math.max(1, Math.ceil(total/ PAGE_SIZE));
-  const pc = document.getElementById('pageControls');
-  pc.innerHTML = '';
-  if(state.page > 1){
-    const pleft = document.createElement('button'); pleft.textContent = '◀'; pleft.onclick = ()=>{ state.page--; renderList(); }; pc.appendChild(pleft);
-  }
-  if(state.page * PAGE_SIZE < total){
-    const pright = document.createElement('button'); pright.textContent='▶'; pright.onclick = ()=>{ state.page++; renderList(); }; pc.appendChild(pright);
-  }
-}
-
-// Dictionary full list
-function renderDictAll(){
-  const container = document.getElementById('dictAll');
-  container.innerHTML = '';
-  // show VE first then EV
-  const sectionVE = document.createElement('div');
-  sectionVE.innerHTML = '<h4 style="color:var(--accent);margin:6px 0">Vaiphei → English</h4>';
-  state.ve.forEach(it => {
-    const d = document.createElement('div'); d.className='entry';
-    d.innerHTML = `<b>${escapeHtml(it.word)}</b><div class="meta">${escapeHtml(it.meaning)}</div>`;
-    if(state.isAdmin){
-      const btns = document.createElement('div');
-      const eBtn = document.createElement('button'); eBtn.textContent='✎ Edit'; eBtn.onclick = ()=>startEdit('ve', state.ve.indexOf(it));
-      const rBtn = document.createElement('button'); rBtn.textContent='🗑 Delete'; rBtn.onclick = ()=>{ if(confirm('Delete?')){ state.ve.splice(state.ve.indexOf(it),1); saveAll(); renderDictAll(); } };
-      rBtn.className='danger';
-      btns.appendChild(eBtn); btns.appendChild(rBtn); d.appendChild(btns);
     }
-    sectionVE.appendChild(d);
-  });
 
-  const sectionEV = document.createElement('div');
-  sectionEV.innerHTML = '<h4 style="color:var(--accent);margin:6px 0">English → Vaiphei</h4>';
-  state.ev.forEach(it => {
-    const d = document.createElement('div'); d.className='entry';
-    d.innerHTML = `<b>${escapeHtml(it.word)}</b><div class="meta">${escapeHtml(it.meaning)}</div>`;
-    if(state.isAdmin){
-      const btns = document.createElement('div');
-      const eBtn = document.createElement('button'); eBtn.textContent='✎ Edit'; eBtn.onclick = ()=>startEdit('ev', state.ev.indexOf(it));
-      const rBtn = document.createElement('button'); rBtn.textContent='🗑 Delete'; rBtn.onclick = ()=>{ if(confirm('Delete?')){ state.ev.splice(state.ev.indexOf(it),1); saveAll(); renderDictAll(); } };
-      rBtn.className='danger';
-      btns.appendChild(eBtn); btns.appendChild(rBtn); d.appendChild(btns);
-    }
-    sectionEV.appendChild(d);
-  });
-
-  container.appendChild(sectionVE);
-  container.appendChild(sectionEV);
-}
-
-// Manage list in add page
-function renderManageList(){
-  const mode = document.getElementById('addMode').value;
-  const arr = (mode === 've') ? state.ve : state.ev;
-  const container = document.getElementById('manageList');
-  container.innerHTML = '';
-  if(arr.length === 0) { container.innerHTML = '<p style="color:var(--muted)">No words yet</p>'; return; }
-  const table = document.createElement('table');
-  table.innerHTML = '<tr><th>Word</th><th>Meaning</th><th>Action</th></tr>';
-  arr.forEach((it, idx) => {
-    const tr = document.createElement('tr');
-    tr.innerHTML = `<td>${escapeHtml(it.word)}</td><td>${escapeHtml(it.meaning)}</td>`;
-    const td = document.createElement('td');
-    const edit = document.createElement('button'); edit.textContent='✎ Edit'; edit.onclick = ()=>startEdit(mode, idx);
-    const del = document.createElement('button'); del.textContent='🗑 Delete'; del.className='danger'; del.onclick = ()=>{ if(confirm('Delete?')){ arr.splice(idx,1); saveAll(); renderManageList(); } };
-    td.appendChild(edit); td.appendChild(del);
-    tr.appendChild(td);
-    table.appendChild(tr);
-  });
-  container.appendChild(table);
-}
-
-// Add / Update flow
-function addOrUpdate(){
-  if(!state.isAdmin) return alert('Please Lutna (login) to add or edit words.');
-  const mode = document.getElementById('addMode').value;
-  const w = document.getElementById('fieldWord').value.trim();
-  const m = document.getElementById('fieldMeaning').value.trim();
-  if(!w || !m) return alert('Both fields required.');
-  if(state.editingMode === mode && state.editingIndex !== null){
-    // update
-    const arr = (mode === 've') ? state.ve : state.ev;
-    arr[state.editingIndex] = { word: w, meaning: m };
-    state.editingIndex = null; state.editingMode = null;
-    document.getElementById('addMessage').textContent = '✏️ Updated';
-  } else {
-    // duplicate check
-    const arr = (mode === 've') ? state.ve : state.ev;
-    if(arr.some(e => e.word.toLowerCase() === w.toLowerCase())){
-      return alert('Duplicate — this word already exists.');
-    }
-    arr.push({ word: w, meaning: m });
-    document.getElementById('addMessage').textContent = '✅ Added';
-  }
-  document.getElementById('fieldWord').value=''; document.getElementById('fieldMeaning').value='';
-  saveAll();
-  renderManageList();
-  renderList();
-}
-
-// Editing start
-function startEdit(mode, index){
-  const arr = (mode === 've') ? state.ve : state.ev;
-  const item = arr[index];
-  document.getElementById('addMode').value = mode;
-  document.getElementById('fieldWord').value = item.word;
-  document.getElementById('fieldMeaning').value = item.meaning;
-  state.editingIndex = index;
-  state.editingMode = mode;
-  openPage('addPage');
-}
-
-// clear form
-function clearAddForm(){ document.getElementById('fieldWord').value=''; document.getElementById('fieldMeaning').value=''; state.editingIndex = null; state.editingMode = null; document.getElementById('addMessage').textContent = ''; }
-
-// Helper: token for Vaiphei (AW,CH,NG first)
-function firstToken(s){
-  if(!s) return '';
-  const U = s.toString().toUpperCase().trim();
-  if(U.startsWith('AW')) return 'AW';
-  if(U.startsWith('CH')) return 'CH';
-  if(U.startsWith('NG')) return 'NG';
-  return U[0];
-}
-
-// Import (file inputs)
-document.getElementById('fileVE').addEventListener('change', (ev) => handleImport(ev, 've'));
-document.getElementById('fileEV').addEventListener('change', (ev) => handleImport(ev, 'ev'));
-
-function handleImport(e, mode){
-  if(!state.isAdmin) return alert('Login required to import.');
-  const f = e.target.files[0]; if(!f) return;
-  const reader = new FileReader();
-  reader.onload = function(evt){
-    try{
-      const data = new Uint8Array(evt.target.result);
-      const wb = XLSX.read(data, { type: 'array' });
-      const ws = wb.Sheets[wb.SheetNames[0]];
-      const rows = XLSX.utils.sheet_to_json(ws, { defval: '' });
-      // Accept columns: Vaiphei, English OR Word, Meaning
-      rows.forEach(r => {
-        if(mode === 've'){
-          const word = r.Vaiphei || r.Word || r.vaiphei || r.word || '';
-          const meaning = r.English || r.Meaning || r.english || r.meaning || '';
-          if(word && meaning) state.ve.push({ word: word.toString().trim(), meaning: meaning.toString().trim() });
-        } else {
-          const word = r.English || r.Word || r.english || r.word || '';
-          const meaning = r.Vaiphei || r.Meaning || r.vaiphei || r.meaning || '';
-          if(word && meaning) state.ev.push({ word: word.toString().trim(), meaning: meaning.toString().trim() });
+    function globalFilter() {
+      let input = document.getElementById("globalSearch").value.toLowerCase();
+      let results = document.getElementById("globalResults");
+      results.innerHTML = "";
+      document.querySelectorAll(".word-item").forEach(item => {
+        if (item.textContent.toLowerCase().includes(input)) {
+          results.appendChild(item.cloneNode(true));
         }
       });
-      saveAll();
-      alert('Imported ' + rows.length + ' rows to ' + (mode==='ve'?'V→E':'E→V'));
-      renderManageList(); renderList(); renderDictAll();
-    }catch(err){
-      console.error(err); alert('Import failed: ' + err.message);
     }
-  };
-  reader.readAsArrayBuffer(f);
-  // reset input
-  e.target.value = '';
-}
-
-// Export
-function exportMode(mode){
-  if(!state.isAdmin) return alert('Login required to export.');
-  exportExcel(mode);
-}
-function exportExcel(mode){
-  const arr = (mode==='ve') ? state.ve : state.ev;
-  // convert to sheet-friendly objects
-  const sheetData = arr.map(it => {
-    if(mode==='ve') return { Vaiphei: it.word, English: it.meaning };
-    else return { English: it.word, Vaiphei: it.meaning };
-  });
-  const ws = XLSX.utils.json_to_sheet(sheetData);
-  const wb = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb, ws, 'Dictionary');
-  XLSX.writeFile(wb, `Tapkuang_${mode}.xlsx`);
-}
-
-// Login/Logout
-function loginPrompt(){
-  const pw = prompt('Enter admin password:');
-  if(!pw) return;
-  // set default admin pw stored? For now just secret = 'tapkuang'
-  if(pw === 'tapkuang'){ state.isAdmin = true; localStorage.setItem(ADMIN_SESS_KEY, '1'); alert('Lutna success — admin enabled'); renderAdminState(); renderManageList(); renderDictAll(); }
-  else alert('Incorrect password');
-}
-function logout(){
-  state.isAdmin = false; localStorage.removeItem(ADMIN_SESS_KEY); alert('Pawtna — logged out'); renderAdminState(); renderManageList();
-}
-
-// small helper escape
-function escapeHtml(s){ return String(s).replace(/[&<>"']/g, function(m){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]; }); }
-
-// INITIALIZE
-loadAll();
-renderAlphabet();
-renderList();
-renderManageList();
-renderDictAll();
-
-// keep add page mode change listener
-document.getElementById('addMode').addEventListener('change', renderManageList);
-document.getElementById('searchMode').addEventListener('change', ()=>{ state.page=1; state.filterLetter='ALL'; renderAlphabet(); renderList(); });
-
-</script>
+  </script>
 </body>
 </html>
