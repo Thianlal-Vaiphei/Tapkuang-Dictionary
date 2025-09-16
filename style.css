@@ -2,8 +2,8 @@ body {
   margin: 0;
   font-family: 'Georgia', serif;
   background: #d4a94f;
-  color: #000;
   text-align: center;
+  color: #000;
 }
 
 .cover {
@@ -20,71 +20,51 @@ body {
   margin-bottom: 20px;
 }
 
-.cover h1 {
+h1 {
   font-size: 2.5em;
   margin: 0;
 }
 
-.cover p {
-  margin-top: 5px;
-  font-weight: bold;
-}
-
-.buttons {
-  margin-top: 30px;
-}
-
-.buttons button {
-  margin: 10px;
-  padding: 12px 20px;
-  font-size: 1.1em;
-  border: none;
-  border-radius: 8px;
-  background: #8b4513;
-  color: #fff;
-  cursor: pointer;
-}
-
-.buttons button:hover {
-  background: #5a2d0c;
-}
-
-.dictionary {
+.section {
   display: none;
   padding: 20px;
 }
 
-.page {
-  border: 2px solid #000;
-  padding: 30px;
-  margin: 20px auto;
-  width: 60%;
-  min-height: 250px;
-  background: #fff;
-  font-size: 1.2em;
-  line-height: 1.5;
-}
-
-.nav-buttons {
-  margin-top: 15px;
-}
-
+.buttons button,
 .nav-buttons button {
-  margin: 5px;
-  padding: 8px 16px;
+  margin: 10px;
+  padding: 10px 18px;
+  font-size: 1em;
   border: none;
-  border-radius: 6px;
-  background: #8b0000;
-  color: #fff;
+  border-radius: 8px;
+  background: #8b4513;
+  color: white;
   cursor: pointer;
 }
 
+.buttons button:hover,
 .nav-buttons button:hover {
-  background: #5a0000;
+  background: #5a2d0c;
 }
 
 input, select {
-  margin: 10px;
+  margin: 5px;
   padding: 8px;
   font-size: 1em;
+  border: 1px solid #999;
+  border-radius: 6px;
+}
+
+.word-entry {
+  margin: 6px;
+  padding: 8px;
+  background: #fff;
+  border: 1px solid #000;
+  border-radius: 6px;
+}
+
+.word-entry button {
+  margin-left: 10px;
+  padding: 4px 8px;
+  font-size: 0.9em;
 }
