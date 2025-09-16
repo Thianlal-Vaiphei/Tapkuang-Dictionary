@@ -6,239 +6,172 @@
   <style>
     body {
       margin: 0;
-      font-family: Arial, sans-serif;
-      background: #fdfdfd;
+      font-family: 'Georgia', serif;
+      background: #d4a94f;
       color: #000;
-    }
-    .page {
-      display: none;
-      padding: 20px;
       text-align: center;
     }
-    .active {
-      display: block;
+
+    .cover {
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
     }
-    img.cover {
-      max-width: 100%;
-      height: auto;
-      margin-top: 40px;
+
+    .cover img {
+      max-width: 250px;
+      border: 3px solid #b8860b;
+      margin-bottom: 20px;
     }
-    .menu {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 15px;
+
+    .cover h1 {
+      font-size: 2.5em;
+      margin: 0;
+    }
+
+    .cover p {
+      margin-top: 5px;
+      font-weight: bold;
+    }
+
+    .buttons {
       margin-top: 30px;
     }
-    .menu button {
-      padding: 15px;
-      border: 1px solid #ccc;
-      border-radius: 10px;
-      font-size: 16px;
+
+    .buttons button {
+      margin: 10px;
+      padding: 12px 20px;
+      font-size: 1.1em;
+      border: none;
+      border-radius: 8px;
+      background: #8b4513;
+      color: #fff;
       cursor: pointer;
-      background: #fff7e6;
-      transition: 0.3s;
     }
-    .menu button:hover {
-      background: #ffe0b3;
+
+    .buttons button:hover {
+      background: #5a2d0c;
     }
-    .dictionary-container {
-      border: 2px solid #000;
+
+    .dictionary {
+      display: none;
       padding: 20px;
+    }
+
+    .page {
+      border: 2px solid #000;
+      padding: 30px;
       margin: 20px auto;
-      width: 80%;
-      min-height: 200px;
-      border-radius: 10px;
-      background: #fff;
-    }
-    .word-entry {
-      text-align: left;
-      margin: 10px 0;
-      font-size: 18px;
-    }
-    .nav-buttons {
-      margin-top: 20px;
-    }
-    .nav-buttons button {
-      margin: 0 10px;
-      padding: 10px 20px;
-      cursor: pointer;
-      font-size: 14px;
-    }
-    .search-box {
-      margin-bottom: 15px;
-    }
-    .search-box input {
-      padding: 10px;
       width: 60%;
-      border: 1px solid #aaa;
-      border-radius: 5px;
-      font-size: 16px;
+      min-height: 250px;
+      background: #fff;
+      font-size: 1.2em;
+      line-height: 1.5;
+    }
+
+    .nav-buttons {
+      margin-top: 15px;
+    }
+
+    .nav-buttons button {
+      margin: 5px;
+      padding: 8px 16px;
+      border: none;
+      border-radius: 6px;
+      background: #8b0000;
+      color: #fff;
+      cursor: pointer;
+    }
+
+    .nav-buttons button:hover {
+      background: #5a0000;
     }
   </style>
 </head>
 <body>
 
   <!-- Cover Page -->
-  <div id="cover" class="page active">
-    <img src="Dictionary.png" alt="Cover" class="cover">
-    <br>
-    <button onclick="showPage('home')">Enter Dictionary</button>
-  </div>
-
-  <!-- Home Page -->
-  <div id="home" class="page">
-    <h2>Tapkuang – Vaiphei Dictionary</h2>
-    <p>By PH THIANNEILAL VAIPHEI</p>
-    <div class="menu">
-      <button onclick="showPage('search')">Hawlna (Search)</button>
-      <button onclick="showPage('dictionary')">Thumalhilchian (Dictionary)</button>
-      <button onclick="showPage('add')">Thumal belapna (Add Word)</button>
-      <button onclick="showPage('import')">Excel laklutna (Import)</button>
-      <button onclick="showPage('export')">Excel lakdawnna (Export)</button>
-      <button onclick="showPage('settings')">Munpi (Settings)</button>
-      <button onclick="login()">Lutna (Login)</button>
-      <button onclick="logout()">Pawtna (Logout)</button>
+  <div class="cover" id="cover">
+    <img src="Dictionary.png" alt="Dictionary Cover">
+    <h1>Tapkuang Vaiphei Dictionary</h1>
+    <p>By Ph Thianneilal Vaiphei 2025</p>
+    <div class="buttons">
+      <button onclick="openBook('e2v')">English → Vaiphei</button>
+      <button onclick="openBook('v2e')">Vaiphei → English</button>
     </div>
   </div>
 
-  <!-- Dictionary Options -->
-  <div id="dictionary" class="page">
-    <h2>Dictionary</h2>
-    <button onclick="showPage('e2v')">English → Vaiphei</button>
-    <button onclick="showPage('v2e')">Vaiphei → English</button>
-    <br><br>
-    <button onclick="showPage('home')">⬅ Back Home</button>
-  </div>
-
-  <!-- English to Vaiphei -->
-  <div id="e2v" class="page">
-    <h2>English → Vaiphei</h2>
-    <div class="search-box">
-      <input type="text" id="e2v-search" placeholder="Search English word..." onkeyup="searchWord('e2v')">
-    </div>
-    <div id="e2v-container" class="dictionary-container"></div>
+  <!-- English → Vaiphei Dictionary -->
+  <div class="dictionary" id="e2v">
+    <div class="page" id="e2vPage"></div>
     <div class="nav-buttons">
-      <button onclick="prevPage('e2v')">⬅ Previous</button>
-      <button onclick="nextPage('e2v')">Next ➡</button>
+      <button onclick="prevPage('e2v')">Previous</button>
+      <button onclick="nextPage('e2v')">Next</button>
+      <button onclick="closeBook()">Back</button>
     </div>
-    <br>
-    <button onclick="showPage('dictionary')">⬅ Back</button>
   </div>
 
-  <!-- Vaiphei to English -->
-  <div id="v2e" class="page">
-    <h2>Vaiphei → English</h2>
-    <div class="search-box">
-      <input type="text" id="v2e-search" placeholder="Search Vaiphei word..." onkeyup="searchWord('v2e')">
-    </div>
-    <div id="v2e-container" class="dictionary-container"></div>
+  <!-- Vaiphei → English Dictionary -->
+  <div class="dictionary" id="v2e">
+    <div class="page" id="v2ePage"></div>
     <div class="nav-buttons">
-      <button onclick="prevPage('v2e')">⬅ Previous</button>
-      <button onclick="nextPage('v2e')">Next ➡</button>
+      <button onclick="prevPage('v2e')">Previous</button>
+      <button onclick="nextPage('v2e')">Next</button>
+      <button onclick="closeBook()">Back</button>
     </div>
-    <br>
-    <button onclick="showPage('dictionary')">⬅ Back</button>
   </div>
 
   <script>
-    // --- Navigation ---
-    function showPage(id) {
-      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-      document.getElementById(id).classList.add('active');
-    }
-
-    // --- Dummy Dictionary Data ---
-    const e2vWords = [
-      ["Apple", "Thingpui"],
-      ["Book", "Lekhabu"],
-      ["Cat", "Kitek"],
-      ["Dog", "Ui"],
-      ["Water", "Tuipi"],
-      ["Food", "Sathu"]
+    // Sample dictionary pages
+    const e2vPages = [
+      "Apple → Sial",
+      "Book → Thu",
+      "Cat → Kizu",
+      "Dog → Uithu"
     ];
 
-    const v2eWords = [
-      ["Awu", "Yes"],
-      ["Awle", "Crocodile"],
-      ["Awp", "Lie upon"],
-      ["Awt", "Jealous"],
-      ["Awm", "To exist"],
-      ["Amai", "Mother"]
+    const v2ePages = [
+      "Sial → Apple",
+      "Thu → Book",
+      "Kizu → Cat",
+      "Uithu → Dog"
     ];
 
-    let e2vPage = 0;
-    let v2ePage = 0;
-    const perPage = 2;
+    let currentPage = { e2v: 0, v2e: 0 };
 
-    function renderDictionary(type, filter = "") {
-      let data = type === 'e2v' ? e2vWords : v2eWords;
-      let page = type === 'e2v' ? e2vPage : v2ePage;
-      let container = document.getElementById(type + "-container");
+    function openBook(book) {
+      document.getElementById("cover").style.display = "none";
+      document.getElementById(book).style.display = "block";
+      showPage(book);
+    }
 
-      container.innerHTML = "";
-      let items = data;
+    function closeBook() {
+      document.getElementById("cover").style.display = "flex";
+      document.getElementById("e2v").style.display = "none";
+      document.getElementById("v2e").style.display = "none";
+    }
 
-      // Apply search filter
-      if (filter) {
-        items = items.filter(([w, t]) => w.toLowerCase().includes(filter.toLowerCase()) || t.toLowerCase().includes(filter.toLowerCase()));
-      } else {
-        let start = page * perPage;
-        let end = start + perPage;
-        items = items.slice(start, end);
-      }
+    function showPage(book) {
+      let pageIndex = currentPage[book];
+      let content = (book === "e2v") ? e2vPages : v2ePages;
+      document.getElementById(book + "Page").innerText = content[pageIndex];
+    }
 
-      if (items.length === 0) {
-        container.innerHTML = "<p>No results found.</p>";
-      } else {
-        items.forEach(([w, t]) => {
-          let div = document.createElement("div");
-          div.className = "word-entry";
-          div.innerHTML = `<b>${w}</b> — ${t}`;
-          container.appendChild(div);
-        });
+    function nextPage(book) {
+      let content = (book === "e2v") ? e2vPages : v2ePages;
+      if (currentPage[book] < content.length - 1) {
+        currentPage[book]++;
+        showPage(book);
       }
     }
 
-    function nextPage(type) {
-      if (type === 'e2v') {
-        if ((e2vPage + 1) * perPage < e2vWords.length) e2vPage++;
-        renderDictionary('e2v');
-      } else {
-        if ((v2ePage + 1) * perPage < v2eWords.length) v2ePage++;
-        renderDictionary('v2e');
+    function prevPage(book) {
+      if (currentPage[book] > 0) {
+        currentPage[book]--;
+        showPage(book);
       }
-    }
-
-    function prevPage(type) {
-      if (type === 'e2v') {
-        if (e2vPage > 0) e2vPage--;
-        renderDictionary('e2v');
-      } else {
-        if (v2ePage > 0) v2ePage--;
-        renderDictionary('v2e');
-      }
-    }
-
-    function searchWord(type) {
-      let input = document.getElementById(type + "-search").value;
-      renderDictionary(type, input);
-    }
-
-    // Initialize
-    renderDictionary('e2v');
-    renderDictionary('v2e');
-
-    // --- Login/Logout ---
-    function login() {
-      let pass = prompt("Enter password:");
-      if (pass === "phaltual") {
-        alert("Login successful!");
-      } else {
-        alert("Wrong password!");
-      }
-    }
-    function logout() {
-      alert("Logged out.");
     }
   </script>
 
