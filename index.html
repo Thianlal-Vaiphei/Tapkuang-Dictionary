@@ -1,666 +1,78 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
+  <meta charset="UTF-8">
   <title>Tapkuang Vaiphei Dictionary</title>
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <!-- SheetJS for reading XLSX/CSV -->
-  <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
-  <style>
-    :root{
-      --gold:#d4a94f;
-      --brown:#8b4513;
-      --paper:#fffef7;
-      --pageBorder:#b8860b;
-      --btnText:#fff;
-      --radius:14px;
-    }
-    *{box-sizing:border-box}
-    body{
-      margin:0;
-      font-family: "Georgia", serif;
-      background: linear-gradient(180deg,#f3e9d5, #e9dfc5 40%, var(--gold));
-      color:#222;
-      -webkit-font-smoothing:antialiased;
-    }
-
-    /* COVER */
-    #cover {
-      height:100vh;
-      display:flex;
-      flex-direction:column;
-      align-items:center;
-      justify-content:center;
-      gap:18px;
-      text-align:center;
-      padding:20px;
-    }
-    #cover img{
-      max-width:420px;
-      width:60%;
-      max-height:580px;
-      border-radius:6px;
-      box-shadow:0 8px 30px rgba(0,0,0,0.25);
-      border:8px solid rgba(184,134,11,0.12);
-      background:#c69a2b;
-    }
-    #cover h1{
-      margin:6px 0 0;
-      font-size:36px;
-      letter-spacing:2px;
-      color:#6b3f06;
-    }
-    #cover p{margin:2px 0 12px;font-weight:700;color:#5a3905}
-
-    .coverButtons{
-      display:flex;
-      gap:14px;
-      flex-wrap:wrap;
-      justify-content:center;
-    }
-    .coverButtons button{
-      padding:12px 20px;
-      border-radius:10px;
-      border:none;
-      background:var(--brown);
-      color:var(--btnText);
-      font-size:16px;
-      cursor:pointer;
-      box-shadow:0 6px 14px rgba(0,0,0,0.18);
-    }
-    .coverButtons button:hover{transform:translateY(-2px);}
-
-    /* APP container */
-    .app {
-      display:none;
-      min-height:100vh;
-      padding:28px;
-    }
-
-    /* Top admin/menu */
-    .topbar{
-      display:flex;
-      gap:12px;
-      align-items:center;
-      justify-content:space-between;
-      margin-bottom:22px;
-      flex-wrap:wrap;
-    }
-    .leftMenu{
-      display:flex;
-      gap:8px;
-      align-items:center;
-      flex-wrap:wrap;
-    }
-    .menuBtn{
-      padding:10px 14px;
-      border-radius:10px;
-      border:2px solid rgba(184,134,11,0.25);
-      background:white;
-      cursor:pointer;
-      font-weight:700;
-    }
-    .menuBtn.secondary{
-      background:transparent;
-      font-weight:600;
-      color:#444;
-    }
-
-    /* Book area */
-    .bookWrap{
-      display:flex;
-      gap:20px;
-      align-items:flex-start;
-      flex-wrap:wrap;
-    }
-
-    .bookControls{
-      flex:0 0 300px;
-      max-width:320px;
-      min-width:220px;
-      background:rgba(255,255,255,0.9);
-      border-radius:12px;
-      padding:14px;
-      border:2px solid rgba(184,134,11,0.08);
-      box-shadow:0 6px 20px rgba(0,0,0,0.06);
-    }
-    .bookControls h3{margin:6px 0 10px;font-size:16px}
-    .controlRow{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
-    .controlRow input[type="file"]{flex:1}
-    .small{font-size:13px;color:#666;margin-bottom:8px}
-
-    .addRow{display:flex;gap:8px;margin-bottom:8px}
-    .addRow input[type="text"]{flex:1;padding:8px;border-radius:8px;border:1px solid #ddd}
-    .selectSmall{padding:8px;border-radius:8px;border:1px solid #ddd;background:#fff}
-
-    .exportBtn{margin-top:8px;padding:8px 10px;border-radius:8px;border:none;background:var(--brown);color:#fff;cursor:pointer}
-
-    /* Book viewer */
-    .bookView{
-      flex:1 1 520px;
-      min-width:320px;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      padding:18px;
-    }
-
-    /* Book / page visual */
-    .book {
-      width:700px;
-      max-width:92vw;
-      height:520px;
-      perspective:1400px;
-      position:relative;
-    }
-
-    /* single page container */
-    .pageShell {
-      width:100%;
-      height:100%;
-      position:relative;
-      transform-style:preserve-3d;
-      transition:transform 600ms cubic-bezier(.2,.9,.3,1);
-    }
-
-    /* page appearance */
-    .page {
-      position:absolute;
-      top:0;
-      left:0;
-      width:50%;
-      height:100%;
-      background:var(--paper);
-      border:6px solid var(--pageBorder);
-      border-radius:16px;
-      box-shadow: 0 12px 30px rgba(0,0,0,0.25);
-      padding:28px;
-      overflow:auto;
-      -webkit-backface-visibility:hidden;
-      backface-visibility:hidden;
-      font-size:16px;
-      line-height:1.5;
-    }
-    /* left & right pages */
-    .page.left{
-      left:0;
-      transform-origin:left center;
-      border-top-right-radius:8px;
-      border-bottom-right-radius:8px;
-      width:50%;
-    }
-    .page.right{
-      left:50%;
-      transform-origin:right center;
-      border-top-left-radius:8px;
-      border-bottom-left-radius:8px;
-      width:50%;
-    }
-
-    /* when flipping next, we rotate the pageShell to create a turn illusion */
-    .book.turnNext .pageShell { transform: rotateY(-180deg); }
-    .book.turnPrev .pageShell { transform: rotateY(0deg); }
-
-    /* contents styling */
-    .entry{
-      padding:10px 14px;
-      border-bottom:1px dashed rgba(0,0,0,0.06);
-      display:flex;
-      justify-content:space-between;
-      gap:12px;
-      align-items:flex-start;
-    }
-    .entry b{font-size:17px}
-    .entry small{color:#444;opacity:0.85}
-
-    /* pager controls */
-    .pager{
-      display:flex;
-      gap:12px;
-      justify-content:center;
-      margin-top:14px;
-    }
-    .pager button{
-      padding:8px 12px;border-radius:10px;border:none;background:var(--brown);color:#fff;cursor:pointer;
-    }
-    .pager .backToCover{background:#3b2a0f}
-
-    /* responsive tweaks */
-    @media (max-width:880px){
-      .book{height:420px}
-      .page{padding:18px;font-size:15px}
-    }
-    @media (max-width:640px){
-      .book{height:360px}
-      .bookWrap{flex-direction:column}
-      .bookControls{order:2;width:100%}
-      .bookView{order:1}
-    }
-
-    /* small helper text box */
-    .noteBox{
-      margin-top:12px;padding:12px;border-radius:10px;background:#fffef9;border:1px solid rgba(184,134,11,0.08)
-    }
-  </style>
+  <link rel="stylesheet" href="style.css">
+  <script defer src="xlsx.full.min.js"></script>
+  <script defer src="script.js"></script>
 </head>
 <body>
 
-  <!-- COVER -->
-  <div id="cover">
-    <!-- Make sure Dictionary.png is in same folder -->
-    <img id="coverImg" src="Dictionary.png" alt="Tapkuang Vaiphei Dictionary cover">
-    <h1>TAPKUANG VAIPHEI DICTIONARY</h1>
-    <p>By PH THIANNEILAL VAIPHEI — 2025</p>
-
-    <div class="coverButtons">
-      <button onclick="enterBook('e2v')">English → Vaiphei</button>
-      <button onclick="enterBook('v2e')">Vaiphei → English</button>
-      <button onclick="openAdmin()">Admin / Import & Add</button>
-    </div>
-
-    <div style="max-width:860px;margin-top:18px;color:#3b2a0f;background:rgba(255,255,255,0.82);padding:16px;border-radius:12px;border:1px solid rgba(184,134,11,0.08)">
-      <div style="font-weight:700;font-size:15px;margin-bottom:6px">Welcome 👋</div>
-      Tapkuang – Vaiphei Dictionary. Use English → Vaiphei or Vaiphei → English. Admin menu contains Import/Export (Excel/CSV), Add Word, and settings. Data is stored in your browser (local storage).
+  <!-- Cover Page -->
+  <div id="cover" class="cover">
+    <img src="Dictionary.png" alt="Dictionary Cover">
+    <h1>Tapkuang Vaiphei Dictionary</h1>
+    <p>By Ph Thianneilal Vaiphei 2025</p>
+    <div class="buttons">
+      <button onclick="openSection('e2v')">English → Vaiphei</button>
+      <button onclick="openSection('v2e')">Vaiphei → English</button>
+      <button onclick="openSection('login')">Login</button>
     </div>
   </div>
 
-  <!-- APP (hidden until enter) -->
-  <div class="app" id="app">
-    <div class="topbar">
-      <div class="leftMenu">
-        <button class="menuBtn" onclick="backToCover()">Back to Cover</button>
-        <button class="menuBtn secondary" onclick="enterBook('e2v')">E → V Book</button>
-        <button class="menuBtn secondary" onclick="enterBook('v2e')">V → E Book</button>
-      </div>
-
-      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
-        <div style="font-size:13px;color:#444">Active Book: <span id="activeBookLabel">—</span></div>
-      </div>
+  <!-- Dictionary Section -->
+  <div id="dictionary" class="dictionary">
+    <h2 id="dictTitle"></h2>
+    <div class="page" id="dictPage"></div>
+    <div class="nav-buttons">
+      <button onclick="prevPage()">← Previous</button>
+      <button onclick="nextPage()">Next →</button>
+      <button onclick="backHome()">Back</button>
     </div>
-
-    <div class="bookWrap">
-
-      <!-- CONTROLS -->
-      <div class="bookControls" id="controls">
-        <h3>Admin / Import / Add Word</h3>
-
-        <div class="small">Excel Laklutna (Import CSV / XLSX)</div>
-        <div class="controlRow">
-          <input type="file" id="importFile" accept=".csv, .xlsx, .xls" />
-        </div>
-        <div style="display:flex;gap:8px;margin-bottom:10px">
-          <select id="importTarget" class="selectSmall">
-            <option value="e2v">English → Vaiphei (e2v)</option>
-            <option value="v2e">Vaiphei → English (v2e)</option>
-          </select>
-          <button class="menuBtn" onclick="importSelected()">Import</button>
-        </div>
-
-        <div class="small">Excel Lakdawna (Export CSV)</div>
-        <div style="display:flex;gap:8px;margin-bottom:10px">
-          <select id="exportTarget" class="selectSmall">
-            <option value="e2v">Export English → Vaiphei</option>
-            <option value="v2e">Export Vaiphei → English</option>
-          </select>
-          <button class="exportBtn" onclick="exportCSV()">Export</button>
-        </div>
-
-        <hr style="border:none;border-top:1px dashed #eee;margin:12px 0">
-
-        <h3>Add Word</h3>
-        <div class="addRow">
-          <input type="text" id="addWordLeft" placeholder="Left (word) e.g. Apple / Sial">
-          <input type="text" id="addWordRight" placeholder="Right (translation) e.g. Sial / Apple">
-        </div>
-        <div style="display:flex;gap:8px;margin-bottom:8px">
-          <select id="addTarget" class="selectSmall">
-            <option value="e2v">Add to English → Vaiphei</option>
-            <option value="v2e">Add to Vaiphei → English</option>
-          </select>
-          <button class="menuBtn" onclick="addWord()">Add Word</button>
-        </div>
-
-        <div class="noteBox">
-          <div style="font-weight:700;margin-bottom:6px">Notes</div>
-          <div style="font-size:13px;color:#444">
-            - Import files: first column is word, second column is translation. Header row will be ignored if present. <br>
-            - Data saved to your browser (localStorage). Use Export to backup.
-          </div>
-        </div>
-      </div>
-
-      <!-- BOOK VIEW -->
-      <div class="bookView">
-        <div class="book" id="book" aria-hidden="false">
-          <!-- pageShell will be rotated for animation -->
-          <div class="pageShell" id="pageShell">
-            <div class="page left" id="leftPage">
-              <!-- left page content (list) -->
-            </div>
-            <div class="page right" id="rightPage">
-              <!-- right page content (list) -->
-            </div>
-          </div>
-        </div>
-      </div>
-
-    </div>
-
-    <!-- Pager controls -->
-    <div style="max-width:980px;margin:18px auto;text-align:center">
-      <div class="pager">
-        <button onclick="goPrev()">Previous</button>
-        <button onclick="backToCover()" class="backToCover">Back to Cover</button>
-        <button onclick="goNext()">Next</button>
-      </div>
-      <div style="margin-top:8px;font-size:13px;color:#444">Page <span id="currentPage">1</span> / <span id="totalPages">1</span></div>
-    </div>
-
   </div>
 
-<script>
-/*
-  Tapkuang Vaiphei Dictionary - single file app
-  - Stores data in localStorage keys: 'tap_v2e' and 'tap_e2v'
-  - Supports import (xlsx/csv) using SheetJS and export to CSV
-  - Page turning animation implemented by rotating .pageShell
-  - Each "book page" shows several word entries (two pages visible: left and right)
-*/
+  <!-- Login Section -->
+  <div id="login" class="dictionary">
+    <h2>Admin Login</h2>
+    <input type="password" id="password" placeholder="Enter password">
+    <div class="nav-buttons">
+      <button onclick="doLogin()">Login</button>
+      <button onclick="backHome()">Back</button>
+    </div>
+    <p id="loginMsg"></p>
+  </div>
 
-const STORAGE_KEYS = { e2v: 'tap_e2v', v2e: 'tap_v2e' };
-const PER_PAGE = 8; // number of entries per single "page area" (left or right). We show two sides so per spread = PER_PAGE*2
+  <!-- Admin Section -->
+  <div id="admin" class="dictionary">
+    <h2>Admin Panel</h2>
+    <div class="buttons">
+      <button onclick="openSection('addWord')">Add Word</button>
+      <button onclick="importExcel()">Import Excel</button>
+      <button onclick="exportExcel()">Export Excel</button>
+    </div>
+    <div class="nav-buttons">
+      <button onclick="logout()">Logout</button>
+      <button onclick="backHome()">Back</button>
+    </div>
+  </div>
 
-// default demo entries (only used if no storage present)
-const defaultE2V = [
-  { left: "Apple", right: "Sial" },
-  { left: "Book", right: "Thu" },
-  { left: "Cat", right: "Kizu" },
-  { left: "Dog", right: "Uithu" },
-  { left: "Water", right: "Aw" },
-  { left: "Fire", right: "Thuol" },
-  { left: "Sky", right: "Raltu" },
-  { left: "House", right: "Veng" },
-  { left: "Mother", right: "Ngun" },
-  { left: "Father", right: "Pa" },
-  { left: "Sun", right: "Ni" },
-  { left: "Moon", right: "Mun" },
-];
+  <!-- Add Word Section -->
+  <div id="addWord" class="dictionary">
+    <h2>Add / Edit Word</h2>
+    <select id="dictType">
+      <option value="e2v">English → Vaiphei</option>
+      <option value="v2e">Vaiphei → English</option>
+    </select>
+    <input type="text" id="word" placeholder="Word">
+    <input type="text" id="meaning" placeholder="Meaning">
+    <div class="nav-buttons">
+      <button onclick="saveWord()">Save</button>
+      <button onclick="deleteWord()">Delete</button>
+      <button onclick="openSection('admin')">Back</button>
+    </div>
+    <p id="addMsg"></p>
+  </div>
 
-const defaultV2E = defaultE2V.map(x => ({ left: x.right, right: x.left }));
-
-// in-memory lists
-let data = { e2v: [], v2e: [] };
-
-// current book and page index
-let activeBook = null; // 'e2v' or 'v2e'
-let currentIndex = 0;   // spread index (0 = first spread which contains page 1 (left) and page2 (right) )
-
-// UI elements
-const app = document.getElementById('app');
-const cover = document.getElementById('cover');
-const activeBookLabel = document.getElementById('activeBookLabel');
-const leftPage = document.getElementById('leftPage');
-const rightPage = document.getElementById('rightPage');
-const pageShell = document.getElementById('pageShell');
-const bookElem = document.getElementById('book');
-const currentPageText = document.getElementById('currentPage');
-const totalPagesText = document.getElementById('totalPages');
-
-const importFileInput = document.getElementById('importFile');
-const importTargetSelector = document.getElementById('importTarget');
-
-loadFromStorage();
-renderBookUI();
-
-// ---------- STORAGE ----------
-function loadFromStorage(){
-  try {
-    const e2vRaw = localStorage.getItem(STORAGE_KEYS.e2v);
-    const v2eRaw = localStorage.getItem(STORAGE_KEYS.v2e);
-    data.e2v = e2vRaw ? JSON.parse(e2vRaw) : defaultE2V.slice();
-    data.v2e = v2eRaw ? JSON.parse(v2eRaw) : defaultV2E.slice();
-  } catch(e){
-    console.error("Failed to load storage", e);
-    data.e2v = defaultE2V.slice();
-    data.v2e = defaultV2E.slice();
-  }
-}
-
-function saveToStorage(){
-  localStorage.setItem(STORAGE_KEYS.e2v, JSON.stringify(data.e2v));
-  localStorage.setItem(STORAGE_KEYS.v2e, JSON.stringify(data.v2e));
-}
-
-// ---------- NAVIGATION ----------
-function enterBook(book){
-  activeBook = book;
-  currentIndex = 0;
-  cover.style.display = 'none';
-  app.style.display = 'block';
-  activeBookLabel.innerText = (book === 'e2v') ? "English → Vaiphei" : "Vaiphei → English";
-  renderSpread();
-}
-
-function backToCover(){
-  cover.style.display = 'flex';
-  app.style.display = 'none';
-  // reset flipping class
-  bookElem.classList.remove('turnNext','turnPrev');
-  activeBook = null;
-}
-
-// compute spreads: each spread contains left page entries and right page entries
-function spreadsFor(book){
-  const list = data[book];
-  const perSpread = PER_PAGE * 2;
-  const spreads = [];
-  for(let i=0;i<list.length;i+=perSpread){
-    const leftEntries = list.slice(i, i+PER_PAGE);
-    const rightEntries = list.slice(i+PER_PAGE, i+perSpread);
-    spreads.push({ left: leftEntries, right: rightEntries });
-  }
-  return spreads.length ? spreads : [{ left:[], right:[] }];
-}
-
-function renderSpread(){
-  if(!activeBook) return;
-  const spreads = spreadsFor(activeBook);
-  const total = spreads.length;
-  if(currentIndex < 0) currentIndex = 0;
-  if(currentIndex >= total) currentIndex = total - 1;
-
-  const spread = spreads[currentIndex];
-  leftPage.innerHTML = pageHtml(spread.left, true);
-  rightPage.innerHTML = pageHtml(spread.right, false);
-
-  currentPageText.innerText = (currentIndex*2 + 1);
-  totalPagesText.innerText = (total * 2);
-
-  // ensure shell rotation reset (for smooth repeat)
-  bookElem.classList.remove('turnNext','turnPrev');
-  setTimeout(()=>{ bookElem.classList.remove('turnNext','turnPrev'); },700);
-}
-
-// build inner html for a page area
-function pageHtml(entries, isLeft){
-  let html = `<div style="font-weight:700;font-size:14px;margin-bottom:8px">${isLeft? 'Page' : 'Page'}</div>`;
-  if(entries.length === 0){
-    html += `<div style="color:#7a6e62;margin-top:14px;font-style:italic">No more entries.</div>`;
-  } else {
-    entries.forEach(e=>{
-      html += `<div class="entry"><div><b>${escapeHtml(e.left)}</b><div style="color:#666">${escapeHtml(e.right)}</div></div></div>`;
-    });
-  }
-  return html;
-}
-
-// escape
-function escapeHtml(s){ return (s||'').toString().replace(/[&<>"']/g, function(m){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]; }); }
-
-// page flip controls
-let flipTimeout = null;
-function goNext(){
-  if(!activeBook) return;
-  const totalSpreads = spreadsFor(activeBook).length;
-  if(currentIndex < totalSpreads - 1){
-    // flip visually to next
-    bookElem.classList.add('turnNext');
-    // wait for animation then update content
-    clearTimeout(flipTimeout);
-    flipTimeout = setTimeout(()=>{
-      currentIndex++;
-      renderSpread();
-      // small reset to keep consistent state
-      bookElem.classList.remove('turnNext');
-    }, 620);
-  }
-}
-
-function goPrev(){
-  if(!activeBook) return;
-  if(currentIndex > 0){
-    // flip back (simulate)
-    // We'll briefly set shell to default, show prev
-    // Slight animation: remove turnNext and animate
-    bookElem.classList.add('turnPrev');
-    clearTimeout(flipTimeout);
-    flipTimeout = setTimeout(()=>{
-      currentIndex--;
-      renderSpread();
-      bookElem.classList.remove('turnPrev');
-    }, 420);
-  }
-}
-
-// ---------- ADD WORD ----------
-function addWord(){
-  const left = document.getElementById('addWordLeft').value.trim();
-  const right = document.getElementById('addWordRight').value.trim();
-  const target = document.getElementById('addTarget').value;
-
-  if(!left || !right){ alert('Please enter both word and translation.'); return; }
-
-  // append to list
-  data[target].push({ left, right });
-  saveToStorage();
-  document.getElementById('addWordLeft').value = '';
-  document.getElementById('addWordRight').value = '';
-  alert('Added.');
-  if(activeBook === target) renderSpread();
-}
-
-// ---------- EXPORT CSV ----------
-function exportCSV(){
-  const target = document.getElementById('exportTarget').value;
-  const arr = data[target] || [];
-  // create CSV lines
-  let csv = 'word,translation\n';
-  arr.forEach(r=>{
-    // escape quotes
-    const a = `"${(r.left||'').replace(/"/g,'""')}"`;
-    const b = `"${(r.right||'').replace(/"/g,'""')}"`;
-    csv += `${a},${b}\n`;
-  });
-  const blob = new Blob([csv], { type:'text/csv;charset=utf-8;' });
-  const filename = (target === 'e2v') ? 'english_to_vaiphei.csv' : 'vaiphei_to_english.csv';
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url; a.download = filename; document.body.appendChild(a); a.click();
-  setTimeout(()=>{ URL.revokeObjectURL(url); a.remove(); }, 5000);
-}
-
-// ---------- IMPORT (CSV / XLSX) ----------
-function importSelected(){
-  const file = importFileInput.files[0];
-  if(!file){ alert('Choose a file first.'); return; }
-  const target = importTargetSelector.value;
-
-  const reader = new FileReader();
-  const name = file.name.toLowerCase();
-  if(name.endsWith('.csv') || name.endsWith('.txt')){
-    reader.onload = (e) => {
-      const text = e.target.result;
-      const parsed = parseCSV(text);
-      if(parsed.length){
-        // parsed rows: [ [col1, col2], ... ]
-        // map into objects
-        const rows = parsed.map(r => ({ left: (r[0]||'').toString().trim(), right:(r[1]||'').toString().trim() })).filter(r=>r.left || r.right);
-        // append to existing data
-        data[target] = data[target].concat(rows);
-        saveToStorage();
-        alert(`Imported ${rows.length} rows into ${target}.`);
-        if(activeBook === target) renderSpread();
-      } else alert('No rows parsed from CSV.');
-    };
-    reader.readAsText(file,'utf-8');
-  } else {
-    // try reading xlsx via SheetJS
-    reader.onload = (e) => {
-      const dataArr = e.target.result;
-      let workbook;
-      try {
-        workbook = XLSX.read(dataArr, { type: 'binary' });
-      } catch(err){
-        alert('Failed to read file as spreadsheet: ' + err);
-        return;
-      }
-      // take first sheet
-      const sheetName = workbook.SheetNames[0];
-      const sheet = workbook.Sheets[sheetName];
-      // convert to json (array of arrays)
-      const rows = XLSX.utils.sheet_to_json(sheet, { header:1 });
-      // ignore header row if it looks like header (contains non-word labels)
-      const mapped = rows.map(r=>({ left: (r[0]||'').toString().trim(), right:(r[1]||'').toString().trim() })).filter(r=>r.left || r.right);
-      data[target] = data[target].concat(mapped);
-      saveToStorage();
-      alert(`Imported ${mapped.length} rows from spreadsheet into ${target}.`);
-      if(activeBook === target) renderSpread();
-    };
-    // read as binary string
-    reader.readAsBinaryString(file);
-  }
-}
-
-// rudimentary CSV parser (handles quoted fields)
-function parseCSV(text){
-  const rows = [];
-  const lines = text.split(/\r\n|\n/);
-  for(let i=0;i<lines.length;i++){
-    const line = lines[i].trim();
-    if(line === '') continue;
-    const cols = [];
-    let cur = '';
-    let inQuotes = false;
-    for(let j=0;j<line.length;j++){
-      const ch = line[j];
-      if(ch === '"' && line[j+1]==='"'){ cur += '"'; j++; continue; }
-      if(ch === '"'){ inQuotes = !inQuotes; continue; }
-      if(ch === ',' && !inQuotes){ cols.push(cur); cur=''; continue; }
-      cur += ch;
-    }
-    cols.push(cur);
-    rows.push(cols);
-  }
-  return rows;
-}
-
-// ---------- UI Helpers ----------
-function openAdmin(){
-  cover.style.display = 'none';
-  app.style.display = 'block';
-  activeBookLabel.innerText = '—';
-  // render blank book content
-  leftPage.innerHTML = `<div style="padding:16px;color:#666">Choose a book to open on the left (E→V or V→E)</div>`;
-  rightPage.innerHTML = `<div style="padding:16px;color:#666">Admin panel on the left — open a book to view pages.</div>`;
-}
-
-// minimal UI render at start
-function renderBookUI(){
-  // ensure data loaded
-  // nothing else needed here; real rendering occurs on enterBook
-}
-
-// On page load, show cover (already)
-</script>
 </body>
 </html>
