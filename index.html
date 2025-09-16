@@ -4,38 +4,26 @@
   <meta charset="UTF-8">
   <title>Tapkuang Vaiphei Dictionary</title>
   <link rel="stylesheet" href="style.css">
-  <script defer src="xlsx.full.min.js"></script>
-  <script defer src="script.js"></script>
+  <script src="xlsx.full.min.js"></script>
 </head>
 <body>
-
   <!-- Cover Page -->
   <div id="cover" class="cover">
     <img src="Dictionary.png" alt="Dictionary Cover">
     <h1>Tapkuang Vaiphei Dictionary</h1>
     <p>By Ph Thianneilal Vaiphei 2025</p>
     <div class="buttons">
-      <button onclick="openSection('e2v')">English → Vaiphei</button>
-      <button onclick="openSection('v2e')">Vaiphei → English</button>
-      <button onclick="openSection('login')">Login</button>
+      <button onclick="openSection('dictionaryE2V')">English → Vaiphei</button>
+      <button onclick="openSection('dictionaryV2E')">Vaiphei → English</button>
+      <button onclick="openSection('login')">Admin Login</button>
     </div>
   </div>
 
-  <!-- Dictionary Section -->
-  <div id="dictionary" class="dictionary">
-    <h2 id="dictTitle"></h2>
-    <div class="page" id="dictPage"></div>
-    <div class="nav-buttons">
-      <button onclick="prevPage()">← Previous</button>
-      <button onclick="nextPage()">Next →</button>
-      <button onclick="backHome()">Back</button>
-    </div>
-  </div>
-
-  <!-- Login Section -->
-  <div id="login" class="dictionary">
+  <!-- Login -->
+  <div id="login" class="section">
     <h2>Admin Login</h2>
-    <input type="password" id="password" placeholder="Enter password">
+    <input type="text" id="username" placeholder="Username">
+    <input type="password" id="password" placeholder="Password">
     <div class="nav-buttons">
       <button onclick="doLogin()">Login</button>
       <button onclick="backHome()">Back</button>
@@ -43,36 +31,70 @@
     <p id="loginMsg"></p>
   </div>
 
-  <!-- Admin Section -->
-  <div id="admin" class="dictionary">
+  <!-- Admin Panel -->
+  <div id="admin" class="section">
     <h2>Admin Panel</h2>
-    <div class="buttons">
-      <button onclick="openSection('addWord')">Add Word</button>
-      <button onclick="importExcel()">Import Excel</button>
-      <button onclick="exportExcel()">Export Excel</button>
-    </div>
+    <button onclick="openSection('addWord')">Add Word</button>
+    <button onclick="importExcel()">Import Excel</button>
+    <button onclick="exportExcel()">Export Excel</button>
+    <button onclick="openSection('changeLogin')">Change Login</button>
+    <button onclick="logout()">Logout</button>
     <div class="nav-buttons">
-      <button onclick="logout()">Logout</button>
       <button onclick="backHome()">Back</button>
     </div>
   </div>
 
-  <!-- Add Word Section -->
-  <div id="addWord" class="dictionary">
-    <h2>Add / Edit Word</h2>
-    <select id="dictType">
+  <!-- Change Login -->
+  <div id="changeLogin" class="section">
+    <h2>Change Admin Login</h2>
+    <input type="text" id="newUser" placeholder="New Username">
+    <input type="password" id="newPass" placeholder="New Password">
+    <div class="nav-buttons">
+      <button onclick="updateLogin()">Save</button>
+      <button onclick="openSection('admin')">Back</button>
+    </div>
+    <p id="loginChangeMsg"></p>
+  </div>
+
+  <!-- Add Word -->
+  <div id="addWord" class="section">
+    <h2>Add Word</h2>
+    <select id="addType">
       <option value="e2v">English → Vaiphei</option>
       <option value="v2e">Vaiphei → English</option>
     </select>
-    <input type="text" id="word" placeholder="Word">
-    <input type="text" id="meaning" placeholder="Meaning">
+    <input type="text" id="word1" placeholder="Word">
+    <input type="text" id="word2" placeholder="Translation">
     <div class="nav-buttons">
-      <button onclick="saveWord()">Save</button>
-      <button onclick="deleteWord()">Delete</button>
+      <button onclick="addWord()">Add</button>
       <button onclick="openSection('admin')">Back</button>
     </div>
     <p id="addMsg"></p>
   </div>
 
+  <!-- Dictionary Pages -->
+  <div id="dictionaryE2V" class="section">
+    <h2>English → Vaiphei Dictionary</h2>
+    <input type="text" id="searchE2V" oninput="searchWords('e2v')" placeholder="Search...">
+    <div id="e2vList"></div>
+    <div class="nav-buttons">
+      <button onclick="prevPage('e2v')">← Prev</button>
+      <button onclick="nextPage('e2v')">Next →</button>
+      <button onclick="backHome()">Back</button>
+    </div>
+  </div>
+
+  <div id="dictionaryV2E" class="section">
+    <h2>Vaiphei → English Dictionary</h2>
+    <input type="text" id="searchV2E" oninput="searchWords('v2e')" placeholder="Search...">
+    <div id="v2eList"></div>
+    <div class="nav-buttons">
+      <button onclick="prevPage('v2e')">← Prev</button>
+      <button onclick="nextPage('v2e')">Next →</button>
+      <button onclick="backHome()">Back</button>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
 </body>
 </html>
