@@ -1,168 +1,88 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta charset="UTF-8">
   <title>Tapkuang Vaiphei Dictionary</title>
   <link rel="stylesheet" href="style.css">
-  <!-- SheetJS CDN for import/export -->
-  <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <script src="script.js" defer></script>
 </head>
 <body>
-  <!-- HOME / COVER -->
-  <header class="home" id="homeScreen">
+
+  <!-- Login Page -->
+  <section id="loginPage" class="page">
+    <h2>Login</h2>
+    <input type="text" id="username" placeholder="Username"><br><br>
+    <input type="password" id="password" placeholder="Password"><br><br>
+    <button onclick="login()">Login</button>
+  </section>
+
+  <!-- Home Page -->
+  <section id="homePage" class="page">
     <img src="Home page.jpg" alt="Cover" class="cover-img">
-    <h1>By PH THIANNEILAL VAIPHEI</h1>
-    <div class="menu-grid">
-      <button class="menu-card" onclick="showHome()">Home</button>
-      <button class="menu-card" onclick="openDictionary('search')">Hawlna (Search)</button>
-      <button class="menu-card" onclick="openDictionary('e2v')">Thumahlilchian (E → V)</button>
-      <button class="menu-card" onclick="openSection('import')">Excel laklutna (Import CSV/XLSX)</button>
-      <button class="menu-card" onclick="openSection('add')">Thumal belapna (Add Word)</button>
-      <button class="menu-card" onclick="openSection('settings')">Munpi (Settings)</button>
-      <button class="menu-card" onclick="openSection('login')" id="loginCard">Lutna (Login/Setup)</button>
-      <button class="menu-card" onclick="logout()" id="logoutCard" style="display:none">Pawtna (Logout)</button>
+    <h1>Tapkuang Vaiphei Dictionary</h1>
+    <p>By Ph Thianneilal Vaiphei 2025</p>
+    <div class="buttons">
+      <button onclick="showSection('e2vDict')">English → Vaiphei</button>
+      <button onclick="showSection('v2eDict')">Vaiphei → English</button>
+      <button onclick="showSection('addWordPage')">Add Word</button>
+      <button onclick="showSection('importExportPage')">Import / Export</button>
+      <button onclick="logout()">Logout</button>
     </div>
-
-    <div class="info-box">
-      <p>👋 Tapkuang – Vaiphei Dictionary. Use Hawlna (Search) or Thumahlilchian (Dictionary). Admin can Import / Export / Add / Edit / Delete words.</p>
-    </div>
-  </header>
-
-  <!-- LOGIN -->
-  <section class="panel" id="login">
-    <h2>Login / Setup</h2>
-    <input id="loginUser" placeholder="Username" />
-    <input id="loginPass" placeholder="Password" type="password" />
-    <div class="row">
-      <button onclick="doLogin()">Login</button>
-      <button onclick="showHome()">Back</button>
-    </div>
-    <p id="loginMsg" class="msg"></p>
   </section>
 
-  <!-- SETTINGS (change admin credentials) -->
-  <section class="panel" id="settings">
-    <h2>Settings (Change Admin)</h2>
-    <input id="newAdminUser" placeholder="New username" />
-    <input id="newAdminPass" placeholder="New password" type="password" />
-    <div class="row">
-      <button onclick="changeAdmin()">Save</button>
-      <button onclick="showHome()">Back</button>
-    </div>
-    <p id="setMsg" class="msg"></p>
-  </section>
-
-  <!-- IMPORT -->
-  <section class="panel" id="import">
-    <h2>Import (CSV / XLSX)</h2>
-    <p class="note">Choose file and target dictionary. Expected columns: Word, Meaning (first two columns).</p>
-    <input id="importFile" type="file" accept=".csv,.xlsx,.xls" />
-    <div class="row">
-      <select id="importTarget">
-        <option value="e2v">English → Vaiphei (E→V)</option>
-        <option value="v2e">Vaiphei → English (V→E)</option>
-      </select>
-      <button onclick="importFile()">Import & Save</button>
-      <button onclick="showHome()">Back</button>
-    </div>
-    <p id="importMsg" class="msg"></p>
-  </section>
-
-  <!-- ADD WORD -->
-  <section class="panel" id="add">
+  <!-- Add Word Page -->
+  <section id="addWordPage" class="page">
     <h2>Add Word</h2>
-    <label>Target</label>
-    <select id="addTarget">
+    <select id="dictType">
       <option value="e2v">English → Vaiphei</option>
       <option value="v2e">Vaiphei → English</option>
-    </select>
-    <input id="addWordLeft" placeholder="Word (Left)" />
-    <input id="addWordRight" placeholder="Meaning (Right)" />
-    <div class="row">
-      <button onclick="addWordFromForm()">Save</button>
-      <button onclick="showHome()">Back</button>
-    </div>
-    <p id="addMsg" class="msg"></p>
+    </select><br><br>
+    <input type="text" id="wordInput" placeholder="Word"><br><br>
+    <input type="text" id="meaningInput" placeholder="Meaning"><br><br>
+    <button onclick="addWord()">Save Word</button><br><br>
+    <button onclick="showSection('homePage')">Back</button>
   </section>
 
-  <!-- SEARCH (Hawlna) -->
-  <section class="panel" id="search">
-    <h2>Hawlna (Search)</h2>
-    <select id="searchTarget">
-      <option value="e2v">English → Vaiphei</option>
-      <option value="v2e">Vaiphei → English</option>
-    </select>
-    <input id="searchBox" placeholder="Type word to search..." oninput="doSearch()" />
-    <div id="searchResults" class="results"></div>
-    <div class="row"><button onclick="showHome()">Back</button></div>
+  <!-- Import / Export Page -->
+  <section id="importExportPage" class="page">
+    <h2>Import / Export</h2>
+    <h3>English → Vaiphei</h3>
+    <input type="file" accept=".xlsx" onchange="importExcel(event,'e2v')"><br>
+    <button onclick="exportExcel('e2v')">Export E2V</button>
+
+    <h3>Vaiphei → English</h3>
+    <input type="file" accept=".xlsx" onchange="importExcel(event,'v2e')"><br>
+    <button onclick="exportExcel('v2e')">Export V2E</button><br><br>
+
+    <button onclick="showSection('homePage')">Back</button>
   </section>
 
-  <!-- DICTIONARIES: E2V & V2E (single-page display each) -->
-  <section class="panel dict" id="e2v">
-    <div class="dict-head">
-      <h2>English → Vaiphei</h2>
-      <div class="dict-controls">
-        <input id="e2vSearch" placeholder="Search in dictionary..." oninput="searchInDict('e2v')" />
-        <button id="e2vLogout" style="display:none" onclick="logout()">Logout</button>
-      </div>
+  <!-- English → Vaiphei Dictionary -->
+  <section id="e2vDict" class="page">
+    <h2>English → Vaiphei</h2>
+    <input type="text" id="e2vSearch" placeholder="Search..." oninput="searchWord('e2v')">
+    <div class="dict-page" id="e2vPage"></div>
+    <div class="nav-buttons">
+      <button onclick="prevPage('e2v')">← Prev</button>
+      <span id="e2vPageNum">0 / 0</span>
+      <button onclick="nextPage('e2v')">Next →</button>
     </div>
-
-    <div id="e2vPage" class="book-page"></div>
-
-    <div class="nav">
-      <button onclick="prevEntry('e2v')">← Prev</button>
-      <span id="e2vPos">0 / 0</span>
-      <button onclick="nextEntry('e2v')">Next →</button>
-    </div>
-
-    <div class="jump">
-      <input id="e2vJump" type="number" placeholder="Page #" />
-      <button onclick="jumpTo('e2v')">Go</button>
-    </div>
-
-    <div id="e2vAdmin" class="admin-row"></div>
-
-    <div class="row import-export">
-      <button onclick="triggerImport('e2v')">Import for E→V</button>
-      <button onclick="exportDict('e2v')">Export E→V</button>
-      <button onclick="showHome()">Back</button>
-    </div>
+    <button onclick="showSection('homePage')">Back</button>
   </section>
 
-  <section class="panel dict" id="v2e">
-    <div class="dict-head">
-      <h2>Vaiphei → English</h2>
-      <div class="dict-controls">
-        <input id="v2eSearch" placeholder="Search in dictionary..." oninput="searchInDict('v2e')" />
-        <button id="v2eLogout" style="display:none" onclick="logout()">Logout</button>
-      </div>
+  <!-- Vaiphei → English Dictionary -->
+  <section id="v2eDict" class="page">
+    <h2>Vaiphei → English</h2>
+    <input type="text" id="v2eSearch" placeholder="Search..." oninput="searchWord('v2e')">
+    <div class="dict-page" id="v2ePage"></div>
+    <div class="nav-buttons">
+      <button onclick="prevPage('v2e')">← Prev</button>
+      <span id="v2ePageNum">0 / 0</span>
+      <button onclick="nextPage('v2e')">Next →</button>
     </div>
-
-    <div id="v2ePage" class="book-page"></div>
-
-    <div class="nav">
-      <button onclick="prevEntry('v2e')">← Prev</button>
-      <span id="v2ePos">0 / 0</span>
-      <button onclick="nextEntry('v2e')">Next →</button>
-    </div>
-
-    <div class="jump">
-      <input id="v2eJump" type="number" placeholder="Page #" />
-      <button onclick="jumpTo('v2e')">Go</button>
-    </div>
-
-    <div id="v2eAdmin" class="admin-row"></div>
-
-    <div class="row import-export">
-      <button onclick="triggerImport('v2e')">Import for V→E</button>
-      <button onclick="exportDict('v2e')">Export V→E</button>
-      <button onclick="showHome()">Back</button>
-    </div>
+    <button onclick="showSection('homePage')">Back</button>
   </section>
 
-  <footer class="footer">Data saved locally in browser (localStorage). Use Export to backup.</footer>
-
-  <script src="script.js"></script>
 </body>
 </html>
