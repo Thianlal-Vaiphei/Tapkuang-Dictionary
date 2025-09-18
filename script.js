@@ -1,199 +1,243 @@
-let loggedIn = false;
-let pageSize = 10;
+// ===== Data Storage =====
+let e2vPages = JSON.parse(localStorage.getItem("e2vPages") || "[]");
+let v2ePages = JSON.parse(localStorage.getItem("v2ePages") || "[]");
 let currentPage = { e2v: 0, v2e: 0 };
-let words = { e2v: [], v2e: [] };
-let filtered = { e2v: null, v2e: null };
+let searchResults = { e2v: null, v2e: null };
 
-// Setup default admin
-if (!localStorage.getItem("admin")) {
-  localStorage.setItem("admin", JSON.stringify({ username: "admin", password: "admin123" }));
+// ===== Admin Credentials =====
+const adminUser = "Thianlal Vaiphei";
+const adminPass = "phaltual";
+let isAdmin = false;
+
+// ===== Utility: Save Data =====
+function saveData() {
+  localStorage.setItem("e2vPages", JSON.stringify(e2vPages));
+  localStorage.setItem("v2ePages", JSON.stringify(v2ePages));
 }
 
-// Load words from localStorage
-if (localStorage.getItem("words")) {
-  words = JSON.parse(localStorage.getItem("words"));
-}
-
-function saveWords() {
-  localStorage.setItem("words", JSON.stringify(words));
-}
-
-// Section navigation
-function openSection(id) {
-  document.querySelectorAll(".section, .cover").forEach(sec => sec.style.display = "none");
-  document.getElementById(id).style.display = "block";
-  if (id === "dictionaryE2V") showPage("e2v");
-  if (id === "dictionaryV2E") showPage("v2e");
-}
-
-function backHome() {
-  document.querySelectorAll(".section").forEach(sec => sec.style.display = "none");
-  document.getElementById("cover").style.display = "flex";
-}
-
-// Login
-function doLogin() {
-  let user = document.getElementById("username").value;
-  let pass = document.getElementById("password").value;
-  let admin = JSON.parse(localStorage.getItem("admin"));
-
-  if (user === admin.username && pass === admin.password) {
-    loggedIn = true;
-    document.getElementById("loginMsg").innerText = "Login successful!";
-    openSection("admin");
+// ===== Utility: Sort Dictionary =====
+function sortDictionary(book) {
+  if (book === "e2v") {
+    e2vPages.sort((a, b) => a.localeCompare(b));
   } else {
-    document.getElementById("loginMsg").innerText = "Wrong username or password!";
+    v2ePages.sort((a, b) => a.localeCompare(b));
   }
+}
+
+// ===== Open/Close Books =====
+function openBook(book) {
+  document.getElementById("cover").style.display = "none";
+  document.getElementById(book).style.display = "block";
+  showPage(book);
+}
+
+function closeBook() {
+  document.getElementById("cover").style.display = "flex";
+  document.getElementById("e2v").style.display = "none";
+  document.getElementById("v2e").style.display = "none";
+}
+
+// ===== Login =====
+function login() {
+  let user = prompt("Enter username:");
+  let pass = prompt("Enter password:");
+  if (user === adminUser && pass === adminPass) {
+    alert("Login successful!");
+    isAdmin = true;
+  } else {
+    alert("Invalid credentials.");
+  }
+  showPage("e2v");
+  showPage("v2e");
 }
 
 function logout() {
-  loggedIn = false;
-  backHome();
+  isAdmin = false;
+  alert("Logged out!");
+  showPage("e2v");
+  showPage("v2e");
 }
 
-// Change Login
-function updateLogin() {
-  let newUser = document.getElementById("newUser").value.trim();
-  let newPass = document.getElementById("newPass").value.trim();
-  if (!newUser || !newPass) {
-    document.getElementById("loginChangeMsg").innerText = "Both fields required!";
-    return;
-  }
-  localStorage.setItem("admin", JSON.stringify({ username: newUser, password: newPass }));
-  document.getElementById("loginChangeMsg").innerText = "Login updated!";
-}
-
-// Add Word
-function addWord() {
-  let type = document.getElementById("addType").value;
-  let w1 = document.getElementById("word1").value.trim();
-  let w2 = document.getElementById("word2").value.trim();
-  if (!w1 || !w2) {
-    document.getElementById("addMsg").innerText = "Both fields required!";
-    return;
-  }
-  if (type === "e2v") words.e2v.push({ e: w1, v: w2 });
-  else words.v2e.push({ v: w1, e: w2 });
-  saveWords();
-  document.getElementById("addMsg").innerText = "Word added!";
-  document.getElementById("word1").value = "";
-  document.getElementById("word2").value = "";
-}
-
-// Show Dictionary
-function showPage(type) {
-  let list = document.getElementById(type + "List");
-  list.innerHTML = "";
-  let data = filtered[type] || words[type];
-  let start = currentPage[type] * pageSize;
-  let pageData = data.slice(start, start + pageSize);
-
-  pageData.forEach((item, i) => {
-    let div = document.createElement("div");
-    div.className = "word-entry";
-    div.innerHTML = type === "e2v"
-      ? `<b>${item.e}</b> → ${item.v}`
-      : `<b>${item.v}</b> → ${item.e}`;
-
-    if (loggedIn) {
-      let editBtn = document.createElement("button");
-      editBtn.textContent = "Edit";
-      editBtn.onclick = () => editWord(type, start + i);
-      let delBtn = document.createElement("button");
-      delBtn.textContent = "Delete";
-      delBtn.onclick = () => deleteWord(type, start + i);
-      div.appendChild(editBtn);
-      div.appendChild(delBtn);
+// ===== Add Word =====
+function addWord(book) {
+  let word = prompt("Enter word:");
+  let meaning = prompt("Enter meaning:");
+  if (word && meaning) {
+    let entry = word + " - " + meaning;
+    if (book === "e2v") {
+      e2vPages.push(entry);
+      sortDictionary("e2v");
+    } else {
+      v2ePages.push(entry);
+      sortDictionary("v2e");
     }
-    list.appendChild(div);
-  });
-}
-
-// Edit word
-function editWord(type, index) {
-  let new1, new2;
-  if (type === "e2v") {
-    new1 = prompt("Edit English:", words.e2v[index].e);
-    new2 = prompt("Edit Vaiphei:", words.e2v[index].v);
-    if (new1 && new2) words.e2v[index] = { e: new1, v: new2 };
-  } else {
-    new1 = prompt("Edit Vaiphei:", words.v2e[index].v);
-    new2 = prompt("Edit English:", words.v2e[index].e);
-    if (new1 && new2) words.v2e[index] = { v: new1, e: new2 };
+    saveData();
+    showPage(book);
   }
-  saveWords();
-  showPage(type);
 }
 
-// Delete word
-function deleteWord(type, index) {
+// ===== Edit Word =====
+function editWord(book, index) {
+  let data = (book === "e2v") ? e2vPages : v2ePages;
+  let parts = data[index].split(" - ");
+  let newWord = prompt("Edit word:", parts[0]);
+  let newMeaning = prompt("Edit meaning:", parts[1]);
+  if (newWord && newMeaning) {
+    data[index] = newWord + " - " + newMeaning;
+    sortDictionary(book);
+    saveData();
+    showPage(book);
+  }
+}
+
+// ===== Delete Word =====
+function deleteWord(book, index) {
   if (confirm("Delete this word?")) {
-    words[type].splice(index, 1);
-    saveWords();
-    showPage(type);
+    if (book === "e2v") {
+      e2vPages.splice(index, 1);
+      sortDictionary("e2v");
+    } else {
+      v2ePages.splice(index, 1);
+      sortDictionary("v2e");
+    }
+    saveData();
+    showPage(book);
   }
 }
 
-// Paging
-function nextPage(type) {
-  let data = filtered[type] || words[type];
-  if ((currentPage[type] + 1) * pageSize < data.length) {
-    currentPage[type]++;
-    showPage(type);
-  }
-}
-function prevPage(type) {
-  if (currentPage[type] > 0) {
-    currentPage[type]--;
-    showPage(type);
-  }
-}
+// ===== Show Page =====
+function showPage(book) {
+  let pageIndex = currentPage[book];
+  let data = searchResults[book] ? searchResults[book] : (book === "e2v" ? e2vPages : v2ePages);
+  let container = document.getElementById(book + "Page");
 
-// Search
-function searchWords(type) {
-  let query = document.getElementById(type === "e2v" ? "searchE2V" : "searchV2E").value.toLowerCase();
-  if (!query) {
-    filtered[type] = null;
+  container.innerText = data[pageIndex] || "No entry";
+
+  // Admin controls
+  let adminDiv = document.getElementById(book + "Admin");
+  if (isAdmin && data[pageIndex] && data[pageIndex] !== "No results found") {
+    adminDiv.innerHTML = `
+      <button onclick="editWord('${book}', ${pageIndex})">Edit</button>
+      <button onclick="deleteWord('${book}', ${pageIndex})">Delete</button>
+      <button onclick="addWord('${book}')">Add New</button>
+      <button onclick="logout()">Logout</button>
+    `;
+  } else if (isAdmin) {
+    adminDiv.innerHTML = `<button onclick="addWord('${book}')">Add New</button>
+                          <button onclick="logout()">Logout</button>`;
   } else {
-    filtered[type] = words[type].filter(item =>
-      (item.e && item.e.toLowerCase().includes(query)) ||
-      (item.v && item.v.toLowerCase().includes(query))
-    );
+    adminDiv.innerHTML = "";
   }
-  currentPage[type] = 0;
-  showPage(type);
+
+  // Update Jump Info
+  document.getElementById(book + "PageNum").innerText = (pageIndex + 1) + " / " + data.length;
 }
 
-// Excel Import/Export
-function importExcel() {
-  let input = document.createElement("input");
-  input.type = "file";
-  input.accept = ".xlsx,.xls";
-  input.onchange = e => {
-    let file = e.target.files[0];
-    let reader = new FileReader();
-    reader.onload = evt => {
-      let data = new Uint8Array(evt.target.result);
-      let workbook = XLSX.read(data, { type: "array" });
-      let sheet = workbook.Sheets[workbook.SheetNames[0]];
-      let rows = XLSX.utils.sheet_to_json(sheet);
-      rows.forEach(r => {
-        if (r.English && r.Vaiphei) words.e2v.push({ e: r.English, v: r.Vaiphei });
-        if (r.Vaiphei && r.English) words.v2e.push({ v: r.Vaiphei, e: r.English });
-      });
-      saveWords();
-      alert("Imported successfully!");
-    };
-    reader.readAsArrayBuffer(file);
+// ===== Next / Prev Page with Animation =====
+function nextPage(book) {
+  let data = searchResults[book] ? searchResults[book] : (book === "e2v" ? e2vPages : v2ePages);
+  if (currentPage[book] < data.length - 1) {
+    let pageEl = document.getElementById(book + "Page");
+    pageEl.classList.add("flip-next");
+    setTimeout(() => {
+      currentPage[book]++;
+      showPage(book);
+      pageEl.classList.remove("flip-next");
+    }, 600);
+  }
+}
+
+function prevPage(book) {
+  if (currentPage[book] > 0) {
+    let pageEl = document.getElementById(book + "Page");
+    pageEl.classList.add("flip-prev");
+    setTimeout(() => {
+      currentPage[book]--;
+      showPage(book);
+      pageEl.classList.remove("flip-prev");
+    }, 600);
+  }
+}
+
+// ===== Jump to Page =====
+function jumpToPage(book) {
+  let num = parseInt(document.getElementById(book + "Jump").value);
+  let data = searchResults[book] ? searchResults[book] : (book === "e2v" ? e2vPages : v2ePages);
+  if (!isNaN(num) && num > 0 && num <= data.length) {
+    currentPage[book] = num - 1;
+    showPage(book);
+  } else {
+    alert("Invalid page number!");
+  }
+}
+
+// ===== Search =====
+function searchWord(book) {
+  let query = document.getElementById(book + "Search").value.toLowerCase().trim();
+  let data = (book === "e2v") ? e2vPages : v2ePages;
+
+  if (query === "") {
+    searchResults[book] = null;
+    currentPage[book] = 0;
+    showPage(book);
+    return;
+  }
+
+  let results = data.filter(entry => entry.toLowerCase().includes(query));
+  searchResults[book] = results.length ? results : ["No results found"];
+  currentPage[book] = 0;
+  showPage(book);
+}
+
+// ===== A–Z Filter =====
+function filterAZ(book, letter) {
+  let data = (book === "e2v") ? e2vPages : v2ePages;
+  let results = data.filter(entry => entry.toLowerCase().startsWith(letter.toLowerCase()));
+  searchResults[book] = results.length ? results : ["No results found"];
+  currentPage[book] = 0;
+  showPage(book);
+}
+
+// ===== Import / Export Excel =====
+function importExcel(event, book) {
+  let file = event.target.files[0];
+  let reader = new FileReader();
+  reader.onload = function(e) {
+    let data = new Uint8Array(e.target.result);
+    let workbook = XLSX.read(data, { type: "array" });
+    let sheet = workbook.Sheets[workbook.SheetNames[0]];
+    let rows = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+
+    rows.forEach(row => {
+      if (row[0] && row[1]) {
+        let entry = row[0] + " - " + row[1];
+        if (book === "e2v") {
+          e2vPages.push(entry);
+        } else {
+          v2ePages.push(entry);
+        }
+      }
+    });
+    sortDictionary(book);
+    saveData();
+    showPage(book);
   };
-  input.click();
+  reader.readAsArrayBuffer(file);
 }
 
-function exportExcel() {
+function exportExcel(book) {
+  let data = (book === "e2v") ? e2vPages : v2ePages;
+  let rows = data.map(entry => entry.split(" - "));
+  let ws = XLSX.utils.aoa_to_sheet([["Word", "Meaning"], ...rows]);
   let wb = XLSX.utils.book_new();
-  let ws1 = XLSX.utils.json_to_sheet(words.e2v.map(w => ({ English: w.e, Vaiphei: w.v })));
-  let ws2 = XLSX.utils.json_to_sheet(words.v2e.map(w => ({ Vaiphei: w.v, English: w.e })));
-  XLSX.utils.book_append_sheet(wb, ws1, "E2V");
-  XLSX.utils.book_append_sheet(wb, ws2, "V2E");
-  XLSX.writeFile(wb, "dictionary.xlsx");
+  XLSX.utils.book_append_sheet(wb, ws, "Dictionary");
+  XLSX.writeFile(wb, book + "_dictionary.xlsx");
 }
+
+// ===== Init =====
+window.onload = () => {
+  sortDictionary("e2v");
+  sortDictionary("v2e");
+  showPage("e2v");
+  showPage("v2e");
+};
