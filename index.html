@@ -1,88 +1,148 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Tapkuang Vaiphei Dictionary</title>
+
+  <!-- style -->
   <link rel="stylesheet" href="style.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+  <!-- jQuery + Turn.js (page-turning library) -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <!-- NOTE: if your environment blocks CDN, download and reference locally -->
+  <script src="https://cdn.jsdelivr.net/gh/blasten/turn.js@4/turn.min.js"></script>
+
+  <!-- SheetJS for Excel import/export -->
+  <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
+
+  <!-- dictionary data (separate file) -->
+  <script src="dictionary-data.js" defer></script>
+
+  <!-- main logic -->
   <script src="script.js" defer></script>
 </head>
 <body>
 
-  <!-- Login Page -->
-  <section id="loginPage" class="page">
+  <!-- COVER / HOME -->
+  <main id="home" class="screen">
+    <img src="cover.jpg" alt="Cover" class="cover-img">
+    <h1>Tapkuang — Vaiphei Dictionary</h1>
+    <p>By PH THIANNEILAL VAIPHEI</p>
+
+    <div class="menu-grid">
+      <button onclick="openBook('v2e')" class="card">Vaiphei → English</button>
+      <button onclick="openBook('e2v')" class="card">English → Vaiphei</button>
+      <button onclick="openImportPage()" class="card">Excel laklutna (Import)</button>
+      <button onclick="openAddPage()" class="card">Thumal belapna (Add Word)</button>
+      <button id="loginBtn" onclick="openLogin()" class="card">Lutna (Login)</button>
+      <button id="logoutBtn" onclick="doLogout()" class="card" style="display:none">Pawtna (Logout)</button>
+    </div>
+
+    <div class="info">Browse or login as admin to manage words. Admin: <b>Thianlal Vaiphei</b> / <b>phaltual</b></div>
+  </main>
+
+  <!-- LOGIN -->
+  <section id="login" class="screen" style="display:none">
     <h2>Login</h2>
-    <input type="text" id="username" placeholder="Username"><br><br>
-    <input type="password" id="password" placeholder="Password"><br><br>
-    <button onclick="login()">Login</button>
+    <input id="loginUser" placeholder="Username" />
+    <input id="loginPass" placeholder="Password" type="password" />
+    <div class="row">
+      <button onclick="doLogin()">Login</button>
+      <button onclick="openHome()">Back</button>
+    </div>
+    <p id="loginMsg" class="msg"></p>
   </section>
 
-  <!-- Home Page -->
-  <section id="homePage" class="page">
-    <img src="Home page.jpg" alt="Cover" class="cover-img">
-    <h1>Tapkuang Vaiphei Dictionary</h1>
-    <p>By Ph Thianneilal Vaiphei 2025</p>
-    <div class="buttons">
-      <button onclick="showSection('e2vDict')">English → Vaiphei</button>
-      <button onclick="showSection('v2eDict')">Vaiphei → English</button>
-      <button onclick="showSection('addWordPage')">Add Word</button>
-      <button onclick="showSection('importExportPage')">Import / Export</button>
-      <button onclick="logout()">Logout</button>
+  <!-- IMPORT/EXPORT (Excel Laklutna) -->
+  <section id="importPage" class="screen" style="display:none">
+    <h2>Import / Save Excel (Laklutna)</h2>
+    <p class="note">Select file (.xlsx or .csv). First two columns expected: Word, Meaning.</p>
+    <input id="importFile" type="file" accept=".xlsx,.xls,.csv,.txt" />
+    <div class="row">
+      <select id="importTarget">
+        <option value="v2e">Vaiphei → English (V2E)</option>
+        <option value="e2v">English → Vaiphei (E2V)</option>
+      </select>
+      <button onclick="doImport()">Import & Save</button>
+      <button onclick="openHome()">Back</button>
+    </div>
+    <p id="importMsg" class="msg"></p>
+
+    <hr>
+
+    <div class="row">
+      <button onclick="exportDict('v2e')">Export V2E (XLSX)</button>
+      <button onclick="exportDict('e2v')">Export E2V (XLSX)</button>
     </div>
   </section>
 
-  <!-- Add Word Page -->
-  <section id="addWordPage" class="page">
+  <!-- ADD WORD -->
+  <section id="addPage" class="screen" style="display:none">
     <h2>Add Word</h2>
-    <select id="dictType">
-      <option value="e2v">English → Vaiphei</option>
-      <option value="v2e">Vaiphei → English</option>
-    </select><br><br>
-    <input type="text" id="wordInput" placeholder="Word"><br><br>
-    <input type="text" id="meaningInput" placeholder="Meaning"><br><br>
-    <button onclick="addWord()">Save Word</button><br><br>
-    <button onclick="showSection('homePage')">Back</button>
-  </section>
-
-  <!-- Import / Export Page -->
-  <section id="importExportPage" class="page">
-    <h2>Import / Export</h2>
-    <h3>English → Vaiphei</h3>
-    <input type="file" accept=".xlsx" onchange="importExcel(event,'e2v')"><br>
-    <button onclick="exportExcel('e2v')">Export E2V</button>
-
-    <h3>Vaiphei → English</h3>
-    <input type="file" accept=".xlsx" onchange="importExcel(event,'v2e')"><br>
-    <button onclick="exportExcel('v2e')">Export V2E</button><br><br>
-
-    <button onclick="showSection('homePage')">Back</button>
-  </section>
-
-  <!-- English → Vaiphei Dictionary -->
-  <section id="e2vDict" class="page">
-    <h2>English → Vaiphei</h2>
-    <input type="text" id="e2vSearch" placeholder="Search..." oninput="searchWord('e2v')">
-    <div class="dict-page" id="e2vPage"></div>
-    <div class="nav-buttons">
-      <button onclick="prevPage('e2v')">← Prev</button>
-      <span id="e2vPageNum">0 / 0</span>
-      <button onclick="nextPage('e2v')">Next →</button>
+    <div class="row">
+      <label>Target:</label>
+      <select id="addTarget"><option value="v2e">Vaiphei → English</option><option value="e2v">English → Vaiphei</option></select>
     </div>
-    <button onclick="showSection('homePage')">Back</button>
-  </section>
-
-  <!-- Vaiphei → English Dictionary -->
-  <section id="v2eDict" class="page">
-    <h2>Vaiphei → English</h2>
-    <input type="text" id="v2eSearch" placeholder="Search..." oninput="searchWord('v2e')">
-    <div class="dict-page" id="v2ePage"></div>
-    <div class="nav-buttons">
-      <button onclick="prevPage('v2e')">← Prev</button>
-      <span id="v2ePageNum">0 / 0</span>
-      <button onclick="nextPage('v2e')">Next →</button>
+    <input id="leftInput" placeholder="Word (left)" />
+    <input id="rightInput" placeholder="Meaning (right)" />
+    <div class="row">
+      <button onclick="saveAdded()">Save</button>
+      <button onclick="openHome()">Back</button>
     </div>
-    <button onclick="showSection('homePage')">Back</button>
+    <p id="addMsg" class="msg"></p>
   </section>
 
+  <!-- VAIPHEI → ENGLISH (V2E) Book -->
+  <section id="v2e" class="screen" style="display:none">
+    <div class="book-header">
+      <h2>Vaiphei → English</h2>
+      <div class="controls">
+        <input id="v2eSearch" placeholder="Hawlna (Search)..." oninput="filterBySearch('v2e')" />
+      </div>
+    </div>
+
+    <div class="az-row" id="v2eAlpha"></div>
+
+    <div id="book-v2e" class="book"></div>
+
+    <div class="pager">
+      <button onclick="turnPrev('v2e')">←</button>
+      <span id="v2ePageInfo">Page 0 / 0</span>
+      <button onclick="turnNext('v2e')">→</button>
+      <input id="v2eJump" type="number" min="1" placeholder="Go to page" />
+      <button onclick="jumpToPage('v2e')">Go</button>
+      <button onclick="openHome()">Back</button>
+    </div>
+
+    <div class="admin-row" id="v2eAdminRow"></div>
+  </section>
+
+  <!-- ENGLISH → VAIPHEI (E2V) Book -->
+  <section id="e2v" class="screen" style="display:none">
+    <div class="book-header">
+      <h2>English → Vaiphei</h2>
+      <div class="controls">
+        <input id="e2vSearch" placeholder="Search..." oninput="filterBySearch('e2v')" />
+      </div>
+    </div>
+
+    <div class="az-row" id="e2vAlpha"></div>
+
+    <div id="book-e2v" class="book"></div>
+
+    <div class="pager">
+      <button onclick="turnPrev('e2v')">←</button>
+      <span id="e2vPageInfo">Page 0 / 0</span>
+      <button onclick="turnNext('e2v')">→</button>
+      <input id="e2vJump" type="number" min="1" placeholder="Go to page" />
+      <button onclick="jumpToPage('e2v')">Go</button>
+      <button onclick="openHome()">Back</button>
+    </div>
+
+    <div class="admin-row" id="e2vAdminRow"></div>
+  </section>
+
+  <footer class="footer">Local data stored in browser. Use Export for backup.</footer>
 </body>
 </html>
