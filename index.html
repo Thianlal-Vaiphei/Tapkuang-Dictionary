@@ -4,95 +4,83 @@
   <meta charset="UTF-8">
   <title>Tapkuang Vaiphei Dictionary</title>
   <link rel="stylesheet" href="style.css">
-  <script src="xlsx.full.min.js"></script>
+  <!-- SheetJS for Excel Import/Export -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 </head>
 <body>
+
   <!-- Cover Page -->
-  <div id="cover" class="cover">
-    <img src="Dictionary.png" alt="Dictionary Cover">
+  <div class="cover" id="cover">
+    <img src="Home page.jpg" alt="Dictionary Cover">
     <h1>Tapkuang Vaiphei Dictionary</h1>
     <p>By Ph Thianneilal Vaiphei 2025</p>
     <div class="buttons">
-      <button onclick="openSection('dictionaryE2V')">English → Vaiphei</button>
-      <button onclick="openSection('dictionaryV2E')">Vaiphei → English</button>
-      <button onclick="openSection('login')">Admin Login</button>
+      <button onclick="openBook('e2v')">English → Vaiphei</button>
+      <button onclick="openBook('v2e')">Vaiphei → English</button>
+      <button onclick="login()">Admin Login</button>
     </div>
   </div>
 
-  <!-- Login -->
-  <div id="login" class="section">
-    <h2>Admin Login</h2>
-    <input type="text" id="username" placeholder="Username">
-    <input type="password" id="password" placeholder="Password">
-    <div class="nav-buttons">
-      <button onclick="doLogin()">Login</button>
-      <button onclick="backHome()">Back</button>
+  <!-- English → Vaiphei Dictionary -->
+  <div class="dictionary" id="e2v">
+    <h2>English → Vaiphei</h2>
+    <input type="text" id="e2vSearch" placeholder="Search..." oninput="searchWord('e2v')">
+    <div class="az-filter">
+      <span>A–Z:</span>
+      <script>
+        document.write(
+          "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("")
+          .map(l => `<button onclick="filterAZ('e2v','${l}')">${l}</button>`).join("")
+        );
+      </script>
     </div>
-    <p id="loginMsg"></p>
-  </div>
-
-  <!-- Admin Panel -->
-  <div id="admin" class="section">
-    <h2>Admin Panel</h2>
-    <button onclick="openSection('addWord')">Add Word</button>
-    <button onclick="importExcel()">Import Excel</button>
-    <button onclick="exportExcel()">Export Excel</button>
-    <button onclick="openSection('changeLogin')">Change Login</button>
-    <button onclick="logout()">Logout</button>
-    <div class="nav-buttons">
-      <button onclick="backHome()">Back</button>
-    </div>
-  </div>
-
-  <!-- Change Login -->
-  <div id="changeLogin" class="section">
-    <h2>Change Admin Login</h2>
-    <input type="text" id="newUser" placeholder="New Username">
-    <input type="password" id="newPass" placeholder="New Password">
-    <div class="nav-buttons">
-      <button onclick="updateLogin()">Save</button>
-      <button onclick="openSection('admin')">Back</button>
-    </div>
-    <p id="loginChangeMsg"></p>
-  </div>
-
-  <!-- Add Word -->
-  <div id="addWord" class="section">
-    <h2>Add Word</h2>
-    <select id="addType">
-      <option value="e2v">English → Vaiphei</option>
-      <option value="v2e">Vaiphei → English</option>
-    </select>
-    <input type="text" id="word1" placeholder="Word">
-    <input type="text" id="word2" placeholder="Translation">
-    <div class="nav-buttons">
-      <button onclick="addWord()">Add</button>
-      <button onclick="openSection('admin')">Back</button>
-    </div>
-    <p id="addMsg"></p>
-  </div>
-
-  <!-- Dictionary Pages -->
-  <div id="dictionaryE2V" class="section">
-    <h2>English → Vaiphei Dictionary</h2>
-    <input type="text" id="searchE2V" oninput="searchWords('e2v')" placeholder="Search...">
-    <div id="e2vList"></div>
+    <div class="page" id="e2vPage"></div>
+    <div id="e2vAdmin"></div>
     <div class="nav-buttons">
       <button onclick="prevPage('e2v')">← Prev</button>
+      <span id="e2vPageNum">0 / 0</span>
       <button onclick="nextPage('e2v')">Next →</button>
-      <button onclick="backHome()">Back</button>
     </div>
+    <div class="jump">
+      <input type="number" id="e2vJump" placeholder="Page #">
+      <button onclick="jumpToPage('e2v')">Go</button>
+    </div>
+    <div class="import-export">
+      <input type="file" accept=".xlsx" onchange="importExcel(event,'e2v')">
+      <button onclick="exportExcel('e2v')">Export Excel</button>
+    </div>
+    <button onclick="closeBook()">Back to Cover</button>
   </div>
 
-  <div id="dictionaryV2E" class="section">
-    <h2>Vaiphei → English Dictionary</h2>
-    <input type="text" id="searchV2E" oninput="searchWords('v2e')" placeholder="Search...">
-    <div id="v2eList"></div>
+  <!-- Vaiphei → English Dictionary -->
+  <div class="dictionary" id="v2e">
+    <h2>Vaiphei → English</h2>
+    <input type="text" id="v2eSearch" placeholder="Search..." oninput="searchWord('v2e')">
+    <div class="az-filter">
+      <span>A–Z:</span>
+      <script>
+        document.write(
+          "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("")
+          .map(l => `<button onclick="filterAZ('v2e','${l}')">${l}</button>`).join("")
+        );
+      </script>
+    </div>
+    <div class="page" id="v2ePage"></div>
+    <div id="v2eAdmin"></div>
     <div class="nav-buttons">
       <button onclick="prevPage('v2e')">← Prev</button>
+      <span id="v2ePageNum">0 / 0</span>
       <button onclick="nextPage('v2e')">Next →</button>
-      <button onclick="backHome()">Back</button>
     </div>
+    <div class="jump">
+      <input type="number" id="v2eJump" placeholder="Page #">
+      <button onclick="jumpToPage('v2e')">Go</button>
+    </div>
+    <div class="import-export">
+      <input type="file" accept=".xlsx" onchange="importExcel(event,'v2e')">
+      <button onclick="exportExcel('v2e')">Export Excel</button>
+    </div>
+    <button onclick="closeBook()">Back to Cover</button>
   </div>
 
   <script src="script.js"></script>
