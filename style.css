@@ -1,70 +1,195 @@
+/* General Body */
 body {
   margin: 0;
-  font-family: 'Georgia', serif;
-  background: #d4a94f;
-  text-align: center;
+  font-family: "Georgia", serif;
+  background: #f5e6cc;
   color: #000;
+  text-align: center;
 }
 
+/* Cover Page */
 .cover {
   height: 100vh;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  background: #d4a94f;
 }
 
 .cover img {
-  max-width: 250px;
-  border: 3px solid #b8860b;
+  max-width: 260px;
+  border: 4px solid #b8860b;
+  border-radius: 12px;
   margin-bottom: 20px;
+  box-shadow: 0px 4px 10px rgba(0,0,0,0.4);
 }
 
-h1 {
+.cover h1 {
   font-size: 2.5em;
   margin: 0;
 }
 
-.section {
+.cover p {
+  margin-top: 5px;
+  font-weight: bold;
+}
+
+.cover .buttons {
+  margin-top: 30px;
+}
+
+.cover .buttons button {
+  margin: 10px;
+  padding: 12px 20px;
+  font-size: 1.1em;
+  border: none;
+  border-radius: 8px;
+  background: #8b4513;
+  color: #fff;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.cover .buttons button:hover {
+  background: #5a2d0c;
+}
+
+/* Dictionary Section */
+.dictionary {
   display: none;
   padding: 20px;
 }
 
-.buttons button,
-.nav-buttons button {
+.dictionary h2 {
+  margin-bottom: 10px;
+  color: #5a2d0c;
+}
+
+/* Search box */
+input[type="text"], input[type="number"] {
+  padding: 8px;
   margin: 10px;
-  padding: 10px 18px;
   font-size: 1em;
-  border: none;
-  border-radius: 8px;
-  background: #8b4513;
-  color: white;
-  cursor: pointer;
+  border: 1px solid #888;
+  border-radius: 6px;
 }
 
-.buttons button:hover,
-.nav-buttons button:hover {
-  background: #5a2d0c;
+/* Page look */
+.page {
+  border: 2px solid #8b5e3c;
+  border-radius: 12px;
+  padding: 30px;
+  margin: 20px auto;
+  width: 70%;
+  min-height: 250px;
+  background: #fffbe9;
+  font-size: 1.2em;
+  line-height: 1.5;
+  box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+  transition: transform 0.6s ease, opacity 0.6s ease;
+  transform-origin: left center;
 }
 
-input, select {
+/* Page Flip Animations */
+.page.flip-next {
+  transform: rotateY(-90deg);
+  opacity: 0;
+}
+
+.page.flip-prev {
+  transform: rotateY(90deg);
+  opacity: 0;
+}
+
+/* Navigation buttons */
+.nav-buttons {
+  margin-top: 15px;
+}
+
+.nav-buttons button {
   margin: 5px;
-  padding: 8px;
-  font-size: 1em;
-  border: 1px solid #999;
+  padding: 8px 16px;
+  border: none;
   border-radius: 6px;
+  background: #8b0000;
+  color: #fff;
+  cursor: pointer;
+  transition: 0.3s;
 }
 
-.word-entry {
-  margin: 6px;
-  padding: 8px;
-  background: #fff;
-  border: 1px solid #000;
-  border-radius: 6px;
+.nav-buttons button:hover {
+  background: #5a0000;
 }
 
-.word-entry button {
-  margin-left: 10px;
-  padding: 4px 8px;
+/* Jump Box */
+.jump {
+  margin: 15px 0;
+}
+
+.jump input {
+  width: 80px;
+  text-align: center;
+}
+
+/* Import/Export */
+.import-export {
+  margin-top: 20px;
+}
+
+.import-export button {
+  margin-left: 8px;
+  padding: 8px 14px;
+  font-size: 0.95em;
+  border: none;
+  border-radius: 6px;
+  background: #006400;
+  color: #fff;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.import-export button:hover {
+  background: #004d00;
+}
+
+/* Admin Controls */
+#e2vAdmin, #v2eAdmin {
+  margin-top: 10px;
+}
+
+#e2vAdmin button, #v2eAdmin button {
+  margin: 5px;
+  padding: 6px 12px;
   font-size: 0.9em;
+  border: none;
+  border-radius: 6px;
+  background: #444;
+  color: #fff;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+#e2vAdmin button:hover, #v2eAdmin button:hover {
+  background: #222;
+}
+
+/* A–Z Filter */
+.az-filter {
+  margin: 10px 0;
+}
+
+.az-filter button {
+  margin: 2px;
+  padding: 5px 10px;
+  font-size: 0.8em;
+  border: 1px solid #888;
+  border-radius: 4px;
+  background: #eee;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.az-filter button:hover {
+  background: #ccc;
 }
