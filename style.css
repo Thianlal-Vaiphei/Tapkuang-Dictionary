@@ -1,81 +1,48 @@
-body {
-  margin: 0;
-  font-family: "Georgia", serif;
-  background: #f5e6cc;
-  color: #000;
-  text-align: center;
-}
+/* Basic / theme */
+*{box-sizing:border-box}
+body{font-family: Georgia, serif; margin:0; background:#f7efd6; color:#2b1f12}
+.screen{padding:18px; max-width:1100px; margin:10px auto}
 
+/* cover */
+.cover-img{width:220px; border-radius:8px; border:4px solid rgba(184,134,11,0.18); box-shadow:0 8px 24px rgba(0,0,0,0.12)}
+.menu-grid{display:grid; grid-template-columns: repeat(3,1fr); gap:12px; margin-top:12px}
+.card{padding:18px; background:white; border-radius:12px; border:2px solid rgba(184,134,11,0.12); cursor:pointer; font-weight:600}
+.card:hover{transform:translateY(-6px); box-shadow:0 12px 30px rgba(0,0,0,0.08)}
+.info{max-width:900px; background:#fff; padding:10px; margin-top:12px; border-radius:10px; border:1px solid rgba(0,0,0,0.04);}
+
+/* small */
+.row{display:flex; gap:12px; align-items:center; flex-wrap:wrap; margin-top:10px}
+.msg{color:#6b4d16}
+.note{color:#444}
+
+/* book area */
+.book-header{display:flex; justify-content:space-between; align-items:center}
+.controls input{padding:8px 10px; border-radius:8px; border:1px solid #ccc}
+
+/* alphabet row */
+.az-row{display:flex; gap:8px; flex-wrap:wrap; margin:12px 0}
+.az-row button{border-radius:999px; padding:8px 12px; border:2px solid rgba(184,134,11,0.4); background:#fff; cursor:pointer}
+.az-row button.active{background:#f6e9b8;}
+
+/* book container (turn.js expects pages) */
+.book{width:800px; height:1100px; margin:10px auto; /* A4 portrait approx scaled */ }
+@media (max-width:900px){ .book{width:92%; height:700px} }
+
+/* page style */
 .page {
-  display: none;
-  padding: 20px;
+  width:100%; height:100%; background:#fffaf0; border:4px solid #d1b27a; border-radius:6px; padding:28px;
+  box-shadow:0 12px 40px rgba(0,0,0,0.12); font-size:18px; overflow:auto;
 }
+.page h3{margin:6px 0 12px; color:#b55f00}
+.page p{color:#333}
 
-.cover-img {
-  max-width: 250px;
-  border: 3px solid #b8860b;
-  border-radius: 12px;
-  margin-bottom: 15px;
-  box-shadow: 0px 4px 10px rgba(0,0,0,0.4);
-}
+/* pager */
+.pager{display:flex; gap:10px; align-items:center; justify-content:center; margin-top:10px}
+.pager input{width:90px; padding:6px}
 
-h1 {
-  margin: 0;
-}
+/* admin row */
+.admin-row{display:flex; gap:8px; justify-content:center; margin-top:12px}
+.admin-row button{padding:8px 12px; border-radius:8px; background:#444; color:#fff; border:none}
 
-.buttons button {
-  margin: 8px;
-  padding: 12px 20px;
-  font-size: 1em;
-  border: none;
-  border-radius: 8px;
-  background: #8b4513;
-  color: #fff;
-  cursor: pointer;
-  transition: 0.3s;
-}
-
-.buttons button:hover {
-  background: #5a2d0c;
-}
-
-.dict-page {
-  border: 2px solid #8b5e3c;
-  border-radius: 12px;
-  padding: 20px;
-  margin: 20px auto;
-  width: 70%;
-  min-height: 200px;
-  background: #fffbe9;
-  font-size: 1.1em;
-  line-height: 1.5;
-  box-shadow: 0 6px 15px rgba(0,0,0,0.2);
-  transition: 0.4s;
-}
-
-.nav-buttons {
-  margin: 10px 0;
-}
-
-.nav-buttons button {
-  margin: 5px;
-  padding: 8px 16px;
-  border: none;
-  border-radius: 6px;
-  background: #8b0000;
-  color: #fff;
-  cursor: pointer;
-  transition: 0.3s;
-}
-
-.nav-buttons button:hover {
-  background: #5a0000;
-}
-
-input[type="text"], select {
-  padding: 8px;
-  margin: 6px;
-  font-size: 1em;
-  border: 1px solid #888;
-  border-radius: 6px;
-}
+/* footer */
+.footer{text-align:center; color:#7a5a2b; padding:12px; margin-top:20px}
