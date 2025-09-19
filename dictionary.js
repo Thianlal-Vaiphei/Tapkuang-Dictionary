@@ -1,14 +1,14 @@
-// initial sample data - plenty of entries so pages are filled
+// initial sample data (strings "Left - Right")
 window.initialV2E = [
   "a bawn (n) - casem cartridge, container, receptacle, covering",
   "a belap (a) a belapna (n) - additional, supplementary, supplement",
   "a bem (n) - round, roundial",
-  "aw, ngawng-aw - put around neck, necktie, muffler",
-  "awle - crocodile",
+  "aw, ngawng-aw - Put around neck, necktie, muffler",
+  "awle - Crocodile",
   "awp, awpkhum - incubate, incumbent/lie upon",
-  "awt, Awchat - envy, jealous, grudge",
-  "awt, lampi awt - give chance to other, give way",
-  "bak, bakpa - small fish",
+  "awt, Awchat - Envy, jealous, grudge",
+  "awt, lampi awt - Give chance to other, give way",
+  "bak - small fish",
   "bau - to cook",
   "bawm - tree species",
   "bel - to tie",
