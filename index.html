@@ -5,20 +5,19 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Tapkuang Vaiphei Dictionary</title>
 
-  <!-- style -->
   <link rel="stylesheet" href="style.css">
 
   <!-- jQuery + Turn.js -->
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script src="https://cdn.jsdelivr.net/gh/blasten/turn.js@4/turn.min.js"></script>
 
-  <!-- SheetJS for import/export -->
+  <!-- SheetJS -->
   <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
 
-  <!-- initial dictionary data -->
+  <!-- initial data -->
   <script src="dictionary-data.js" defer></script>
 
-  <!-- main logic -->
+  <!-- main -->
   <script src="script.js" defer></script>
 </head>
 <body>
@@ -26,7 +25,7 @@
   <!-- HOME / COVER -->
   <main id="home" class="screen">
     <img src="Tapkuang cover.jpg" alt="Tapkuang cover" class="cover-img">
-    <h1>Tapkuang Vaiphei Dictionary</h1>
+    <h1 class="main-title">Tapkuang Vaiphei Dictionary</h1>
     <p class="author">By Ph Thianneilal Vaiphei — 2025</p>
 
     <div class="menu-grid">
@@ -34,7 +33,7 @@
       <button class="card" onclick="openBook('v2e')">Vaiphei → English</button>
       <button class="card" onclick="openImport()">Excel laklutna (Import/Save)</button>
       <button class="card" onclick="openAdd()">Thumal belapna (Add Word)</button>
-      <button id="loginBtn" class="card" onclick="openLogin()">Lutna (Login/Setup)</button>
+      <button id="loginBtn" class="card" onclick="openLogin()">Lutna (Login)</button>
       <button id="logoutBtn" class="card" onclick="doLogout()" style="display:none">Pawtna (Logout)</button>
     </div>
 
@@ -45,7 +44,7 @@
     <section class="author-note">
       <h3>Author's Note</h3>
       <p>
-        I want to make Vaiphei Dictionary App since my Higher Secondary School days. But due to lack of my knowledge in Information and Technology I concealed my dreams for many days. But today I can make out my long dreams ‘Tapkuang – Vaiphei Dictionary App’ which is the first Vaiphei Dictionary in App form. I give utmost thanks to God Almighty who made live my dormant dream. I hope this Dictionary serves all the Vaipheis and those who use this language in building up their vocabularies which can enable them to have self-confidence in using English and Vaiphei. All users are requested to help correct mistakes.
+        I want to make Vaiphei Dictionary App since my Higher Secondary School days. But due to lack of my knowledge in Information and Technology I concealed my dreams for many days. ...
       </p>
     </section>
   </main>
@@ -62,7 +61,7 @@
     <p id="loginMsg" class="msg"></p>
   </section>
 
-  <!-- IMPORT/EXPORT -->
+  <!-- IMPORT -->
   <section id="importPage" class="screen" style="display:none">
     <h2>Excel Laklutna (Import & Save)</h2>
     <p class="note">First sheet, first two columns expected: Word (left) and Meaning (right).</p>
@@ -84,7 +83,7 @@
     </div>
   </section>
 
-  <!-- ADD WORD -->
+  <!-- ADD -->
   <section id="addPage" class="screen" style="display:none">
     <h2>Add Word</h2>
     <div class="row">
@@ -103,7 +102,7 @@
     <p id="addMsg" class="msg"></p>
   </section>
 
-  <!-- V2E Book -->
+  <!-- V2E book -->
   <section id="v2e" class="screen" style="display:none">
     <div class="book-header">
       <h2>Vaiphei → English</h2>
@@ -114,7 +113,7 @@
 
     <div id="v2eAlpha" class="az-row"></div>
 
-    <div id="book-v2e" class="book"></div>
+    <div id="book-v2e" class="book a4-book"></div>
 
     <div class="pager">
       <button onclick="turnPrev('v2e')">←</button>
@@ -128,7 +127,7 @@
     <div class="admin-row" id="v2eAdminRow"></div>
   </section>
 
-  <!-- E2V Book -->
+  <!-- E2V book -->
   <section id="e2v" class="screen" style="display:none">
     <div class="book-header">
       <h2>English → Vaiphei</h2>
@@ -139,7 +138,7 @@
 
     <div id="e2vAlpha" class="az-row"></div>
 
-    <div id="book-e2v" class="book"></div>
+    <div id="book-e2v" class="book a4-book"></div>
 
     <div class="pager">
       <button onclick="turnPrev('e2v')">←</button>
