@@ -8,15 +8,14 @@
   <!-- style -->
   <link rel="stylesheet" href="style.css">
 
-  <!-- jQuery + Turn.js (page-turning library) -->
+  <!-- jQuery + Turn.js -->
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  <!-- NOTE: if your environment blocks CDN, download and reference locally -->
   <script src="https://cdn.jsdelivr.net/gh/blasten/turn.js@4/turn.min.js"></script>
 
-  <!-- SheetJS for Excel import/export -->
+  <!-- SheetJS for import/export -->
   <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
 
-  <!-- dictionary data (separate file) -->
+  <!-- initial dictionary data -->
   <script src="dictionary-data.js" defer></script>
 
   <!-- main logic -->
@@ -24,27 +23,36 @@
 </head>
 <body>
 
-  <!-- COVER / HOME -->
+  <!-- HOME / COVER -->
   <main id="home" class="screen">
-    <img src="cover.jpg" alt="Cover" class="cover-img">
-    <h1>Tapkuang — Vaiphei Dictionary</h1>
-    <p>By PH THIANNEILAL VAIPHEI</p>
+    <img src="Tapkuang cover.jpg" alt="Tapkuang cover" class="cover-img">
+    <h1>Tapkuang Vaiphei Dictionary</h1>
+    <p class="author">By Ph Thianneilal Vaiphei — 2025</p>
 
     <div class="menu-grid">
-      <button onclick="openBook('v2e')" class="card">Vaiphei → English</button>
-      <button onclick="openBook('e2v')" class="card">English → Vaiphei</button>
-      <button onclick="openImportPage()" class="card">Excel laklutna (Import)</button>
-      <button onclick="openAddPage()" class="card">Thumal belapna (Add Word)</button>
-      <button id="loginBtn" onclick="openLogin()" class="card">Lutna (Login)</button>
-      <button id="logoutBtn" onclick="doLogout()" class="card" style="display:none">Pawtna (Logout)</button>
+      <button class="card" onclick="openBook('e2v')">English → Vaiphei</button>
+      <button class="card" onclick="openBook('v2e')">Vaiphei → English</button>
+      <button class="card" onclick="openImport()">Excel laklutna (Import/Save)</button>
+      <button class="card" onclick="openAdd()">Thumal belapna (Add Word)</button>
+      <button id="loginBtn" class="card" onclick="openLogin()">Lutna (Login/Setup)</button>
+      <button id="logoutBtn" class="card" onclick="doLogout()" style="display:none">Pawtna (Logout)</button>
     </div>
 
-    <div class="info">Browse or login as admin to manage words. Admin: <b>Thianlal Vaiphei</b> / <b>phaltual</b></div>
+    <div class="info-box">
+      <p>👋 Tapkuang – Vaiphei Dictionary. Use Hawlna (Search) or Thumahlilchian (Dictionary). Admin may Import/Export/Add/Edit/Delete.</p>
+    </div>
+
+    <section class="author-note">
+      <h3>Author's Note</h3>
+      <p>
+        I want to make Vaiphei Dictionary App since my Higher Secondary School days. But due to lack of my knowledge in Information and Technology I concealed my dreams for many days. But today I can make out my long dreams ‘Tapkuang – Vaiphei Dictionary App’ which is the first Vaiphei Dictionary in App form. I give utmost thanks to God Almighty who made live my dormant dream. I hope this Dictionary serves all the Vaipheis and those who use this language in building up their vocabularies which can enable them to have self-confidence in using English and Vaiphei. All users are requested to help correct mistakes.
+      </p>
+    </section>
   </main>
 
   <!-- LOGIN -->
   <section id="login" class="screen" style="display:none">
-    <h2>Login</h2>
+    <h2>Admin Login</h2>
     <input id="loginUser" placeholder="Username" />
     <input id="loginPass" placeholder="Password" type="password" />
     <div class="row">
@@ -54,10 +62,10 @@
     <p id="loginMsg" class="msg"></p>
   </section>
 
-  <!-- IMPORT/EXPORT (Excel Laklutna) -->
+  <!-- IMPORT/EXPORT -->
   <section id="importPage" class="screen" style="display:none">
-    <h2>Import / Save Excel (Laklutna)</h2>
-    <p class="note">Select file (.xlsx or .csv). First two columns expected: Word, Meaning.</p>
+    <h2>Excel Laklutna (Import & Save)</h2>
+    <p class="note">First sheet, first two columns expected: Word (left) and Meaning (right).</p>
     <input id="importFile" type="file" accept=".xlsx,.xls,.csv,.txt" />
     <div class="row">
       <select id="importTarget">
@@ -70,7 +78,6 @@
     <p id="importMsg" class="msg"></p>
 
     <hr>
-
     <div class="row">
       <button onclick="exportDict('v2e')">Export V2E (XLSX)</button>
       <button onclick="exportDict('e2v')">Export E2V (XLSX)</button>
@@ -81,11 +88,14 @@
   <section id="addPage" class="screen" style="display:none">
     <h2>Add Word</h2>
     <div class="row">
-      <label>Target:</label>
-      <select id="addTarget"><option value="v2e">Vaiphei → English</option><option value="e2v">English → Vaiphei</option></select>
+      <label>Target</label>
+      <select id="addTarget">
+        <option value="v2e">Vaiphei → English</option>
+        <option value="e2v">English → Vaiphei</option>
+      </select>
     </div>
-    <input id="leftInput" placeholder="Word (left)" />
-    <input id="rightInput" placeholder="Meaning (right)" />
+    <input id="leftInput" placeholder="Word (Left)" />
+    <input id="rightInput" placeholder="Meaning (Right)" />
     <div class="row">
       <button onclick="saveAdded()">Save</button>
       <button onclick="openHome()">Back</button>
@@ -93,7 +103,7 @@
     <p id="addMsg" class="msg"></p>
   </section>
 
-  <!-- VAIPHEI → ENGLISH (V2E) Book -->
+  <!-- V2E Book -->
   <section id="v2e" class="screen" style="display:none">
     <div class="book-header">
       <h2>Vaiphei → English</h2>
@@ -102,7 +112,7 @@
       </div>
     </div>
 
-    <div class="az-row" id="v2eAlpha"></div>
+    <div id="v2eAlpha" class="az-row"></div>
 
     <div id="book-v2e" class="book"></div>
 
@@ -110,7 +120,7 @@
       <button onclick="turnPrev('v2e')">←</button>
       <span id="v2ePageInfo">Page 0 / 0</span>
       <button onclick="turnNext('v2e')">→</button>
-      <input id="v2eJump" type="number" min="1" placeholder="Go to page" />
+      <input id="v2eJump" type="number" min="1" placeholder="Page #" />
       <button onclick="jumpToPage('v2e')">Go</button>
       <button onclick="openHome()">Back</button>
     </div>
@@ -118,7 +128,7 @@
     <div class="admin-row" id="v2eAdminRow"></div>
   </section>
 
-  <!-- ENGLISH → VAIPHEI (E2V) Book -->
+  <!-- E2V Book -->
   <section id="e2v" class="screen" style="display:none">
     <div class="book-header">
       <h2>English → Vaiphei</h2>
@@ -127,7 +137,7 @@
       </div>
     </div>
 
-    <div class="az-row" id="e2vAlpha"></div>
+    <div id="e2vAlpha" class="az-row"></div>
 
     <div id="book-e2v" class="book"></div>
 
@@ -135,7 +145,7 @@
       <button onclick="turnPrev('e2v')">←</button>
       <span id="e2vPageInfo">Page 0 / 0</span>
       <button onclick="turnNext('e2v')">→</button>
-      <input id="e2vJump" type="number" min="1" placeholder="Go to page" />
+      <input id="e2vJump" type="number" min="1" placeholder="Page #" />
       <button onclick="jumpToPage('e2v')">Go</button>
       <button onclick="openHome()">Back</button>
     </div>
