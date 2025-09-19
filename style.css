@@ -1,82 +1,106 @@
 body {
-  font-family: Georgia, serif;
   margin: 0;
+  font-family: 'Georgia', serif;
+  background: #d4a94f;
+  color: #000;
   text-align: center;
-  background: #f3efe6;
-  color: #222;
 }
 
-.hidden {
-  display: none;
+/* Cover */
+.cover {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
-
 .cover-img {
-  width: 250px;
-  margin-top: 40px;
-  border: 3px solid #444;
-}
-
-h1 {
-  margin: 10px 0;
-  font-size: 2em;
-  color: #5a2d0c;
-}
-
-.subtitle {
-  font-weight: bold;
+  max-width: 280px;
+  border: 3px solid #b8860b;
   margin-bottom: 20px;
+  border-radius: 8px;
 }
-
-.buttons button, .nav-buttons button {
-  margin: 8px;
-  padding: 10px 20px;
+.cover h1 {
+  font-size: 2.5em;
+  margin: 0;
+}
+.cover p {
+  margin-top: 5px;
+  font-weight: bold;
+}
+.buttons {
+  margin-top: 30px;
+}
+.buttons button {
+  margin: 10px;
+  padding: 12px 20px;
+  font-size: 1.1em;
   border: none;
-  border-radius: 6px;
+  border-radius: 8px;
   background: #8b4513;
-  color: white;
+  color: #fff;
   cursor: pointer;
 }
-
-.buttons button:hover, .nav-buttons button:hover {
+.buttons button:hover {
   background: #5a2d0c;
 }
 
-#dictionary-content {
-  width: 80%;
-  margin: 20px auto;
-  text-align: left;
-  border: 1px solid #ccc;
-  padding: 15px;
-  background: white;
-  min-height: 85vh; /* A4-like full page */
+/* Dictionary Pages */
+.dictionary {
+  display: none;
+  padding: 20px;
 }
-
-.word-entry {
-  margin-bottom: 10px;
-  font-size: 14px; /* smaller text */
+.page {
+  width: 210mm;          /* A4 width */
+  height: 297mm;         /* A4 height */
+  margin: 0 auto;
+  background: #fff;
+  padding: 20px;
+  border: 2px solid #000;
+  overflow: hidden;
+  font-size: 14px;       /* smaller font */
   line-height: 1.4;
-  border-bottom: 1px solid #ddd;
-  padding-bottom: 5px;
+  text-align: left;
 }
-
-.headword {
+.word-entry {
+  margin-bottom: 8px;
+}
+.word-entry b {
   font-size: 15px;
-  font-weight: bold;
-  color: #a52a2a;
 }
-
 .admin-tools {
-  float: right;
+  margin-left: 10px;
+}
+.admin-tools button {
   font-size: 12px;
+  padding: 2px 6px;
+  margin-left: 4px;
+  cursor: pointer;
 }
 
+/* Navigation */
+.nav-buttons {
+  margin-top: 15px;
+}
+.nav-buttons button {
+  margin: 5px;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  background: #8b0000;
+  color: #fff;
+  cursor: pointer;
+}
+.nav-buttons button:hover {
+  background: #5a0000;
+}
+
+/* Author Note */
 .author-note {
-  margin-top: 30px;
-  padding: 15px;
-  border-top: 2px solid #ccc;
+  margin: 30px auto;
+  padding: 20px;
   width: 70%;
-  margin-left: auto;
-  margin-right: auto;
-  font-size: 14px;
-  line-height: 1.5;
+  background: #fff;
+  border: 2px solid #000;
+  text-align: left;
 }
