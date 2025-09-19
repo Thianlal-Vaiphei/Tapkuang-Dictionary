@@ -4,53 +4,45 @@
   <meta charset="UTF-8">
   <title>Tapkuang Vaiphei Dictionary</title>
   <link rel="stylesheet" href="style.css">
-  <script src="dictionary.js"></script>
-  <script src="script.js" defer></script>
 </head>
 <body>
-
-  <!-- Cover Page -->
-  <div class="cover" id="cover">
+  <!-- ✅ Cover Section -->
+  <div class="cover">
     <img src="Tapkuang cover.jpg" alt="Dictionary Cover" class="cover-img">
     <h1>Tapkuang Vaiphei Dictionary</h1>
-    <p>By Ph Thianneilal Vaiphei 2025</p>
-    <div class="buttons">
-      <button onclick="openBook('e2v')">English → Vaiphei</button>
-      <button onclick="openBook('v2e')">Vaiphei → English</button>
-    </div>
+    <p class="subtitle">By Ph. Thianneilal Vaiphei • 2025</p>
   </div>
 
-  <!-- English → Vaiphei Dictionary -->
-  <div class="dictionary" id="e2v">
-    <div class="page" id="e2vPage"></div>
-    <div class="nav-buttons">
-      <button onclick="prevPage('e2v')">⬅ Prev</button>
-      <span id="page-info-e2v"></span>
-      <button onclick="nextPage('e2v')">Next ➡</button>
-      <button onclick="closeBook()">Back</button>
-    </div>
+  <!-- ✅ Main Buttons -->
+  <div class="menu">
+    <button onclick="location.href='v2e.html'">Vaiphei → English</button>
+    <button onclick="location.href='e2v.html'">English → Vaiphei</button>
+    <button onclick="location.href='excel.html'">Excel Laklutna</button>
+    <button onclick="location.href='addword.html'">Word Add</button>
+    <button onclick="location.href='login.html'">Admin Log in</button>
   </div>
 
-  <!-- Vaiphei → English Dictionary -->
-  <div class="dictionary" id="v2e">
-    <div class="page" id="v2ePage"></div>
-    <div class="nav-buttons">
-      <button onclick="prevPage('v2e')">⬅ Prev</button>
-      <span id="page-info-v2e"></span>
-      <button onclick="nextPage('v2e')">Next ➡</button>
-      <button onclick="closeBook()">Back</button>
-    </div>
-  </div>
-
-  <!-- Author's Note -->
-  <div class="author-note" id="author-note">
-    <h2>Author's Note</h2>
+  <!-- ✅ Author's Note -->
+  <div id="author-note" class="author-note">
+    <h3>Author's Note</h3>
     <p>
-      This dictionary is prepared for the Vaiphei community with the aim of
-      preserving our language and making it accessible for generations.
-      Suggestions and contributions are welcome.
+      This dictionary project is dedicated to the preservation and growth of the Vaiphei language. 
+      It is designed as a bridge for learners, researchers, and everyday users who wish to better 
+      understand the richness of Vaiphei and English side by side. The work represents years of 
+      dedication and effort to collect, organize, and make the vocabulary accessible in a digital form.
     </p>
+    <p>
+      Language is more than communication—it is the soul of a community. With every word preserved, 
+      a piece of identity and culture is safeguarded for the future generations. It is my humble hope 
+      that this project will inspire younger Vaiphei speakers to value their mother tongue while also 
+      helping outsiders learn and appreciate it.
+    </p>
+    <p>
+      This work is not perfect and will continue to grow. Feedback, corrections, and contributions 
+      from users are always welcome. Together, we can make this dictionary stronger and more useful 
+      for schools, churches, researchers, and families alike.
+    </p>
+    <p><em>— The Author</em></p>
   </div>
-
 </body>
 </html>
