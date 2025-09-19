@@ -1,17 +1,53 @@
-// dictionary-data.js
-// Keep arrays of strings "Left - Right" ; left is the search/sort key
-
+// initial sample data - plenty of entries so pages are filled
 window.initialV2E = [
-  "Aw, ngawng-aw - Put around neck, necktie, muffler",
-  "Awle - Crocodile",
-  "Awp, awpkhum - incubate, incumbent/lie upon",
-  "Awt, Awchat - Envy, jealous, grudge",
-  "Awt, lampi awt - Give chance to other, give way"
+  "a bawn (n) - casem cartridge, container, receptacle, covering",
+  "a belap (a) a belapna (n) - additional, supplementary, supplement",
+  "a bem (n) - round, roundial",
+  "aw, ngawng-aw - put around neck, necktie, muffler",
+  "awle - crocodile",
+  "awp, awpkhum - incubate, incumbent/lie upon",
+  "awt, Awchat - envy, jealous, grudge",
+  "awt, lampi awt - give chance to other, give way",
+  "bak, bakpa - small fish",
+  "bau - to cook",
+  "bawm - tree species",
+  "bel - to tie",
+  "bup - to cut",
+  "chaw - to sit",
+  "chawp - small leaf",
+  "dah - to jump",
+  "doh - a container",
+  "eng - to shout",
+  "feh - to peel",
+  "gai - chicken",
+  "hawn - to cook rice",
+  "iam - small insect",
+  "jeng - to dry",
+  "ka - house",
+  "lai - river",
+  "man - to gather",
+  "ngai - I, me",
+  "ngol - large container",
+  "pa - father",
+  "rua - to run",
+  "thu - book"
 ];
 
 window.initialE2V = [
   "Apple - Sial",
   "Book - Thu",
   "Cat - Kizu",
-  "Dog - Uithu"
+  "Dog - Uithu",
+  "Fish - Bak",
+  "House - Ka",
+  "Knife - Pam",
+  "Light - Lum",
+  "Mother - Nu",
+  "Night - Nin",
+  "Open - Thak",
+  "Run - Rua",
+  "Sing - Sai",
+  "Tree - Bawm",
+  "Water - Vai",
+  "Young - Nupa"
 ];
