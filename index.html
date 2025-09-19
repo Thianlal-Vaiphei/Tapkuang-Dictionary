@@ -4,80 +4,52 @@
   <meta charset="UTF-8">
   <title>Tapkuang Vaiphei Dictionary</title>
   <link rel="stylesheet" href="style.css">
-  <script src="dictionary-data.js" defer></script>
+  <script src="dictionary.js"></script>
   <script src="script.js" defer></script>
 </head>
 <body>
 
   <!-- Cover Page -->
-  <div id="cover-page">
+  <div class="cover" id="cover">
     <img src="Tapkuang cover.jpg" alt="Dictionary Cover" class="cover-img">
     <h1>Tapkuang Vaiphei Dictionary</h1>
-    <p class="subtitle">By Thianlal Vaiphei</p>
-    <button onclick="showLogin()">Login</button>
-  </div>
-
-  <!-- Login Page -->
-  <div id="login-page" class="hidden">
-    <h2>Login</h2>
-    <input id="username" type="text" placeholder="Username"><br>
-    <input id="password" type="password" placeholder="Password"><br>
-    <button onclick="login()">Login</button>
-    <button onclick="goHome()">Cancel</button>
-    <p id="login-msg"></p>
-  </div>
-
-  <!-- Home Page -->
-  <div id="home-page" class="hidden">
-    <h2>Main Menu</h2>
+    <p>By Ph Thianneilal Vaiphei 2025</p>
     <div class="buttons">
-      <button onclick="openDictionary('v2e')">Vaiphei → English</button>
-      <button onclick="openDictionary('e2v')">English → Vaiphei</button>
-      <button onclick="showImport()">Excel Laklutna</button>
-      <button onclick="showAddWord()">Add Word</button>
-      <button onclick="logout()">Logout</button>
-    </div>
-    <div class="author-note">
-      <h3>Author’s Note</h3>
-      <p>This dictionary is prepared for the Vaiphei community with love and dedication. 
-      May it be a blessing to all language learners and researchers.</p>
+      <button onclick="openBook('e2v')">English → Vaiphei</button>
+      <button onclick="openBook('v2e')">Vaiphei → English</button>
     </div>
   </div>
 
-  <!-- Dictionary Page -->
-  <div id="dictionary-page" class="hidden">
-    <h2 id="dict-title"></h2>
-    <input id="search" type="text" placeholder="Search word..." oninput="searchWord()">
-    <div id="dictionary-content"></div>
+  <!-- English → Vaiphei Dictionary -->
+  <div class="dictionary" id="e2v">
+    <div class="page" id="e2vPage"></div>
     <div class="nav-buttons">
-      <button onclick="prevPage()">← Previous</button>
-      <span id="page-info"></span>
-      <button onclick="nextPage()">Next →</button>
+      <button onclick="prevPage('e2v')">⬅ Prev</button>
+      <span id="page-info-e2v"></span>
+      <button onclick="nextPage('e2v')">Next ➡</button>
+      <button onclick="closeBook()">Back</button>
     </div>
-    <button onclick="goHome()">Back</button>
   </div>
 
-  <!-- Add Word Page -->
-  <div id="add-word-page" class="hidden">
-    <h2>Add New Word</h2>
-    <label>Language:</label>
-    <select id="dict-type">
-      <option value="v2e">Vaiphei → English</option>
-      <option value="e2v">English → Vaiphei</option>
-    </select><br>
-    <input id="word" type="text" placeholder="Word"><br>
-    <input id="pos" type="text" placeholder="Part of speech"><br>
-    <textarea id="definition" placeholder="Meaning"></textarea><br>
-    <button onclick="saveWord()">Save</button>
-    <button onclick="goHome()">Cancel</button>
+  <!-- Vaiphei → English Dictionary -->
+  <div class="dictionary" id="v2e">
+    <div class="page" id="v2ePage"></div>
+    <div class="nav-buttons">
+      <button onclick="prevPage('v2e')">⬅ Prev</button>
+      <span id="page-info-v2e"></span>
+      <button onclick="nextPage('v2e')">Next ➡</button>
+      <button onclick="closeBook()">Back</button>
+    </div>
   </div>
 
-  <!-- Import Page -->
-  <div id="import-page" class="hidden">
-    <h2>Excel Laklutna (Import)</h2>
-    <input type="file" id="import-file" accept=".xlsx,.csv"><br>
-    <button onclick="importExcel()">Import</button>
-    <button onclick="goHome()">Cancel</button>
+  <!-- Author's Note -->
+  <div class="author-note" id="author-note">
+    <h2>Author's Note</h2>
+    <p>
+      This dictionary is prepared for the Vaiphei community with the aim of
+      preserving our language and making it accessible for generations.
+      Suggestions and contributions are welcome.
+    </p>
   </div>
 
 </body>
