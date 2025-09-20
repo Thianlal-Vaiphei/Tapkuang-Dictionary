@@ -1,77 +1,70 @@
-body {
-  margin: 0;
-  font-family: 'Georgia', serif;
-  background: #f4e1b6;
-  color: #222;
-  text-align: center;
-}
+/* Shared styles for home + dictionary */
+*{box-sizing:border-box}
+body{font-family:Georgia,serif;margin:0;background:#f7efd6;color:#2b1f12}
 
-/* ✅ Cover Section */
-.cover {
-  padding: 30px 10px 10px;
-  background: #d4a94f;
-  border-bottom: 4px solid #8b5e3c;
+/* Header / cover */
+.site-header, .dict-header{
+  display:flex;align-items:center;gap:20px;padding:18px;background:#d4a94f;border-bottom:4px solid #8b5e3c;
 }
+.cover-img{max-width:320px;width:100%;height:auto;border-radius:8px;border:4px solid #8b5e3c;box-shadow:0 6px 18px rgba(0,0,0,0.12)}
+.cover-img.small{max-width:140px}
+.title-area h1{margin:0;font-size:1.8rem;color:#3b2600}
+.byline{margin:0;color:#4a2f00}
 
-.cover-img {
-  max-width: 280px;
-  border: 4px solid #8b5e3c;
-  border-radius: 12px;
-  margin-bottom: 15px;
-}
+/* Home menu */
+.main-menu{padding:22px;text-align:center}
+.menu-grid{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;margin:12px 0}
+.menu-btn{padding:14px 22px;border-radius:8px;background:#8b4513;color:#fff;border:none;font-weight:700;cursor:pointer}
+.menu-btn:hover{background:#5a2d0c}
 
-.cover h1 {
-  margin: 10px 0 5px;
-  font-size: 2.4em;
-  color: #3b2600;
-}
+/* Author note */
+.note-box{max-width:980px;margin:18px auto}
+.toggle-note{background:#fff8e7;border:2px solid #b8860b;padding:8px 12px;border-radius:8px;cursor:pointer}
+.author-note{background:#fff8e7;border:2px solid #b8860b;padding:16px;margin-top:10px;text-align:left;border-radius:8px}
+.author-note.collapsed{display:none}
 
-.subtitle {
-  font-size: 1.1em;
-  font-weight: bold;
-  color: #4a2f00;
-}
+/* modal login */
+.modal{position:fixed;left:0;top:0;width:100%;height:100%;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,0.4)}
+.modal[aria-hidden="false"]{display:flex}
+.modal-content{background:#fff8e7;padding:18px;border-radius:8px;border:2px solid #b8860b;width:320px;text-align:center}
+.modal-content input{width:100%;padding:8px;margin:8px 0;border-radius:6px;border:1px solid #ccc}
+.modal-actions{display:flex;gap:8px;justify-content:center}
 
-/* ✅ Menu Buttons */
-.menu {
-  margin: 25px auto;
-}
+/* dictionary layout */
+.dict-main{max-width:1100px;margin:20px auto;padding:10px}
+.tabs{display:flex;gap:8px;margin-bottom:10px}
+.tab{padding:10px 14px;border-radius:8px;border:2px solid #b8860b;background:#fff8e7;cursor:pointer}
+.tab.active{background:#f6e9b8}
+.controls{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;gap:12px}
+.search-row{display:flex;gap:8px;align-items:center}
+.search-row input{padding:8px;border-radius:8px;border:1px solid #ccc}
+.search-row select{padding:8px;border-radius:8px;border:1px solid #ccc}
 
-.menu button {
-  margin: 10px;
-  padding: 14px 24px;
-  font-size: 1.1em;
-  border: none;
-  border-radius: 8px;
-  background: #8b4513;
-  color: #fff;
-  cursor: pointer;
-  transition: background 0.3s;
-}
+/* Admin controls */
+.admin-controls{display:flex;gap:8px;align-items:center}
+.admin-controls button, .admin-controls input[type=file]{padding:8px;border-radius:6px;border:1px solid #ccc}
 
-.menu button:hover {
-  background: #5a2d0c;
-}
+/* Book / A4 page style */
+.book-area{margin-top:16px;text-align:center}
+.book{margin:0 auto}
+.a4-book{width:794px;height:1123px;margin:auto;position:relative}
+@media (max-width:900px){ .a4-book{width:92%;height:760px} }
 
-/* ✅ Author's Note */
-.author-note {
-  margin: 40px auto;
-  padding: 20px;
-  max-width: 800px;
-  background: #fff8e7;
-  border: 2px solid #b8860b;
-  border-radius: 10px;
-  text-align: left;
-}
+.page{width:100%;height:100%;background:#fffaf0;border:6px solid #d1b27a;border-radius:6px;padding:28px;overflow:auto;font-size:14px;line-height:1.4;text-align:left}
+.word-entry{margin-bottom:8px;display:flex;justify-content:space-between;gap:6px;align-items:flex-start}
+.word-left{max-width:85%}
+.word-left b{font-size:15px;color:#8b4513}
+.entry-controls button{padding:6px 8px;margin-left:6px;border-radius:6px;border:none;cursor:pointer}
+.entry-controls button.edit{background:#d35400;color:#fff}
+.entry-controls button.del{background:#c0392b;color:#fff}
 
-.author-note h3 {
-  margin-top: 0;
-  text-align: center;
-  color: #5a2d0c;
-}
+/* pager */
+.pager{margin-top:12px;display:flex;gap:8px;justify-content:center;align-items:center}
+.pager input{width:80px;padding:6px}
 
-.author-note p {
-  margin-bottom: 15px;
-  line-height: 1.6;
-  font-size: 1em;
-}
+/* dialog */
+.dialog{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);background:#fff8e7;padding:16px;border:2px solid #b8860b;border-radius:8px;z-index:50}
+
+/* small */
+.msg{color:#5a2d0c;font-weight:600}
+.admin-row{margin-top:8px}
