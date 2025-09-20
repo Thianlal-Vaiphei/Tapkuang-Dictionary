@@ -1,48 +1,70 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Tapkuang Vaiphei Dictionary</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Tapkuang Vaiphei Dictionary - Home</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <!-- ✅ Cover Section -->
-  <div class="cover">
-    <img src="Tapkuang cover.jpg" alt="Dictionary Cover" class="cover-img">
-    <h1>Tapkuang Vaiphei Dictionary</h1>
-    <p class="subtitle">By Ph. Thianneilal Vaiphei • 2025</p>
+  <header class="site-header">
+    <img src="Tapkuang cover.jpg" alt="Tapkuang cover" class="cover-img" id="homeCover">
+    <div class="title-area">
+      <h1>Tapkuang — Vaiphei Dictionary</h1>
+      <p class="byline">By Ph. Thianneilal Vaiphei • 2025</p>
+    </div>
+  </header>
+
+  <main class="main-menu">
+    <div class="menu-grid">
+      <button class="menu-btn" onclick="location.href='dictionary.html'">Dictionary (V2E / E2V)</button>
+      <button class="menu-btn" onclick="openDictionaryPage('v2e')">Vaiphei → English</button>
+      <button class="menu-btn" onclick="openDictionaryPage('e2v')">English → Vaiphei</button>
+      <button class="menu-btn" onclick="location.href='dictionary.html#import'">Excel Laklutna (Import / Export)</button>
+      <button class="menu-btn" onclick="location.href='dictionary.html#add'">Word Add</button>
+      <button class="menu-btn" onclick="openLoginModal()">Admin Log in</button>
+    </div>
+
+    <div class="note-box">
+      <button id="toggleNote" class="toggle-note" onclick="toggleAuthorNote()">Read Author's Note ▾</button>
+      <div id="authorNote" class="author-note collapsed">
+        <h3>Author's Note</h3>
+        <p>
+          This dictionary project is dedicated to the preservation and growth of the Vaiphei language.
+          It is designed as a bridge for learners, researchers, and everyday users who wish to better
+          understand the richness of Vaiphei and English side by side. The work represents years of
+          dedication and effort to collect, organize, and make the vocabulary accessible in a digital form.
+        </p>
+        <p>
+          Language is more than communication—it is the soul of a community. With every word preserved,
+          a piece of identity and culture is safeguarded for the future generations. It is my humble hope
+          that this project will inspire younger Vaiphei speakers to value their mother tongue while also
+          helping outsiders learn and appreciate it.
+        </p>
+        <p>
+          This work is not perfect and will continue to grow. Feedback, corrections, and contributions
+          from users are always welcome. Together, we can make this dictionary stronger and more useful
+          for schools, churches, researchers, and families alike.
+        </p>
+        <p><em>— The Author</em></p>
+      </div>
+    </div>
+  </main>
+
+  <!-- Login Modal (simple) -->
+  <div id="loginModal" class="modal" aria-hidden="true">
+    <div class="modal-content">
+      <h2>Admin Login</h2>
+      <input id="adminUser" placeholder="Username" />
+      <input id="adminPass" type="password" placeholder="Password" />
+      <div class="modal-actions">
+        <button onclick="doLogin()">Login</button>
+        <button onclick="closeLoginModal()">Cancel</button>
+      </div>
+      <p id="loginMsg" class="msg"></p>
+    </div>
   </div>
 
-  <!-- ✅ Main Buttons -->
-  <div class="menu">
-    <button onclick="location.href='v2e.html'">Vaiphei → English</button>
-    <button onclick="location.href='e2v.html'">English → Vaiphei</button>
-    <button onclick="location.href='excel.html'">Excel Laklutna</button>
-    <button onclick="location.href='addword.html'">Word Add</button>
-    <button onclick="location.href='login.html'">Admin Log in</button>
-  </div>
-
-  <!-- ✅ Author's Note -->
-  <div id="author-note" class="author-note">
-    <h3>Author's Note</h3>
-    <p>
-      This dictionary project is dedicated to the preservation and growth of the Vaiphei language. 
-      It is designed as a bridge for learners, researchers, and everyday users who wish to better 
-      understand the richness of Vaiphei and English side by side. The work represents years of 
-      dedication and effort to collect, organize, and make the vocabulary accessible in a digital form.
-    </p>
-    <p>
-      Language is more than communication—it is the soul of a community. With every word preserved, 
-      a piece of identity and culture is safeguarded for the future generations. It is my humble hope 
-      that this project will inspire younger Vaiphei speakers to value their mother tongue while also 
-      helping outsiders learn and appreciate it.
-    </p>
-    <p>
-      This work is not perfect and will continue to grow. Feedback, corrections, and contributions 
-      from users are always welcome. Together, we can make this dictionary stronger and more useful 
-      for schools, churches, researchers, and families alike.
-    </p>
-    <p><em>— The Author</em></p>
-  </div>
+  <script src="script.js"></script>
 </body>
 </html>
