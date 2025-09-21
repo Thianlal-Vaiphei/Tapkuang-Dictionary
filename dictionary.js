@@ -1,13 +1,13 @@
-// Sample dictionary data
+// Initial dictionary data
 let dictionary = {
   v2e: [
-    { left: "Vaiphei", right: "A tribal language of India" },
-    { left: "Lal", right: "Chief, king" },
-    { left: "In", right: "House" }
+    { left: "Sial", right: "Apple" },
+    { left: "Thu", right: "Book" },
+    { left: "Kizu", right: "Cat" }
   ],
   e2v: [
-    { left: "Language", right: "Paoh" },
+    { left: "Apple", right: "Sial" },
     { left: "Book", right: "Thu" },
-    { left: "Love", right: "Nuam" }
+    { left: "Cat", right: "Kizu" }
   ]
 };
