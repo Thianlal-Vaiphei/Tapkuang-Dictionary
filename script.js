@@ -29,8 +29,11 @@ function renderPage() {
     div.className = "word-box";
     div.innerHTML = `<strong>${entry.left}</strong> - <span>${entry.right}</span>`;
     if (isAdmin) {
-      div.innerHTML += ` <button onclick="deleteWord(${start + index})">Delete</button>`;
-    }
+  div.innerHTML += `
+    <button onclick="editWord(${start + index})">Edit</button>
+    <button onclick="deleteWord(${start + index})">Delete</button>
+  `;
+}
     container.appendChild(div);
   });
 
@@ -64,9 +67,16 @@ function addWord() {
 }
 
 // Delete Word
-function deleteWord(index) {
-  dictionary[currentTab].splice(index, 1);
-  renderPage();
+function editWord(index) {
+  let entry = dictionary[currentTab][index];
+  let newWord = prompt("Edit word:", entry.left);
+  let newMeaning = prompt("Edit meaning:", entry.right);
+
+  if (newWord && newMeaning) {
+    dictionary[currentTab][index] = { left: newWord, right: newMeaning };
+    dictionary[currentTab].sort((a, b) => a.left.localeCompare(b.left));
+    renderPage();
+  }
 }
 
 // Import
