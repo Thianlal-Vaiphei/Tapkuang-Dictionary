@@ -2,59 +2,69 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Vaiphei-English Dictionary</title>
+  <title>Tapkuang Vaiphei Dictionary</title>
   <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
 </head>
 <body>
-  <!-- Cover Section -->
+  <!-- Cover / Home -->
   <header class="cover">
     <img src="Tapkuang cover.jpg" alt="Dictionary Cover" class="cover-img">
-    <h1>Vaiphei – English Dictionary</h1>
+    <h1>Tapkuang Vaiphei Dictionary</h1>
   </header>
 
-  <!-- Navigation -->
-  <main class="menu">
-    <button onclick="openSection('dictionary')">📖 Dictionary (V2E & E2V)</button>
-    <button onclick="openSection('addWord')">➕ Add Word</button>
-    <button onclick="openSection('excel')">📂 Excel Laklutna (Import & Export)</button>
-    <button onclick="openSection('login')">🔑 Admin Login</button>
-  </main>
+  <!-- Menu -->
+  <nav class="menu">
+    <button onclick="showSection('dictionary')">Dictionary (V2E & E2V)</button>
+    <button onclick="showSection('addword')">Word Add</button>
+    <button onclick="showSection('excel')">Excel Laklutna</button>
+    <button onclick="showSection('login')">Admin Login</button>
+  </nav>
 
-  <!-- Sections -->
+  <!-- Dictionary -->
   <section id="dictionary" class="hidden">
     <h2>Dictionary</h2>
     <div class="tabs">
-      <button onclick="switchDictionary('v2e')">Vaiphei → English</button>
-      <button onclick="switchDictionary('e2v')">English → Vaiphei</button>
+      <button onclick="switchTab('v2e')">Vaiphei → English</button>
+      <button onclick="switchTab('e2v')">English → Vaiphei</button>
     </div>
-    <div id="dict-pages" class="book"></div>
-    <div class="page-controls">
-      <button onclick="prevPage()">⬅ Prev</button>
-      <span id="pageIndicator"></span>
-      <button onclick="nextPage()">Next ➡</button>
+    <div id="dictionaryContent" class="book">
+      <div id="pageContent" class="page"></div>
+      <div class="nav-buttons">
+        <button onclick="prevPage()">⟵ Previous</button>
+        <span id="pageNumber"></span>
+        <button onclick="nextPage()">Next ⟶</button>
+      </div>
     </div>
   </section>
 
-  <section id="addWord" class="hidden">
-    <h2>Add Word</h2>
-    <label>Word:</label>
-    <input type="text" id="wordInput">
-    <label>Meaning:</label>
-    <input type="text" id="meaningInput">
-    <select id="dictType">
-      <option value="v2e">Vaiphei → English</option>
-      <option value="e2v">English → Vaiphei</option>
-    </select>
-    <button onclick="addWord()">Save Word</button>
+  <!-- Word Add -->
+  <section id="addword" class="hidden">
+    <h2>Add New Word</h2>
+    <form onsubmit="addWord(event)">
+      <label>Choose Dictionary:</label>
+      <select id="dictType">
+        <option value="v2e">Vaiphei → English</option>
+        <option value="e2v">English → Vaiphei</option>
+      </select><br><br>
+      <input type="text" id="wordInput" placeholder="Word" required>
+      <input type="text" id="meaningInput" placeholder="Meaning" required>
+      <button type="submit">Save</button>
+    </form>
   </section>
 
+  <!-- Excel -->
   <section id="excel" class="hidden">
-    <h2>Excel Laklutna</h2>
+    <h2>Excel Laklutna (Admin Only)</h2>
     <div class="excel-block">
       <h3>Import Dictionary</h3>
-      <input type="file" id="importFile" accept=".xlsx">
-      <button onclick="importExcel()">Import & Save</button>
+      <label>Vaiphei → English:</label>
+      <input type="file" id="importV2E" accept=".xlsx">
+      <button onclick="importExcel('v2e')">Import & Save</button><br><br>
+
+      <label>English → Vaiphei:</label>
+      <input type="file" id="importE2V" accept=".xlsx">
+      <button onclick="importExcel('e2v')">Import & Save</button>
     </div>
     <div class="excel-block">
       <h3>Export Dictionary</h3>
@@ -63,25 +73,27 @@
     </div>
   </section>
 
+  <!-- Login -->
   <section id="login" class="hidden">
     <h2>Admin Login</h2>
-    <input type="text" id="username" placeholder="Username">
-    <input type="password" id="password" placeholder="Password">
-    <button onclick="login()">Login</button>
+    <form onsubmit="login(event)">
+      <input type="text" id="username" placeholder="Username" required><br>
+      <input type="password" id="password" placeholder="Password" required><br>
+      <button type="submit">Login</button>
+    </form>
     <p id="loginMessage"></p>
   </section>
 
   <!-- Author's Note -->
   <footer>
-    <h2>Author’s Note</h2>
+    <h2>Author's Note</h2>
     <p>
-      This dictionary is created to preserve and promote the Vaiphei language by providing
-      an accessible and easy-to-use platform for translation between Vaiphei and English.
-      It is designed as a tool for students, researchers, and the community to strengthen
-      linguistic heritage. The application allows adding, editing, and deleting words with
-      admin privileges, as well as Excel import/export for efficient management. Every word
-      entered is automatically sorted alphabetically for ease of search. May this work serve
-      as a humble contribution towards the enrichment of our language and cultural identity.
+      This dictionary app is created with the vision of preserving and promoting
+      the Vaiphei language. It is designed as a living resource: words and
+      meanings can be added over time, making it ever-growing. The goal is to
+      support students, researchers, and community members who want to learn,
+      translate, or deepen their knowledge of Vaiphei and English. Accuracy,
+      clarity, and accessibility are at the heart of this project.
     </p>
   </footer>
 
