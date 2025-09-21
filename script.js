@@ -1,79 +1,79 @@
 let currentTab = "v2e";
 let currentPage = 1;
-let pageSize = 10;
+let itemsPerPage = 10;
 let isAdmin = false;
 
-// Show / Hide sections
-function showSection(id) {
-  document.querySelectorAll(".app-section, .main-menu").forEach(s => s.style.display = "none");
-  document.getElementById(id).style.display = "block";
+// Navigation
+function openSection(id) {
+  document.querySelectorAll("section").forEach(s => s.classList.add("hidden"));
+  document.getElementById(id).classList.remove("hidden");
   if (id === "dictionary") renderPage();
 }
 
-// Tabs
 function switchTab(tab) {
   currentTab = tab;
-  document.querySelectorAll(".tab").forEach(b => b.classList.remove("active"));
-  document.getElementById("tab-" + tab).classList.add("active");
   currentPage = 1;
   renderPage();
 }
 
-// Render dictionary page
+// Render Dictionary Page
 function renderPage() {
   let data = dictionary[currentTab];
-  let start = (currentPage - 1) * pageSize;
-  let page = data.slice(start, start + pageSize);
+  let start = (currentPage - 1) * itemsPerPage;
+  let pageData = data.slice(start, start + itemsPerPage);
 
-  let container = document.getElementById("bookContainer");
-  container.innerHTML = page.map(entry =>
-    `<div class="word-box"><strong>${entry.left}</strong> — ${entry.right}</div>`
-  ).join("");
+  let container = document.getElementById("pageContent");
+  container.innerHTML = "";
+  pageData.forEach((entry, index) => {
+    let div = document.createElement("div");
+    div.className = "word-box";
+    div.innerHTML = `<strong>${entry.left}</strong> - <span>${entry.right}</span>`;
+    if (isAdmin) {
+      div.innerHTML += ` <button onclick="deleteWord(${start + index})">Delete</button>`;
+    }
+    container.appendChild(div);
+  });
 
-  document.getElementById("pageInfo").textContent =
-    `Page ${currentPage} / ${Math.ceil(data.length / pageSize)}`;
+  document.getElementById("pageNum").innerText = currentPage;
 }
 
-// Pager
-function prevPage(section="dictionary") {
+function nextPage() {
+  if ((currentPage * itemsPerPage) < dictionary[currentTab].length) {
+    currentPage++;
+    renderPage();
+  }
+}
+function prevPage() {
   if (currentPage > 1) {
     currentPage--;
     renderPage();
   }
 }
-function nextPage(section="dictionary") {
-  let max = Math.ceil(dictionary[currentTab].length / pageSize);
-  if (currentPage < max) {
-    currentPage++;
-    renderPage();
-  }
-}
-function jumpToPage() {
-  let p = parseInt(document.getElementById("jumpPage").value);
-  let max = Math.ceil(dictionary[currentTab].length / pageSize);
-  if (p >= 1 && p <= max) {
-    currentPage = p;
-    renderPage();
-  }
+
+// Add Word
+function addWord() {
+  let side = document.getElementById("wordSide").value;
+  let word = document.getElementById("wordInput").value.trim();
+  let meaning = document.getElementById("meaningInput").value.trim();
+
+  if (!word || !meaning) return alert("Enter both word and meaning");
+
+  dictionary[side].push({ left: word, right: meaning });
+  dictionary[side].sort((a, b) => a.left.localeCompare(b.left));
+  alert("Word added!");
 }
 
-// Search
-function onSearch() {
-  let q = document.getElementById("searchInput").value.toLowerCase();
-  let data = dictionary[currentTab].filter(
-    w => w.left.toLowerCase().includes(q) || w.right.toLowerCase().includes(q)
-  );
-  let container = document.getElementById("bookContainer");
-  container.innerHTML = data.map(entry =>
-    `<div class="word-box"><strong>${entry.left}</strong> — ${entry.right}</div>`
-  ).join("");
-  document.getElementById("pageInfo").textContent = `Search result: ${data.length}`;
+// Delete Word
+function deleteWord(index) {
+  dictionary[currentTab].splice(index, 1);
+  renderPage();
 }
 
 // Import
 function importAndSave() {
   let fileInput = document.getElementById("fileInput");
   if (!fileInput.files.length) return alert("Select a file");
+
   let file = fileInput.files[0];
   let reader = new FileReader();
   reader.onload = e => {
@@ -84,71 +84,27 @@ function importAndSave() {
       if (r[0] && r[1]) dictionary[currentTab].push({ left: r[0], right: r[1] });
     });
     renderPage();
+    alert("Import successful!");
   };
   reader.readAsArrayBuffer(file);
 }
 
 // Export
-function exportCurrent() {
-  let ws = XLSX.utils.json_to_sheet(dictionary[currentTab]);
+function exportExcel(side) {
+  let ws = XLSX.utils.json_to_sheet(dictionary[side].map(x => [x.left, x.right]));
   let wb = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb, ws, currentTab);
-  XLSX.writeFile(wb, currentTab + ".xlsx");
-}
-function exportAll(tab) {
-  let ws = XLSX.utils.json_to_sheet(dictionary[tab]);
-  let wb = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb, ws, tab);
-  XLSX.writeFile(wb, tab + ".xlsx");
-}
-
-// Add word
-function saveAdd() {
-  let dir = document.getElementById("addDirection").value;
-  let left = document.getElementById("addLeft").value.trim();
-  let right = document.getElementById("addRight").value.trim();
-  if (!left || !right) {
-    document.getElementById("addMsg").textContent = "Please fill both fields";
-    return;
-  }
-  dictionary[dir].push({ left, right });
-  document.getElementById("addMsg").textContent = "Saved!";
+  XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
+  XLSX.writeFile(wb, `${side}.xlsx`);
 }
 
 // Login
-function openLoginModal() {
-  document.getElementById("loginModal").style.display = "flex";
-}
-function closeLoginModal() {
-  document.getElementById("loginModal").style.display = "none";
-}
-function doLogin() {
-  let user = document.getElementById("adminUser").value;
-  let pass = document.getElementById("adminPass").value;
-  if (user === "admin" && pass === "1234") {
+function login() {
+  let user = document.getElementById("username").value;
+  let pass = document.getElementById("password").value;
+  if (user === "Thianlal Vaiphei" && pass === "phaltual") {
     isAdmin = true;
-    document.getElementById("adminControls").style.display = "block";
-    closeLoginModal();
+    document.getElementById("loginMsg").innerText = "Login successful!";
   } else {
-    document.getElementById("loginMsg").textContent = "Invalid login";
+    document.getElementById("loginMsg").innerText = "Invalid credentials!";
   }
 }
-function logoutAdmin() {
-  isAdmin = false;
-  document.getElementById("adminControls").style.display = "none";
-}
-
-// Author note toggle
-function toggleAuthorNote() {
-  let note = document.getElementById("authorNote");
-  if (note.classList.contains("collapsed")) {
-    note.classList.remove("collapsed");
-    note.classList.add("expanded");
-  } else {
-    note.classList.remove("expanded");
-    note.classList.add("collapsed");
-  }
-}
-
-// Start
-window.onload = () => renderPage();
