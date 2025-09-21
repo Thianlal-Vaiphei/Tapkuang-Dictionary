@@ -7,9 +7,13 @@
 
   <link rel="stylesheet" href="style.css">
 
-  <!-- SheetJS from CDN (for import/export). If you need offline, download sheetjs and load locally. -->
+  <!-- SheetJS CDN (used by script.js for import/export) -->
   <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
 
+  <!-- dictionary data (sample) -->
+  <script src="dictionary.js" defer></script>
+
+  <!-- main app logic -->
   <script src="script.js" defer></script>
 </head>
 <body>
@@ -22,12 +26,12 @@
     </div>
   </header>
 
-  <!-- MAIN MENU -->
+  <!-- HOME -->
   <main id="home" class="main-menu">
     <div class="menu-grid">
       <button class="menu-btn" onclick="showSection('dictionary')">Dictionary (V2E & E2V)</button>
       <button class="menu-btn" onclick="showSection('add')">Word Add</button>
-      <button class="menu-btn" onclick="showSection('import')">Excel Laklutna (Import / Save)</button>
+      <button class="menu-btn" onclick="showSection('import')">Excel Laklutna</button>
       <button class="menu-btn" onclick="showSection('export')">Export</button>
       <button class="menu-btn" onclick="openLoginModal()">Admin Log in</button>
     </div>
@@ -58,7 +62,7 @@
     </div>
   </main>
 
-  <!-- DICTIONARY SECTION (combined V2E & E2V) -->
+  <!-- DICTIONARY SECTION -->
   <section id="dictionary" class="app-section" style="display:none">
     <div class="dict-header">
       <img src="Tapkuang cover.jpg" class="cover-img small" alt="">
@@ -105,26 +109,22 @@
     </div>
   </section>
 
-  <!-- IMPORT SECTION (for admin import preview & paging) -->
+  <!-- IMPORT SECTION -->
   <section id="import" class="app-section" style="display:none">
     <div class="dict-header">
       <img src="Tapkuang cover.jpg" class="cover-img small" alt="">
-      <div><h2>Excel Import (Choose file & Save)</h2></div>
+      <div><h2>Excel Import (Preview & Save)</h2></div>
       <div class="top-actions">
         <button onclick="showSection('home')">Home</button>
       </div>
     </div>
 
     <div class="import-controls">
-      <div>
-        <label>Direction:</label>
-        <select id="importDir"><option value="v2e">Vaiphei → English</option><option value="e2v">English → Vaiphei</option></select>
-      </div>
-      <div>
-        <input id="importFile" type="file" accept=".xlsx,.xls,.csv,.txt" />
-        <button onclick="previewImport()">Preview Import</button>
-        <button onclick="confirmImport()">Import & Save</button>
-      </div>
+      <label>Direction:</label>
+      <select id="importDir"><option value="v2e">Vaiphei → English</option><option value="e2v">English → Vaiphei</option></select>
+      <input id="importFile" type="file" accept=".xlsx,.xls,.csv,.txt" />
+      <button onclick="previewImport()">Preview</button>
+      <button onclick="confirmImport()">Import & Save</button>
     </div>
 
     <div class="book-area">
@@ -137,7 +137,7 @@
     </div>
   </section>
 
-  <!-- ADD WORD SECTION (also used as Add dialog) -->
+  <!-- ADD WORD SECTION -->
   <section id="add" class="app-section" style="display:none">
     <div class="dict-header">
       <img src="Tapkuang cover.jpg" class="cover-img small" alt="">
@@ -189,6 +189,5 @@
       <p id="loginMsg" class="msg"></p>
     </div>
   </div>
-
 </body>
 </html>
