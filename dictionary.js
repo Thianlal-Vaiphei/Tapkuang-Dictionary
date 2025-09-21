@@ -1,54 +1,21 @@
-// Sample dictionary content (replace with import/export later)
-const e2vPages = [
-  "Apple → Sial",
-  "Book → Thu",
-  "Cat → Kizu",
-  "Dog → Uithu",
-  "Egg → Hmuk",
-  "Fish → Ngui",
-  "Goat → Bui",
-  "House → Inn",
-  "Ink → Thilthei",
-  "Jesus → Pathian",
-  "King → Lal",
-  "Lion → Sang",
-  "Man → Mi",
-  "Night → Zan",
-  "Orange → Arang",
-  "Pen → Thumal",
-  "Queen → Lalnu",
-  "Road → Lam",
-  "Sun → Ni",
-  "Tree → Thing",
-  "Umbrella → Kawlni",
-  "Village → Khua",
-  "Water → Tuipi",
-  "Zebra → Sa’pi"
+// Initial dictionary data
+let v2eDictionary = [
+  { word: "A", meaning: "First letter of alphabet" },
+  { word: "Aw", meaning: "Respectful prefix" },
+  { word: "Bawl", meaning: "To sing" },
+  { word: "Chap", meaning: "Quick" }
 ];
 
-const v2ePages = [
-  "Sial → Apple",
-  "Thu → Book",
-  "Kizu → Cat",
-  "Uithu → Dog",
-  "Hmuk → Egg",
-  "Ngui → Fish",
-  "Bui → Goat",
-  "Inn → House",
-  "Thilthei → Ink",
-  "Pathian → Jesus",
-  "Lal → King",
-  "Sang → Lion",
-  "Mi → Man",
-  "Zan → Night",
-  "Arang → Orange",
-  "Thumal → Pen",
-  "Lalnu → Queen",
-  "Lam → Road",
-  "Ni → Sun",
-  "Thing → Tree",
-  "Kawlni → Umbrella",
-  "Khua → Village",
-  "Tuipi → Water",
-  "Sa’pi → Zebra"
+let e2vDictionary = [
+  { word: "Apple", meaning: "Thinghat" },
+  { word: "Book", meaning: "Thumal" },
+  { word: "Cat", meaning: "Kuli" }
 ];
+
+// Sort function
+function sortDictionary(dict) {
+  return dict.sort((a, b) => a.word.localeCompare(b.word));
+}
+
+v2eDictionary = sortDictionary(v2eDictionary);
+e2vDictionary = sortDictionary(e2vDictionary);
